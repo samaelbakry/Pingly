@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, ShieldCheck, Zap, Globe, ArrowRight, Sparkles } from "lucide-react";
+import Footer from "@/components/ui/Footer";
 
 export default function Home() {
   return (
@@ -22,9 +23,9 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Link href="/login">
+            <Link href="/verifyingOptions">
               <Button className="font-medium rounded-full px-6 bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-lg shadow-orange-500/20 transition-all">
-                Log In
+               Join us 
               </Button>
             </Link>
           </div>
@@ -143,9 +144,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="relative z-10 py-8 border-t border-orange-100 text-center text-xs text-slate-400">
-        © {new Date().getFullYear()} Pingly. Crafting warm connections everywhere.
-      </footer>
+      <Footer/>
     </div>
   );
 }

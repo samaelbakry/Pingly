@@ -1,55 +1,108 @@
-import AuthForm from "@/components/auth/AuthForm";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Mail, Lock, ArrowRight } from "lucide-react";
+import { loginWithEmail } from "@/services/auth";
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await loginWithEmail(email, password);
+      console.log(res);
+      toast.success("Logged in successfully!");
+      router.push("/chatDashboard");
+    } catch (error) {
+      console.log(error);
+      toast.error("Invalid credentials. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <main className="relative min-h-screen w-full flex items-center justify-center bg-amber-50/40 p-4 overflow-hidden font-sans text-slate-800">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-linear-to-tr from-amber-300/40 via-orange-300/30 to-red-300/40 blur-[140px] rounded-full pointer-events-none" />
+    <>
+      <div className="flex flex-col items-center text-center space-y-1.5 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight bg-linear-to-r from-orange-600 via-red-500 to-rose-600 bg-clip-text text-transparent">
+          Welcome Back
+        </h1>
+        <p className="text-xs sm:text-sm font-medium text-slate-500">
+          Sign in to pick up where your draft left off
+        </p>
+      </div>
 
-      <Card className="relative w-full max-w-md border-white/80 bg-white/75 backdrop-blur-2xl shadow-2xl shadow-orange-500/10 rounded-3xl p-3 text-slate-800">
-        <CardHeader className="text-center space-y-2 pb-4">
-          <div className="mx-auto flex items-center justify-center w-14 h-14 rounded-2xl bg-linear-to-tr from-amber-500 via-orange-500 to-red-500 text-white shadow-xl shadow-orange-500/25 mb-2">
-            <svg
-              className="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <div className="space-y-1.5">
+          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold block">
+            Email Address
+          </label>
+          <div className="relative">
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              className="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/50 text-sm text-slate-800 placeholder:text-slate-400 focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10 transition-all"
+              name="email"
+              onChange={(event) => setEmail(event.target.value)}
+              type="email"
+              value={email}
+              placeholder="name@example.com"
+              required
+            />
           </div>
+        </div>
 
-          <CardTitle className="text-3xl font-black tracking-tight bg-linear-to-r from-orange-600 via-red-500 to-rose-600 bg-clip-text text-transparent">
-            Pingly
-          </CardTitle>
-          <CardDescription className="text-sm font-medium text-slate-500">
-            Sign in to connect with your world
-          </CardDescription>
-        </CardHeader>
+        <div className="space-y-1.5">
+          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold block">
+            Password
+          </label>
+          <div className="relative">
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              className="w-full h-12 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/50 text-sm text-slate-800 placeholder:text-slate-400 focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10 transition-all"
+              name="password"
+              onChange={(event) => setPassword(event.target.value)}
+              type="password"
+              value={password}
+              placeholder="••••••••"
+              required
+            />
+          </div>
+        </div>
 
-        <CardContent>
-          <AuthForm />
-        </CardContent>
+        <button
+          className="w-full h-12 mt-2 font-semibold bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-lg shadow-orange-500/20 transition-all active:scale-[0.99] rounded-xl cursor-pointer flex items-center justify-center gap-2 group disabled:opacity-50"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? (
+            "Logging in..."
+          ) : (
+            <>
+              Log in
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </>
+          )}
+        </button>
+      </form>
 
-        <CardFooter className="justify-center pt-2">
-          <p className="text-xs text-center text-slate-400">
-            By signing in, you agree to Pingly&apos;s Terms & Privacy Policy
-          </p>
-        </CardFooter>
-      </Card>
-    </main>
+      <p className="mt-6 text-center text-xs sm:text-sm font-medium text-slate-500">
+        Need an account?{" "}
+        <Link
+          href="/register"
+          className="font-bold text-orange-600 hover:text-red-600 underline underline-offset-4 transition-colors"
+        >
+          Sign up
+        </Link>
+      </p>
+    </>
   );
 }
