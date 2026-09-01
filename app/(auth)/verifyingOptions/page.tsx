@@ -1,16 +1,14 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Phone, Mail } from "lucide-react";
+import Logo from "@/components/ui/Logo";
+import { Mail, Phone } from "lucide-react";
+import Link from "next/link";
 
 export default function VerifyingOptions() {
   return (
     <div className="flex flex-col items-center text-center">
-      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-tr from-amber-500 via-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/25">
-        <MessageSquare className="h-6 w-6 fill-current" />
-      </div>
-
-      <h1 className="bg-linear-to-r from-orange-600 via-red-500 to-rose-600 bg-clip-text text-2xl sm:text-3xl font-black tracking-tight text-transparent">
-        Welcome to Pingly
+       <Logo withText={false} />
+      <h1 className="bg-linear-to-r from-orange-600 via-red-500 to-rose-600 bg-clip-text text-2xl my-2 sm:text-3xl font-black tracking-tight text-transparent">
+        Welcome to Pingly!
       </h1>
       <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500 mb-6">
         How would you like to get started?

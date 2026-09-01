@@ -1,8 +1,9 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, ShieldCheck, Zap, Globe, ArrowRight, Sparkles } from "lucide-react";
 import Footer from "@/components/ui/Footer";
+import Logo from "@/components/ui/Logo";
+import { ArrowRight, Globe, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,14 +14,7 @@ export default function Home() {
 
       <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-amber-50/20">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-linear-to-tr from-amber-500 via-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/20">
-              <MessageSquare className="w-5 h-5 fill-current" />
-            </div>
-            <span className="text-xl  font-bold tracking-tight text-slate-900">
-              Pingly
-            </span>
-          </div>
+          <Logo withText={true} />
 
           <div className="flex items-center gap-2">
             <Link href="/verifyingOptions">

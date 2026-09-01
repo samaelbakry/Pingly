@@ -1,6 +1,7 @@
-import Link from "next/link";
-import { ArrowLeft, MessageSquare } from "lucide-react";
 import Footer from "@/components/ui/Footer";
+import Logo from "@/components/ui/Logo";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function AuthLayout({
   children,
@@ -14,14 +15,7 @@ export default function AuthLayout({
 
       <header className="relative z-20 w-full shadow from-amber-500 via-orange-500 to-red-500 backdrop-blur-xl">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="group flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-tr from-amber-500 via-orange-500 to-red-500 text-white shadow-md shadow-orange-500/20 transition-transform duration-200 group-hover:scale-105">
-              <MessageSquare className="h-5 w-5 fill-current" />
-            </div>
-            <span className="bg-linear-to-r from-orange-600 via-red-500 to-rose-600 bg-clip-text text-xl font-black tracking-tight text-transparent">
-              Pingly
-            </span>
-          </Link>
+         <Logo withText={true} />
 
           <Link
             href="/"

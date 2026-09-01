@@ -1,5 +1,13 @@
 import { auth } from "@/lib/firebaseConfig";
-import { ConfirmationResult, createUserWithEmailAndPassword, RecaptchaVerifier, signInWithEmailAndPassword, signInWithPhoneNumber, updateCurrentUser, updateProfile} from "firebase/auth";
+import {
+  ConfirmationResult,
+  createUserWithEmailAndPassword,
+  RecaptchaVerifier,
+  signInWithEmailAndPassword,
+  signInWithPhoneNumber,
+  updateProfile,
+} from "firebase/auth";
+import { ensureUserProfile } from "./users";
 
 let confirmationResult: ConfirmationResult | null = null;
 
@@ -20,23 +28,28 @@ export const verifyOtp = async (otp: string) => {
     throw new Error("OTP was not requested");
   }
 
-  const result = confirmationResult.confirm(otp);
+  const result = await confirmationResult.confirm(otp);
 
-  return (await result).user;
+  await ensureUserProfile(result.user);
+
+  return result.user;
 };
 
-export const registerWithEmail = async(name:string, email:string, password:string)=>{
+export const registerWithEmail = async (
+  name: string,
+  email: string,
+  password: string,
+) => {
+  const result = await createUserWithEmailAndPassword(auth, email, password);
 
-  const result = await createUserWithEmailAndPassword(auth , email , password)
+  await updateProfile(result.user, { displayName: name });
+  await ensureUserProfile(result.user);
 
-  await updateProfile(result.user,{displayName:name})
+  return result.user;
+};
 
-  return result.user
-}
+export const loginWithEmail = async (email: string, password: string) => {
+  const result = await signInWithEmailAndPassword(auth, email, password);
 
-export const loginWithEmail = async(email:string, password:string)=>{
-
-  const result = await signInWithEmailAndPassword(auth , email , password)
-
-  return result.user
-}
+  return result.user;
+};
