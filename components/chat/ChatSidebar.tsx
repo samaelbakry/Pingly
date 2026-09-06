@@ -11,14 +11,20 @@ import { useAuth } from "@/context/AuthContext";
 import { getAllUsers } from "@/services/users";
 import { UserProfile } from "@/types/userProfile";
 import ChatSkeleton from "../skeletons/ChatSkeleton";
+import { createChat } from "@/services/chats";
 
-export default function ChatSidebar() {
+type ChatPropsType = {
+  selectedUserId: string | null;
+  setSelectedUserId: (userId: string | null) => void;
+  setChatId: (chatId: string | null) => void;
+};
+
+export default function ChatSidebar({ selectedUserId, setSelectedUserId, setChatId }: ChatPropsType) {
   const { user: currentUser } = useAuth();
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<UserProfile[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -28,7 +34,6 @@ export default function ChatSidebar() {
         const data = await getAllUsers();
 
         const otherUsers = data.filter((user) => user.uid !== currentUser?.uid);
-        console.log("Fetched users:", otherUsers);
         setUsers(otherUsers);
       } catch (error) {
         console.error("Failed to fetch users:", error);
@@ -57,6 +62,26 @@ export default function ChatSidebar() {
     });
   }, [users, search]);
 
+  const handleSelectChat = async (
+  currentUserID: string,
+  otherUserID: string
+) => {
+  if (!currentUserID || !otherUserID) return;
+
+  try {
+    const chatID = await createChat(
+      currentUserID,
+      otherUserID
+    );
+
+    setSelectedUserId(otherUserID);
+    setChatId(chatID);
+
+    console.log("Opened chat:", chatID);
+  } catch (error) {
+    console.error("Failed to open chat:", error);
+  }
+};
   return (
     <div className="relative flex flex-col h-full rounded-3xl border border-white/80 bg-white/70 p-4 shadow-xl shadow-orange-500/5 backdrop-blur-2xl">
       <div className="flex items-center justify-between pb-3.5 border-b border-orange-100/60">
@@ -112,7 +137,11 @@ export default function ChatSidebar() {
               <button
                 key={user.uid}
                 type="button"
-                onClick={() => setSelectedUserId(user.uid)}
+                onClick={() => {
+                  if (currentUser?.uid) {
+                    handleSelectChat(currentUser.uid, user.uid);
+                  }
+                }}
                 className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all duration-200 text-left cursor-pointer group relative ${
                   isSelected
                     ? "bg-linear-to-r from-orange-500/15 to-rose-500/10 border border-orange-300/50 shadow-xs"
