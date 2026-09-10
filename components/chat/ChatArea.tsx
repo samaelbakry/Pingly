@@ -1,7 +1,9 @@
 "use client";
 
-import { CheckCheck, MessageSquare, Send, Smile, Sparkles } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { CheckCheck, Send, Smile, Sparkles } from "lucide-react";
 import { SubmitEvent, useEffect, useRef, useState } from "react";
+
 
 import Logo from "../ui/Logo";
 import { Button } from "../ui/button";
@@ -14,13 +16,15 @@ import {
 import { Message } from "@/types/messages";
 
 import { useAuth } from "@/context/AuthContext";
+import { UserProfile } from "@/types/userProfile";
 
 type ChatPropsType = {
   selectedUserId: string | null;
+  selectedUser: UserProfile | null;
   chatId: string | null;
 };
 
-export default function ChatArea({selectedUserId,chatId }: ChatPropsType) {
+export default function ChatArea({selectedUserId, selectedUser ,chatId }: ChatPropsType) {
   const { user: currentUser } = useAuth();
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -93,31 +97,38 @@ export default function ChatArea({selectedUserId,chatId }: ChatPropsType) {
     );
   }
 
-  return (
-    <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-white/80 bg-white/70 shadow-xl shadow-orange-500/5 backdrop-blur-2xl">
-      <div className="shrink-0 flex items-center justify-between border-b border-orange-100/60 bg-white/40 px-6 py-4 backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10 text-orange-600">
-            <MessageSquare className="h-4 w-4" />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-slate-800 leading-none">
-              Conversation
-            </h2>
-            <p className="mt-1 text-[11px] font-semibold text-slate-400">
-              {messages.length} {messages.length === 1 ? "message" : "messages"}
-            </p>
-          </div>
+
+   return (
+    <div className="flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-white/40 bg-white/30 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] backdrop-blur-3xl">
+      <div className="flex items-center gap-3 border-b border-white/20 px-6 py-4 bg-white/20 backdrop-blur-xl">
+        <Avatar className="h-10 w-10 border border-white/60 shadow-xs">
+          <AvatarImage
+            src={selectedUser?.photoURL || ""}
+            alt={selectedUser?.name || "User"}
+          />
+          <AvatarFallback className="bg-linear-to-tr from-amber-400 to-orange-500 font-bold text-white">
+            {selectedUser?.name?.charAt(0).toUpperCase() || "U"}
+          </AvatarFallback>
+        </Avatar>
+
+        <div>
+          <h2 className="text-sm font-semibold tracking-tight text-slate-800">
+            {selectedUser?.name || "Unknown User"}
+          </h2>
+          <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+            {messages.length}{" "}
+            {messages.length === 1 ? "message" : "messages"}
+          </p>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-4">
+      <div className="flex-1 overflow-y-auto p-5 space-y-3.5">
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center text-center p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-600 mb-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-600 mb-3 backdrop-blur-md">
               <Smile className="h-6 w-6" />
             </div>
-            <p className="text-xs font-bold text-slate-700">No messages yet</p>
+            <p className="text-xs font-semibold text-slate-700">No messages yet</p>
             <p className="text-[11px] font-medium text-slate-400 mt-0.5">
               Say hello to break the ice 👋
             </p>
@@ -134,10 +145,10 @@ export default function ChatArea({selectedUserId,chatId }: ChatPropsType) {
                 }`}
               >
                 <div
-                  className={`max-w-[75%] sm:max-w-[65%] rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-medium shadow-xs transition-all ${
+                  className={`max-w-[75%] sm:max-w-[65%] rounded-2xl px-4 py-2.5 text-xs sm:text-sm font-normal shadow-xs transition-all ${
                     isMine
-                      ? "rounded-br-xs bg-linear-to-tr from-amber-500 via-orange-500 to-red-500 text-white shadow-orange-500/20"
-                      : "rounded-bl-xs bg-white text-slate-800 border border-orange-100/80 shadow-orange-500/5"
+                      ? "rounded-br-xs bg-linear-to-tr from-amber-500 via-orange-500 to-red-500 text-white shadow-orange-500/15"
+                      : "rounded-bl-xs bg-white/60 text-slate-800 border border-white/60 backdrop-blur-md shadow-sm"
                   }`}
                 >
                   <p className="leading-relaxed wrap-break-words">{message.text}</p>
@@ -146,9 +157,9 @@ export default function ChatArea({selectedUserId,chatId }: ChatPropsType) {
                 <div className="mt-1 flex items-center gap-1 px-1">
                   <span className="text-[10px] font-medium text-slate-400">
                     {message.createdAt ? new Date(message.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
                       : "Just now"}
                   </span>
                   {isMine && (
@@ -164,7 +175,7 @@ export default function ChatArea({selectedUserId,chatId }: ChatPropsType) {
 
       <form
         onSubmit={handleSendMessage}
-        className="shrink-0 border-t border-orange-100/60 p-4 bg-white/40 backdrop-blur-md"
+        className="shrink-0 border-t border-white/20 p-4 bg-white/20 backdrop-blur-xl"
       >
         <div className="flex items-center gap-2">
           <Input
@@ -172,13 +183,13 @@ export default function ChatArea({selectedUserId,chatId }: ChatPropsType) {
             onChange={(e) => setMessageText(e.target.value)}
             placeholder="Type a message..."
             disabled={sending}
-            className="h-11 flex-1 rounded-2xl border-slate-200/80 bg-white/80 px-4 text-xs sm:text-sm placeholder:text-slate-400 focus-visible:border-orange-400 focus-visible:bg-white focus-visible:ring-4 focus-visible:ring-orange-500/10 transition-all"
+            className="h-11 flex-1 rounded-full border-white/40 bg-white/40 px-4 text-xs sm:text-sm placeholder:text-slate-400 backdrop-blur-md focus-visible:border-orange-400 focus-visible:bg-white/60 focus-visible:ring-4 focus-visible:ring-orange-500/10 transition-all shadow-inner"
           />
 
           <Button
             type="submit"
             disabled={sending || !messageText.trim()}
-            className="h-11 w-11 shrink-0 rounded-2xl bg-linear-to-r from-amber-500 via-orange-500 to-red-500 p-0 text-white shadow-lg shadow-orange-500/20 hover:opacity-95 active:scale-95 transition-all disabled:opacity-50"
+            className="h-11 w-11 shrink-0 rounded-full bg-linear-to-r from-amber-500 via-orange-500 to-red-500 p-0 text-white shadow-lg shadow-orange-500/20 hover:opacity-95 active:scale-95 transition-all disabled:opacity-50"
           >
             <Send className="h-4 w-4" />
           </Button>

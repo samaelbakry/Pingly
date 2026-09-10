@@ -32,8 +32,8 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-amber-50/40 border-b border-orange-100/60 shadow-xs transition-all">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-3xl bg-white/30 border-b border-white/40 shadow-[0_4px_24px_0_rgba(249,115,22,0.04)] transition-all">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Logo withText={true} />
         </div>
@@ -42,13 +42,13 @@ export default function Navbar() {
           {user ? (
             <div className="relative" ref={dropdownRef}>
               <div className="flex items-center gap-3">
-                <span className="hidden sm:inline-block text-sm font-medium text-slate-700">
+                <span className="hidden sm:inline-block text-xs font-semibold text-slate-700">
                   {user.displayName || user.email}
                 </span>
 
                 <button
                   onClick={() => setDropdownOpen((prev) => !prev)}
-                  className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-orange-200 bg-orange-100 flex items-center justify-center text-orange-700 font-semibold shadow-xs hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
+                  className="relative h-10 w-10 rounded-full overflow-hidden border border-white/60 bg-white/40 flex items-center justify-center text-orange-700 font-semibold shadow-xs hover:border-orange-400 focus:outline-none focus:ring-4 focus:ring-orange-500/10 backdrop-blur-md transition-all"
                   aria-expanded={dropdownOpen}
                   aria-label="User menu"
                 >
@@ -61,18 +61,18 @@ export default function Navbar() {
               </div>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-xl border border-orange-100 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-4 py-2 border-b border-slate-100 sm:hidden">
+                <div className="absolute right-0 mt-2 w-56 rounded-[2rem] bg-white/70 shadow-2xl border border-white/60 py-2 z-50 backdrop-blur-3xl animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-4 py-2 border-b border-white/40 sm:hidden">
                     <p className="text-xs font-semibold text-slate-900 truncate">
                       {user.displayName || "Account"}
                     </p>
-                    <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                    <p className="text-[11px] font-medium text-slate-400 truncate mt-0.5">{user.email}</p>
                   </div>
 
                   <Link
                     href="/profile"
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-white/60 hover:text-orange-600 transition-colors mx-1.5 rounded-xl"
                   >
                     <User className="h-4 w-4" />
                     <span>Profile settings</span>
@@ -84,7 +84,7 @@ export default function Navbar() {
                         setDropdownOpen(false);
                         logout();
                       }}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50/50 transition-colors mx-1.5 rounded-xl mt-0.5"
                     >
                       <LogOut className="h-4 w-4" />
                       <span>Log out</span>
@@ -97,9 +97,9 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="flex items-center px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 active:scale-95 text-white shadow-sm shadow-orange-500/20 text-sm font-medium transition-all"
+                className="flex items-center px-4 py-2 rounded-full bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 active:scale-95 text-white shadow-lg shadow-orange-500/20 text-xs font-bold transition-all"
               >
-                <LogIn className="w-4 h-4 mr-1.5" />
+                <LogIn className="w-4 h-4 mr-1.5 stroke-[2.5]" />
                 Log in
               </Link>
             </div>
