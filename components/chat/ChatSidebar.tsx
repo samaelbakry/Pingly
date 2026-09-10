@@ -62,10 +62,7 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setChat
     });
   }, [users, search]);
 
-  const handleSelectChat = async (
-  currentUserID: string,
-  otherUserID: string
-) => {
+ const handleSelectChat = async (currentUserID: string,otherUserID: string) => {
   if (!currentUserID || !otherUserID) return;
 
   try {

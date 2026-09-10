@@ -1,11 +1,15 @@
+"use client"
+import Navbar from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Footer from "@/components/ui/Footer";
-import Logo from "@/components/ui/Logo";
+import { useAuth } from "@/context/AuthContext";
 import { ArrowRight, Globe, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
+    const { user } = useAuth();
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-amber-50/40 text-slate-800 selection:bg-orange-500 selection:text-white">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-250 h-150 bg-linear-to-tr from-amber-300/40 via-orange-300/40 to-red-300/40 blur-[130px] rounded-full pointer-events-none" />
@@ -13,17 +17,7 @@ export default function Home() {
       <div className="absolute bottom-10 -right-32 w-125 h-125 bg-rose-400/25 blur-[140px] rounded-full pointer-events-none" />
 
       <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-amber-50/20">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Logo withText={true} />
-
-          <div className="flex items-center gap-2">
-            <Link href="/verifyingOptions">
-              <Button className="font-medium rounded-full px-6 bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-lg shadow-orange-500/20 transition-all">
-               Join us 
-              </Button>
-            </Link>
-          </div>
-        </div>
+      <Navbar/>
       </header>
 
       <section className="relative z-10 px-6 pt-16 pb-24 max-w-6xl mx-auto">
@@ -49,17 +43,17 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/login">
+              <Link href={user ? "/chatDashboard" : "/login"}>
                 <Button size="lg" className="h-14 px-8 rounded-full text-base font-semibold bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-2xl shadow-orange-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] group">
-                  Start chatting free
+                 {user ? "Your Chats" : "Join us and chat now !"}
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <a href="#features">
+              <Link href="#features">
                 <Button size="lg" variant="outline" className="h-14 px-8 rounded-full text-base font-semibold border-orange-200/80 bg-white/60 hover:bg-white text-slate-700 backdrop-blur-md transition-all shadow-sm">
                   Explore features
                 </Button>
-              </a>
+              </Link>
             </div>
           </div>
 

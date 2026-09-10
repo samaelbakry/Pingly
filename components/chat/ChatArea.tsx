@@ -1,7 +1,7 @@
 "use client";
 
-import { Send, Smile, CheckCheck, MessageSquare, Sparkles } from "lucide-react";
-import { FormEvent, useEffect, useState, useRef } from "react";
+import { CheckCheck, MessageSquare, Send, Smile, Sparkles } from "lucide-react";
+import { SubmitEvent, useEffect, useRef, useState } from "react";
 
 import Logo from "../ui/Logo";
 import { Button } from "../ui/button";
@@ -20,10 +20,7 @@ type ChatPropsType = {
   chatId: string | null;
 };
 
-export default function ChatArea({
-  selectedUserId,
-  chatId,
-}: ChatPropsType) {
+export default function ChatArea({selectedUserId,chatId }: ChatPropsType) {
   const { user: currentUser } = useAuth();
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -35,6 +32,7 @@ export default function ChatArea({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  //handle any chat updates
   useEffect(() => {
     if (!chatId) return;
 
@@ -51,7 +49,8 @@ export default function ChatArea({
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (e: FormEvent) => {
+  // send message
+  const handleSendMessage = async (e: SubmitEvent) => {
     e.preventDefault();
 
     const text = messageText.trim();
@@ -62,11 +61,7 @@ export default function ChatArea({
       setSending(true);
       setMessageText("");
 
-      await sendMessage(
-        chatId,
-        currentUser.uid,
-        text
-      );
+      await sendMessage( chatId , currentUser.uid , text);
     } catch (error) {
       console.error("Failed to send message:", error);
     } finally {
@@ -150,8 +145,7 @@ export default function ChatArea({
 
                 <div className="mt-1 flex items-center gap-1 px-1">
                   <span className="text-[10px] font-medium text-slate-400">
-                    {message.createdAt
-                      ? new Date(message.createdAt).toLocaleTimeString([], {
+                    {message.createdAt ? new Date(message.createdAt).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
                         })
