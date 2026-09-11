@@ -24,12 +24,7 @@ type ChatPropsType = {
   setSelectedUser: (user: UserProfile | null) => void;
 };
 
-export default function ChatSidebar({
-  selectedUserId,
-  setSelectedUserId,
-  setSelectedUser,
-  setChatId,
-}: ChatPropsType) {
+export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSelectedUser, setChatId}: ChatPropsType) {
   const { user: currentUser } = useAuth();
 
   const [search, setSearch] = useState("");
@@ -131,14 +126,14 @@ const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
     setSelectedUser(user);
     setChatId(chatID);
 
-    console.log("Opened chat:", chatID);
+    // console.log("Opened chat:", chatID);
   } catch (error) {
     console.error("Failed to open chat:", error);
   }
 };
 
  return (
-    <div className="relative flex h-full flex-col rounded-[2.5rem] border border-white/40 bg-white/30 p-4 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] backdrop-blur-3xl">
+    <div className="relative flex min-h-screen flex-col rounded-[2.5rem] border border-white/40 bg-white/30 p-4 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] backdrop-blur-3xl">
       <div className="flex items-center justify-between border-b border-white/20 pb-3.5 px-1 bg-white/10 backdrop-blur-md rounded-t-2xl">
         <div>
           <h2 className="flex items-center gap-1.5 text-sm font-bold tracking-tight text-slate-800">

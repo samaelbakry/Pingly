@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CheckCheck, Send, Smile, Sparkles } from "lucide-react";
 import { SubmitEvent, useEffect, useRef, useState } from "react";
 
-
 import Logo from "../ui/Logo";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -17,6 +16,7 @@ import { Message } from "@/types/messages";
 
 import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "@/types/userProfile";
+
 
 type ChatPropsType = {
   selectedUserId: string | null;
@@ -36,23 +36,24 @@ export default function ChatArea({selectedUserId, selectedUser ,chatId }: ChatPr
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  //handle any chat updates
-  useEffect(() => {
-    if (!chatId) return;
+  //handle any changes
+ useEffect(() => {
+  if (!chatId) return;
 
-    const unsubscribe = listenToMessages(chatId, (fetchedMessages) => {
-      setMessages(fetchedMessages);
-    });
+  const unsubscribe = listenToMessages(chatId, (fetchedMessages) => {
+    setMessages(fetchedMessages);
+  });
 
-    return () => {
-      unsubscribe();
-    };
-  }, [chatId]);
+  return () => {
+    unsubscribe();
+  };
+}, [chatId]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+ 
   // send message
   const handleSendMessage = async (e: SubmitEvent) => {
     e.preventDefault();
@@ -75,7 +76,7 @@ export default function ChatArea({selectedUserId, selectedUser ,chatId }: ChatPr
 
   if (!selectedUserId || !chatId) {
     return (
-      <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/80 bg-white/70 p-8 text-center shadow-xl shadow-orange-500/5 backdrop-blur-2xl">
+      <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/80 bg-white/70 p-8 text-center shadow-xl shadow-orange-500/5 backdrop-blur-2xl">
         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-linear-to-br from-amber-300/20 to-orange-400/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-linear-to-tr from-rose-400/20 to-orange-300/20 blur-3xl" />
 
@@ -195,6 +196,7 @@ export default function ChatArea({selectedUserId, selectedUser ,chatId }: ChatPr
           </Button>
         </div>
       </form>
+     
     </div>
   );
 }
