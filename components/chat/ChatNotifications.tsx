@@ -12,8 +12,8 @@ type Props = {
 
 export default function ChatNotification({ user, message, onClose }: Props) {
   return (
-    <div className="fixed right-5 top-20 z-9999 flex w-85 items-start gap-3 rounded-[2rem] border border-white/60 bg-white/70 p-4 shadow-2xl shadow-orange-500/15 backdrop-blur-3xl animate-in fade-in slide-in-from-top-5 duration-200">
-      <Avatar className="h-11 w-11 shrink-0 border border-white/60 shadow-xs">
+    <div className="fixed right-5 top-20 z-9999 flex w-85 items-start gap-3 rounded-[2rem] border border-white/60 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/80 p-4 shadow-2xl shadow-orange-500/15 dark:shadow-none backdrop-blur-3xl animate-in fade-in slide-in-from-top-5 duration-200">
+      <Avatar className="h-11 w-11 shrink-0 border border-white/60 dark:border-zinc-700 shadow-xs">
         <AvatarImage
           src={user.photoURL || ""}
           alt={user.name || "User"}
@@ -25,11 +25,11 @@ export default function ChatNotification({ user, message, onClose }: Props) {
       </Avatar>
 
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold text-slate-800">
+        <p className="text-xs font-semibold text-slate-800 dark:text-zinc-100">
           {user.name || "New message"}
         </p>
 
-        <p className="mt-0.5 truncate text-xs font-medium text-slate-400">
+        <p className="mt-0.5 truncate text-xs font-medium text-slate-400 dark:text-zinc-400">
           {message}
         </p>
       </div>
@@ -37,7 +37,7 @@ export default function ChatNotification({ user, message, onClose }: Props) {
       <button
         type="button"
         onClick={onClose}
-        className="rounded-full p-1.5 text-slate-400 transition-colors hover:bg-white/60 hover:text-slate-600"
+        className="rounded-full p-1.5 text-slate-400 dark:text-zinc-400 transition-colors hover:bg-white/60 dark:hover:bg-zinc-800 hover:text-slate-600 dark:hover:text-zinc-200"
       >
         <X className="h-4 w-4" />
       </button>

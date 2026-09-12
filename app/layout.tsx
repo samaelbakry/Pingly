@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
+import ThemeContextProvider from "@/context/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,11 +22,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-   <html lang="en" className={`${geistSans.className} h-full antialiased`}>
+    <html lang="en" className={`${geistSans.className} h-full antialiased`}>
       <body className={`min-h-screen flex flex-col ${geistMono.variable}`}>
         <AuthProvider>
-        {children}
-        <Toaster />
+          <ThemeContextProvider>
+            {children}
+            <Toaster />
+          </ThemeContextProvider>
         </AuthProvider>
       </body>
     </html>

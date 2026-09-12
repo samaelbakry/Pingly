@@ -11,12 +11,12 @@ export default function Home() {
     const { user } = useAuth();
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-amber-50/40 text-slate-800 selection:bg-orange-500 selection:text-white">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-250 h-150 bg-linear-to-tr from-amber-300/40 via-orange-300/40 to-red-300/40 blur-[130px] rounded-full pointer-events-none" />
-      <div className="absolute top-1/3 -left-32 w-96 h-96 bg-orange-400/30 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-10 -right-32 w-125 h-125 bg-rose-400/25 blur-[140px] rounded-full pointer-events-none" />
+    <div className="relative min-h-screen w-full overflow-hidden bg-amber-50/40 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-250 h-150 bg-linear-to-tr from-amber-300/40 via-orange-300/40 to-red-300/40 dark:from-amber-500/10 dark:via-orange-600/10 dark:to-red-600/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 -left-32 w-96 h-96 bg-orange-400/30 dark:bg-orange-600/15 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 -right-32 w-125 h-125 bg-rose-400/25 dark:bg-rose-600/15 blur-[140px] rounded-full pointer-events-none" />
 
-      <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-amber-50/20">
+      <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-amber-50/20 dark:bg-zinc-950/60 border-b border-orange-100/40 dark:border-zinc-800/60">
       <Navbar/>
       </header>
 
@@ -24,33 +24,33 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
           
           <div className="text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-300/40 text-orange-700 text-xs font-semibold uppercase tracking-widest mb-8">
-              <Sparkles className="w-3.5 h-3.5 text-orange-500" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 dark:bg-orange-500/20 border border-orange-300/40 dark:border-orange-500/30 text-orange-700 dark:text-orange-300 text-xs font-semibold uppercase tracking-widest mb-8">
+              <Sparkles className="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" />
               <span>Next-gen instant messaging</span>
             </div>
 
-            <h1 className=" text-5xl sm:text-6xl font-bold tracking-tight leading-[1.08] text-slate-900 mb-6">
+            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight leading-[1.08] text-slate-900 dark:text-zinc-50 mb-6">
               Chat warmer.
               <br />
               Connect faster with{" "}
-              <span className="italic bg-linear-to-r from-amber-500 via-orange-500 to-red-600 bg-clip-text text-transparent">
+              <span className="italic bg-linear-to-r from-amber-500 via-orange-500 to-red-600 dark:from-amber-400 dark:via-orange-400 dark:to-red-500 bg-clip-text text-transparent">
                 Pingly.
               </span>
             </h1>
 
-            <p className="text-lg text-slate-600 max-w-lg font-normal leading-relaxed mb-10">
+            <p className="text-lg text-slate-600 dark:text-zinc-400 max-w-lg font-normal leading-relaxed mb-10">
               Real-time conversations, elevated — warm design, instant OTP sign-in, and modern encryption baked into every message.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href={user ? "/chatDashboard" : "/login"}>
-                <Button size="lg" className="h-14 px-8 rounded-full text-base font-semibold bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-2xl shadow-orange-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] group">
-                 {user ? "Your Chats" : "Join us and chat now !"}
+                <Button size="lg" className="h-14 px-8 rounded-full text-base font-semibold bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-2xl shadow-orange-500/30 dark:shadow-orange-950/50 transition-all hover:scale-[1.02] active:scale-[0.98] group">
+                   {user ? "Your Chats" : "Join us and chat now !"}
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Link href="#features">
-                <Button size="lg" variant="outline" className="h-14 px-8 rounded-full text-base font-semibold border-orange-200/80 bg-white/60 hover:bg-white text-slate-700 backdrop-blur-md transition-all shadow-sm">
+                <Button size="lg" variant="outline" className="h-14 px-8 rounded-full text-base font-semibold border-orange-200/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-900 text-slate-700 dark:text-zinc-200 backdrop-blur-md transition-all shadow-sm">
                   Explore features
                 </Button>
               </Link>
@@ -59,19 +59,19 @@ export default function Home() {
 
           <div className="relative hidden lg:flex justify-center items-center">
             <div className="relative w-full max-w-sm space-y-3">
-              <div className="ml-auto max-w-[75%] rounded-2xl rounded-br-sm bg-white/80 backdrop-blur-md border border-orange-100 px-5 py-3 shadow-lg shadow-orange-500/5">
-                <p className="text-sm text-slate-700">did you get the OTP?</p>
+              <div className="ml-auto max-w-[75%] rounded-2xl rounded-br-sm bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-orange-100 dark:border-zinc-800 px-5 py-3 shadow-lg shadow-orange-500/5 dark:shadow-none">
+                <p className="text-sm text-slate-700 dark:text-zinc-200">did you get the OTP?</p>
               </div>
-              <div className="mr-auto max-w-[75%] rounded-2xl rounded-bl-sm bg-linear-to-tr from-amber-500 via-orange-500 to-red-500 text-white px-5 py-3 shadow-lg shadow-orange-500/25">
+              <div className="mr-auto max-w-[75%] rounded-2xl rounded-bl-sm bg-linear-to-tr from-amber-500 via-orange-500 to-red-500 text-white px-5 py-3 shadow-lg shadow-orange-500/25 dark:shadow-orange-950/40">
                 <p className="text-sm">yep, logged in already 🔥</p>
               </div>
-              <div className="ml-auto max-w-[60%] rounded-2xl rounded-br-sm bg-white/80 backdrop-blur-md border border-orange-100 px-5 py-3 shadow-lg shadow-orange-500/5">
-                <p className="text-sm text-slate-700">that fast?</p>
+              <div className="ml-auto max-w-[60%] rounded-2xl rounded-br-sm bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-orange-100 dark:border-zinc-800 px-5 py-3 shadow-lg shadow-orange-500/5 dark:shadow-none">
+                <p className="text-sm text-slate-700 dark:text-zinc-200">that fast?</p>
               </div>
               <div className="flex items-center gap-1.5 pl-2">
-                <span className="w-2 h-2 rounded-full bg-orange-400 animate-bounce [animation-delay:-0.3s]" />
-                <span className="w-2 h-2 rounded-full bg-orange-400 animate-bounce [animation-delay:-0.15s]" />
-                <span className="w-2 h-2 rounded-full bg-orange-400 animate-bounce" />
+                <span className="w-2 h-2 rounded-full bg-orange-400 dark:bg-orange-500 animate-bounce [animation-delay:-0.3s]" />
+                <span className="w-2 h-2 rounded-full bg-orange-400 dark:bg-orange-500 animate-bounce [animation-delay:-0.15s]" />
+                <span className="w-2 h-2 rounded-full bg-orange-400 dark:bg-orange-500 animate-bounce" />
               </div>
             </div>
           </div>
@@ -81,49 +81,49 @@ export default function Home() {
 
       <section id="features" className="relative z-10 py-16 px-6 max-w-6xl mx-auto w-full">
         <div className="mb-12 text-left">
-          <span className="text-xs font-semibold uppercase tracking-widest text-orange-600">Why Pingly</span>
-          <h2 className=" text-3xl sm:text-4xl font-bold text-slate-900 mt-2">Built for speed, tuned for warmth</h2>
+          <span className="text-xs font-semibold uppercase tracking-widest text-orange-600 dark:text-orange-400">Why Pingly</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-zinc-50 mt-2">Built for speed, tuned for warmth</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <Card className="border-orange-100 bg-white/70 backdrop-blur-xl text-slate-800 rounded-3xl p-2 hover:border-orange-400/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300">
+          <Card className="border-orange-100 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl text-slate-800 dark:text-zinc-100 rounded-3xl p-2 hover:border-orange-400/50 dark:hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 dark:hover:shadow-none transition-all duration-300">
             <CardHeader>
-              <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-amber-500/10 to-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-600 mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 border border-orange-500/20 flex items-center justify-center text-orange-600 dark:text-orange-400 mb-2">
                 <Zap className="w-6 h-6" />
               </div>
-              <CardTitle className="text-xl  font-bold text-slate-900">Instant OTP login</CardTitle>
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-zinc-50">Instant OTP login</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
                 Sign in with your number and a friction-free SMS code — no passwords to remember.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-red-100 bg-white/70 backdrop-blur-xl text-slate-800 rounded-3xl p-2 hover:border-red-400/50 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300">
+          <Card className="border-red-100 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl text-slate-800 dark:text-zinc-100 rounded-3xl p-2 hover:border-red-400/50 dark:hover:border-red-500/40 hover:shadow-xl hover:shadow-red-500/5 dark:hover:shadow-none transition-all duration-300">
             <CardHeader>
-              <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-orange-500/10 to-red-500/10 border border-red-500/20 flex items-center justify-center text-red-600 mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-orange-500/10 to-red-500/10 dark:from-orange-500/20 dark:to-red-500/20 border border-red-500/20 flex items-center justify-center text-red-600 dark:text-red-400 mb-2">
                 <ShieldCheck className="w-6 h-6" />
               </div>
-              <CardTitle className="text-xl  font-bold text-slate-900">Encrypted & private</CardTitle>
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-zinc-50">Encrypted & private</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
                 Every conversation stays yours. Secure sessions built for complete peace of mind.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-amber-100 bg-white/70 backdrop-blur-xl text-slate-800 rounded-3xl p-2 hover:border-amber-400/50 hover:shadow-xl hover:shadow-amber-500/5 transition-all duration-300">
+          <Card className="border-amber-100 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl text-slate-800 dark:text-zinc-100 rounded-3xl p-2 hover:border-amber-400/50 dark:hover:border-amber-500/40 hover:shadow-xl hover:shadow-amber-500/5 dark:hover:shadow-none transition-all duration-300">
             <CardHeader>
-              <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-amber-500/10 to-red-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600 mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-amber-500/10 to-red-500/10 dark:from-amber-500/20 dark:to-red-500/20 border border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-2">
                 <Globe className="w-6 h-6" />
               </div>
-              <CardTitle className="text-xl  font-bold text-slate-900">Cross-device sync</CardTitle>
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-zinc-50">Cross-device sync</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
                 Jump between mobile and desktop with zero delay — your chats follow you everywhere.
               </p>
             </CardContent>
