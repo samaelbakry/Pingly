@@ -4,22 +4,17 @@ import type React from "react";
 import { useContext, useEffect, useState } from "react";
 import { Theme, themeContext } from "./ThemeContext";
 
-const ThemeContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [theme, setTheme] = useState<Theme>("light");
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-
-    if (savedTheme) {
-      setTheme(savedTheme);
+const ThemeContextProvider = ({children }: { children: React.ReactNode }) => {
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") {
+      return "light";
     }
-  }, []);
+
+    return (localStorage.getItem("theme") as Theme | null) ?? "light";
+  });
 
   useEffect(() => {
+    document.documentElement.classList.toggle( "dark", theme === "dark" );
     localStorage.setItem("theme", theme);
   }, [theme]);
 
