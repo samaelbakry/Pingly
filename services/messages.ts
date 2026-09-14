@@ -9,10 +9,11 @@ import {
 import { database } from "@/lib/firebaseConfig";
 import { Message } from "@/types/messages";
 
-export async function sendMessage(
-  chatId: string,
-  senderId: string,
-  text: string
+export async function sendMessage( chatId: string, senderId: string, data: {
+    type: "text" | "image";
+    imageUrl?: string;
+    text?: string;
+  }
 ) {
   const messagesRef = ref(
     database,
@@ -20,15 +21,19 @@ export async function sendMessage(
   );
 
   const newMessageRef = push(messagesRef);
-
+  
   await set(newMessageRef, {
     senderId,
-    text,
+    type: data.type,
+    text: data.text ?? "",
+    imageUrl: data.imageUrl ?? "",
     createdAt: serverTimestamp(),
   });
 
   return newMessageRef.key;
 }
+
+
 
 export function listenToMessages(
   chatId: string,

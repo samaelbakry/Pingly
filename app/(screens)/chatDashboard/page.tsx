@@ -9,7 +9,8 @@ import { UserProfile } from "@/types/userProfile";
 import ChatNotification from "@/components/chat/features/ChatNotifications";
 import { getUserById } from "@/services/chats";
 import ChatSidebar from "@/components/chat/layout/ChatSidebar";
-import ChatArea from "@/components/chat/layout/ChatArea";
+import ChatArea from "@/components/chat/layout/ChatWindow";
+import ChatWindow from "@/components/chat/layout/ChatWindow";
 
 export default function ChatDashboard() {
   const { user: currentUser } = useAuth();
@@ -122,7 +123,7 @@ export default function ChatDashboard() {
           )}
 
           <div className="flex-1 h-full overflow-hidden">
-            <ChatArea
+            <ChatWindow
               selectedUserId={selectedUserId}
               selectedUser={selectedUser}
               chatId={chatId}
