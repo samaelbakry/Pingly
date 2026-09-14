@@ -10,11 +10,11 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import { createChat, getUserById, getUserChats } from "@/services/chats";
 
-import ChatSkeleton from "../skeletons/ChatSkeleton";
-import AddNewChatDialog from "./AddNewChatDialog";
 
 import { ChatItem } from "@/types/chatType";
 import { UserProfile } from "@/types/userProfile";
+import ChatSkeleton from "@/components/skeletons/ChatSkeleton";
+import AddNewChatDialog from "../features/AddNewChatDialog";
 
 type ChatPropsType = {
   selectedUserId: string | null;

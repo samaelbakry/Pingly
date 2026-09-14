@@ -1,6 +1,4 @@
 "use client";
-import ChatArea from "@/components/chat/ChatArea";
-import ChatSidebar from "@/components/chat/ChatSidebar";
 import Navbar from "@/components/common/Navbar";
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
@@ -8,8 +6,10 @@ import { useAuth } from "@/context/AuthContext";
 import { getUserChats } from "@/services/chats";
 import { listenToAllUserMessages } from "@/services/notifications";
 import { UserProfile } from "@/types/userProfile";
-import ChatNotification from "@/components/chat/ChatNotifications";
+import ChatNotification from "@/components/chat/features/ChatNotifications";
 import { getUserById } from "@/services/chats";
+import ChatSidebar from "@/components/chat/layout/ChatSidebar";
+import ChatArea from "@/components/chat/layout/ChatArea";
 
 export default function ChatDashboard() {
   const { user: currentUser } = useAuth();
