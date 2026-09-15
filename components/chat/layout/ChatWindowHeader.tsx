@@ -11,18 +11,20 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { clearChat } from "@/services/chats";
+import { archiveChat, clearChat } from "@/services/chats";
 import { Message } from "@/types/messages";
-import { Trash2 } from "lucide-react";
+import { Archive, Trash2 } from "lucide-react";
 
 export default function ChatWindowHeader({
   selectedUser,
   messages,
   chatId,
+  currentUserId,
 }: {
   selectedUser: { photoURL: string; name: string };
   messages: Message[];
   chatId: string;
+  currentUserId: string;
 }) {
   return (
     <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-zinc-800 px-6 py-3.5 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl">
@@ -47,40 +49,51 @@ export default function ChatWindowHeader({
         </div>
       </div>
 
-      {messages.length > 0 && (
-        <AlertDialog>
-          <AlertDialogTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-slate-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
-              >
-                <Trash2 className="size-4 mr-1.5" />
-                Clear chat
-              </Button>
-            }
-          ></AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Clear conversation?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently remove all
-                messages from this chat history.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => clearChat(chatId)}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                Yes, clear chat
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+      <div className="flex items-center gap-3">
+        {messages.length > 0 && (
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                >
+                  <Trash2 className="size-4 mr-1.5" />
+                  Clear chat
+                </Button>
+              }
+            />
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Clear conversation?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently remove all
+                  messages from this chat history.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => clearChat(chatId)}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Yes, clear chat
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+        <Button
+          onClick={() => archiveChat(currentUserId, chatId)}
+          variant="ghost"
+          size="sm"
+          aria-label="Archive chat"
+          className="text-slate-500 hover:text-orange-600 dark:text-zinc-400 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
+        >
+          <Archive className="size-4" />
+        </Button>
+      </div>
     </div>
   );
 }

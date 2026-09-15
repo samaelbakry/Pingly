@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Search, Sparkles } from "lucide-react";
+import { Archive, Plus, Search, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -8,8 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { useAuth } from "@/context/AuthContext";
-import { createChat, getUserById, getUserChats } from "@/services/chats";
-
+import {
+  createChat,
+  getArchivedChats,
+  getUserById,
+  getUserChats,
+} from "@/services/chats";
 
 import { ChatItem } from "@/types/chatType";
 import { UserProfile } from "@/types/userProfile";
@@ -24,8 +28,9 @@ type ChatPropsType = {
   setSelectedUser: (user: UserProfile | null) => void;
 };
 
-export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSelectedUser, setChatId}: ChatPropsType) {
+export default function ChatSidebar({selectedUserId,setSelectedUserId,setSelectedUser,setChatId,}: ChatPropsType) {
   const { user: currentUser } = useAuth();
+  const [showArchived, setShowArchived] = useState(false);
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -43,7 +48,9 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
 
         if (!currentUser) return;
 
-        const chats = await getUserChats(currentUser.uid);
+        const chats = showArchived
+          ? await getArchivedChats(currentUser.uid)
+          : await getUserChats(currentUser.uid);
 
         const chatItems = chats as unknown as ChatItem[];
 
@@ -88,7 +95,7 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
     if (currentUser?.uid) {
       loadChats();
     }
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid , showArchived , currentUser]);
 
   const filteredChats = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -113,25 +120,22 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
     });
   }, [userChats, chatUsers, search, currentUser?.uid]);
 
-const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
-  if (!currentUserID || !user?.uid) return;
+  const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
+    if (!currentUserID || !user?.uid) return;
 
-  try {
-    const chatID = await createChat(
-      currentUserID,
-      user.uid,
-    );
+    try {
+      const chatID = await createChat(currentUserID, user.uid);
 
-    setSelectedUserId(user.uid);
-    setSelectedUser(user);
-    setChatId(chatID);
-  } catch (error) {
-    console.error("Failed to open chat:", error);
-  }
-};
+      setSelectedUserId(user.uid);
+      setSelectedUser(user);
+      setChatId(chatID);
+    } catch (error) {
+      console.error("Failed to open chat:", error);
+    }
+  };
 
   return (
-    <div className="relative flex h-full flex-col rounded-[2.5rem] border border-white/40 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 p-4 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] dark:shadow-none backdrop-blur-3xl">
+    <div className="relative flex h-full flex-col rounded-[2.5rem] border border-white/40 dark:border-zinc-800 p-5 shadow-md dark:shadow-none backdrop-blur-3xl">
       <div className="flex items-center justify-between border-b border-white/20 dark:border-zinc-800 pb-3.5 px-1 bg-white/10 dark:bg-zinc-900/10 backdrop-blur-md rounded-t-2xl">
         <div>
           <h2 className="flex items-center gap-1.5 text-sm font-bold tracking-tight text-slate-800 dark:text-zinc-100">
@@ -143,6 +147,16 @@ const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
             {userChats.length} conversations
           </p>
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowArchived((prev) => !prev)}
+          className="gap-2"
+        >
+          <Archive className="size-4" />
+
+          {showArchived ? "Hide archived" : "Show archived"}
+        </Button>
       </div>
 
       <div className="relative my-3">
@@ -220,7 +234,9 @@ const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
                   </p>
 
                   <p className="truncate text-[11px] font-medium text-slate-400 dark:text-zinc-500 mt-0.5">
-                    {otherUser?.email || otherUser?.phoneNumber || "No contact info"}
+                    {otherUser?.email ||
+                      otherUser?.phoneNumber ||
+                      "No contact info"}
                   </p>
                 </div>
               </button>
