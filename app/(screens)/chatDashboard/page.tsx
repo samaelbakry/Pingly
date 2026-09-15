@@ -78,16 +78,16 @@ export default function ChatDashboard() {
   }, [notification]);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-slate-50/50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white flex flex-col">
+    <div className="relative h-screen w-full overflow-hidden bg-slate-50/50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white flex flex-col">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-100 bg-linear-to-tr from-amber-400/20 via-orange-400/20 to-red-400/20 dark:from-amber-600/10 dark:via-orange-600/10 dark:to-red-600/10 blur-[140px] rounded-full pointer-events-none" />
       <div className="absolute top-1/3 -left-32 w-96 h-96 bg-orange-500/15 dark:bg-orange-600/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 -right-32 w-125 h-125 bg-rose-500/15 dark:bg-rose-600/10 blur-[150px] rounded-full pointer-events-none" />
 
       <Navbar />
 
-      <main className="relative z-10 flex-1 flex h-[calc(100vh-4rem)] max-w-7xl w-full mx-auto p-3 sm:p-6 gap-5 overflow-hidden">
+      <main className="relative z-10 flex-1 min-h-0 flex max-w-7xl w-full mx-auto p-3 sm:p-6 gap-5 overflow-hidden">
         <div
-          className={`w-full sm:w-96 shrink-0 h-full transition-all duration-300 ease-in-out ${
+          className={`w-full sm:w-96 shrink-0 h-full min-h-0 transition-all duration-300 ease-in-out ${
             selectedUserId
               ? "hidden sm:block"
               : "block animate-in fade-in zoom-in-95 duration-200"
@@ -122,7 +122,7 @@ export default function ChatDashboard() {
             </div>
           )}
 
-          <div className="flex-1 h-full overflow-hidden">
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             <ChatWindow
               selectedUserId={selectedUserId}
               selectedUser={selectedUser}

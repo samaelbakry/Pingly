@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { sendMessage } from "@/services/messages";
 import { uploadImagetoChat } from "@/services/uploads";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { Image, Send, SmilePlus } from "lucide-react";
+import { Image, Loader2, Send, SmilePlus } from "lucide-react";
 import React, { useState, type FormEvent } from "react";
 
 export default function MessageComposer({chatId,currentUserId }: {chatId: string; currentUserId: string }) {
@@ -98,7 +98,11 @@ const handleImageSelect = async (
             htmlFor="chat-image"
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-slate-100"
           >
-            <Image className="h-5 w-5" />
+            {sending ? (
+              <Loader2 aria-label="Sending image" className="size-5 animate-spin" />
+            ) : (
+              <Image aria-label="Upload image" className="size-5" />
+            )}
           </label>
         </div>
         <div className="relative">

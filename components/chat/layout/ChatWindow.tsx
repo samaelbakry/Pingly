@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { listenToMessages } from "@/services/messages";
 import { Message } from "@/types/messages";
@@ -26,11 +26,6 @@ export default function ChatWindow({
   const { user: currentUser } = useAuth();
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   //handle any changes
   useEffect(() => {
@@ -45,21 +40,19 @@ export default function ChatWindow({
     };
   }, [chatId]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   if (!selectedUserId || !chatId) {
     return <NoChatSelectedState />;
   }
-
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-[2.5rem] border border-white/40 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] dark:shadow-none backdrop-blur-3xl">
-      <ChatWindowHeader selectedUser={selectedUser!} messages={messages} />
+    <div className="flex h-full min-h-0 flex-col overflow-hidden scroll-smooth rounded-[2.5rem] border border-white/40 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] dark:shadow-none backdrop-blur-3xl">
+      <ChatWindowHeader
+        selectedUser={selectedUser!}
+        messages={messages}
+        chatId={chatId}
+      />
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-3.5">
-        <MessageBubble messages={messages} />
-        <div ref={messagesEndRef} />
+      <div className="chat-scroll flex-1 min-h-0 overflow-y-auto p-5 space-y-3.5">
+        <MessageBubble messages={messages} chatId={chatId} />
       </div>
 
       <MessageComposer

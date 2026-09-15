@@ -4,6 +4,7 @@ import {
   ref,
   set,
   serverTimestamp,
+  remove,
 } from "firebase/database";
 
 import { database } from "@/lib/firebaseConfig";
@@ -65,4 +66,11 @@ export function listenToMessages(
 
     callback(messages);
   });
+}
+
+export async function deleteMsg(chatId:string , messageId:string){
+
+  const messageRef = ref(database , `chats/${chatId}/messages/${messageId}`)
+
+  await remove(messageRef)
 }

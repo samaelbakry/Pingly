@@ -131,7 +131,7 @@ const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
 };
 
   return (
-    <div className="relative flex min-h-screen flex-col rounded-[2.5rem] border border-white/40 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 p-4 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] dark:shadow-none backdrop-blur-3xl">
+    <div className="relative flex h-full flex-col rounded-[2.5rem] border border-white/40 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 p-4 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] dark:shadow-none backdrop-blur-3xl">
       <div className="flex items-center justify-between border-b border-white/20 dark:border-zinc-800 pb-3.5 px-1 bg-white/10 dark:bg-zinc-900/10 backdrop-blur-md rounded-t-2xl">
         <div>
           <h2 className="flex items-center gap-1.5 text-sm font-bold tracking-tight text-slate-800 dark:text-zinc-100">

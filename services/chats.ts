@@ -1,7 +1,7 @@
 import { database } from "@/lib/firebaseConfig"
 import { ChatItem } from "@/types/chatType"
 import { UserProfile } from "@/types/userProfile"
-import { get, ref, set } from "firebase/database"
+import { get, ref, remove, set } from "firebase/database"
 
 export function getChatId(userOne: string, userTwo: string) {
 
@@ -43,7 +43,7 @@ export async function getUserChats(currentUserId: string) {
   const data = snapshot.val();
 
   return Object.entries(data)
-    .filter(([_, chat]) => {
+    .filter(([, chat]) => {
       const participants = (chat as ChatItem).participants;
 
       return participants?.[currentUserId] === true;
@@ -67,4 +67,11 @@ export async function getUserById(userId: string): Promise<UserProfile | null> {
     uid: userId,
     ...(snapshot.val() as Omit<UserProfile, "uid">),
   };
+}
+
+export async function clearChat(chatId:string) {
+  
+  const chatRef = ref(database , `chats/${chatId}`)
+
+  await remove(chatRef)
 }
