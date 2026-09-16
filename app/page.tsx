@@ -16,11 +16,9 @@ export default function Home() {
       <div className="absolute top-1/3 -left-32 w-96 h-96 bg-orange-400/30 dark:bg-orange-600/15 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 -right-32 w-125 h-125 bg-rose-400/25 dark:bg-rose-600/15 blur-[140px] rounded-full pointer-events-none" />
 
-      <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-amber-50/20 dark:bg-zinc-950/60 border-b border-orange-100/40 dark:border-zinc-800/60">
       <Navbar/>
-      </header>
 
-      <section className="relative z-10 px-6 pt-16 pb-24 max-w-6xl mx-auto">
+      <section className="relative z-50 px-6 pt-16 pb-24 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
           
           <div className="text-left">
@@ -43,7 +41,7 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href={user ? "/chatDashboard" : "/login"}>
+              <Link href={user ? "/chatDashboard" : "/verifyingOptions"}>
                 <Button size="lg" className="h-14 px-8 rounded-full text-base font-semibold bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-2xl shadow-orange-500/30 dark:shadow-orange-950/50 transition-all hover:scale-[1.02] active:scale-[0.98] group">
                    {user ? "Your Chats" : "Join us and chat now !"}
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />

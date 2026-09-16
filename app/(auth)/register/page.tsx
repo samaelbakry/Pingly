@@ -41,24 +41,24 @@ export default function RegsiterPage() {
 
   return (
     <>
-      <div className="flex flex-col items-center text-center space-y-2 w-full">
-        <h1 className="text-3xl font-black tracking-tight bg-linear-to-r from-orange-600 via-red-500 to-rose-600 bg-clip-text text-transparent">
+     <div className="flex flex-col items-center text-center space-y-2 w-full">
+        <h1 className="text-3xl font-black tracking-tight bg-linear-to-r from-orange-600 via-red-500 to-rose-600 dark:from-orange-400 dark:via-red-400 dark:to-rose-400 bg-clip-text text-transparent">
           Create Account
         </h1>
-        <p className="text-sm font-medium text-slate-500 mb-5">
+        <p className="text-sm font-medium text-slate-500 dark:text-zinc-400 mb-5">
           Make room for your next conversation
         </p>
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-1.5">
-          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold block">
+          <label className="text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold block">
             Full name
           </label>
           <div className="relative">
-            <CreditCardCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <CreditCardCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-zinc-500" />
             <input
-              className="w-full h-12 pl-10 pr-4 rounded-xl border border-orange-200 bg-white/80 text-sm text-slate-800 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
+              className="w-full h-12 pl-10 pr-4 rounded-xl border border-orange-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-800/50 text-sm text-slate-800 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:border-orange-500 dark:focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
               name="name"
               onChange={(event) => setName(event.target.value)}
               type="text"
@@ -69,13 +69,13 @@ export default function RegsiterPage() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold block">
+          <label className="text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold block">
             Email Address
           </label>
           <div className="relative">
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-zinc-500" />
             <input
-              className="w-full h-12 pl-10 pr-4 rounded-xl border border-orange-200 bg-white/80 text-sm text-slate-800 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
+              className="w-full h-12 pl-10 pr-4 rounded-xl border border-orange-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-800/50 text-sm text-slate-800 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:border-orange-500 dark:focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
               name="email"
               onChange={(event) => setEmail(event.target.value)}
               type="email"
@@ -87,13 +87,13 @@ export default function RegsiterPage() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold block">
+          <label className="text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold block">
             Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-zinc-500" />
             <input
-              className="w-full h-12 pl-10 pr-4 rounded-xl border border-orange-200 bg-white/80 text-sm text-slate-800 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
+              className="w-full h-12 pl-10 pr-4 rounded-xl border border-orange-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-800/50 text-sm text-slate-800 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:border-orange-500 dark:focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
               name="password"
               onChange={(event) => setPassword(event.target.value)}
               type="password"
@@ -105,20 +105,20 @@ export default function RegsiterPage() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs uppercase tracking-wider text-slate-500 font-bold block">
+          <label className="text-xs uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold block">
             Confirm Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-zinc-500" />
             <input
               aria-describedby={
                 passwordsDoNotMatch ? "password-match-error" : undefined
               }
               aria-invalid={passwordsDoNotMatch}
-              className={`w-full h-12 pl-10 pr-4 rounded-xl border bg-white/80 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-all ${
+              className={`w-full h-12 pl-10 pr-4 rounded-xl border bg-white/80 dark:bg-zinc-800/50 text-sm text-slate-800 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 transition-all ${
                 passwordsDoNotMatch
-                  ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
-                  : "border-orange-200 focus:border-orange-500 focus:ring-orange-500/20"
+                  ? "border-red-400 dark:border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                  : "border-orange-200 dark:border-zinc-800 focus:border-orange-500 dark:focus:border-orange-500 focus:ring-orange-500/20"
               }`}
               name="confirmPassword"
               onChange={(event) => setConfirmPassword(event.target.value)}
@@ -130,7 +130,7 @@ export default function RegsiterPage() {
           </div>
           {passwordsDoNotMatch && (
             <span
-              className="mt-1 block text-xs font-semibold text-red-500"
+              className="mt-1 block text-xs font-semibold text-red-500 dark:text-red-400"
               id="password-match-error"
             >
               Passwords do not match.
@@ -139,7 +139,7 @@ export default function RegsiterPage() {
         </div>
 
         <button
-          className="w-full h-12 mt-2 font-semibold bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-lg shadow-orange-500/25 transition-all active:scale-[0.99] rounded-xl cursor-pointer flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-12 mt-2 font-semibold bg-linear-to-r from-amber-500 via-orange-500 to-red-500 hover:opacity-95 text-white shadow-lg shadow-orange-500/25 dark:shadow-none transition-all active:scale-[0.99] rounded-xl cursor-pointer flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={passwordsDoNotMatch || loading}
           type="submit"
         >
@@ -154,11 +154,11 @@ export default function RegsiterPage() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm font-medium text-slate-500">
+      <p className="mt-6 text-center text-sm font-medium text-slate-500 dark:text-zinc-400">
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-bold text-orange-600 hover:text-red-600 underline underline-offset-4 transition-colors"
+          className="font-bold text-orange-600 dark:text-orange-400 hover:text-red-600 dark:hover:text-red-400 underline underline-offset-4 transition-colors"
         >
           Log in
         </Link>

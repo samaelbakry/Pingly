@@ -27,6 +27,7 @@ export default function ChatListCard({
   const otherUser = chatUsers[otherUserId];
 
   const isSelected = selectedUserId === otherUserId;
+
   return (
     <>
       <button
@@ -64,6 +65,7 @@ export default function ChatListCard({
             {otherUser?.email || otherUser?.phoneNumber || "No contact info"}
           </p>
         </div>
+      
       </button>
     </>
   );

@@ -52,18 +52,18 @@ export default function AuthForm() {
             <div className="flex items-center justify-between">
               <label
                 htmlFor="phone"
-                className="text-sm font-semibold text-slate-700"
+                className="text-sm font-semibold text-slate-700 dark:text-zinc-200"
               >
                 Phone number
               </label>
 
-              <span className="text-[11px] font-medium text-slate-400">
+              <span className="text-[11px] font-medium text-slate-400 dark:text-zinc-500">
                 Required
               </span>
             </div>
 
             <div className="relative">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400 dark:text-zinc-500">
                 +
               </span>
 
@@ -73,11 +73,11 @@ export default function AuthForm() {
                 placeholder="20 1XX XXX XXXX"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="h-13 rounded-2xl border-slate-200 bg-slate-50/70 pl-9 pr-4 text-sm shadow-none transition-all placeholder:text-slate-400 focus-visible:border-orange-400 focus-visible:bg-white focus-visible:ring-4 focus-visible:ring-orange-500/10"
+                className="h-13 rounded-2xl border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-800/50 pl-9 pr-4 text-sm text-slate-800 dark:text-zinc-100 shadow-none transition-all placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus-visible:border-orange-400 dark:focus-visible:border-orange-500 focus-visible:bg-white dark:focus-visible:bg-zinc-800 focus-visible:ring-4 focus-visible:ring-orange-500/10"
               />
             </div>
 
-            <p className="px-1 text-[11px] leading-5 text-slate-400">
+            <p className="px-1 text-[11px] leading-5 text-slate-400 dark:text-zinc-500">
               We&apos;ll send you a one-time verification code.
             </p>
           </div>
@@ -85,7 +85,7 @@ export default function AuthForm() {
           <Button
             onClick={handleSendOTP}
             disabled={loading}
-            className="h-13 w-full rounded-2xl bg-linear-to-r from-orange-500 via-orange-500 to-rose-500 font-semibold text-white shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-orange-500/25 active:translate-y-0 disabled:opacity-60"
+            className="h-13 w-full rounded-2xl bg-linear-to-r from-orange-500 via-orange-500 to-rose-500 font-semibold text-white shadow-lg shadow-orange-500/20 dark:shadow-none transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-orange-500/25 active:translate-y-0 disabled:opacity-60"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -108,11 +108,11 @@ export default function AuthForm() {
           </div>
 
           <div className="space-y-1">
-            <p className="text-sm font-semibold text-slate-800">
+            <p className="text-sm font-semibold text-slate-800 dark:text-zinc-200">
               Verify your number
             </p>
 
-            <p className="text-xs leading-5 text-slate-400">
+            <p className="text-xs leading-5 text-slate-400 dark:text-zinc-500">
               Enter the 6-digit code we sent to your phone.
             </p>
           </div>
@@ -128,7 +128,7 @@ export default function AuthForm() {
                   <InputOTPSlot
                     key={index}
                     index={index}
-                    className="h-12 w-10 rounded-xl border-slate-200 bg-slate-50/70 text-lg font-semibold text-slate-800 shadow-none transition-all focus-within:border-orange-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-orange-500/10 sm:h-14 sm:w-12"
+                    className="h-12 w-10 rounded-xl border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-800/50 text-lg font-semibold text-slate-800 dark:text-zinc-100 shadow-none transition-all focus-within:border-orange-400 dark:focus-within:border-orange-500 focus-within:bg-white dark:focus-within:bg-zinc-800 focus-within:ring-4 focus-within:ring-orange-500/10 sm:h-14 sm:w-12"
                   />
                 ))}
               </InputOTPGroup>
@@ -138,7 +138,7 @@ export default function AuthForm() {
           <Button
             onClick={handleVerifyOTP}
             disabled={loading || otp.length < 6}
-            className="h-13 w-full rounded-2xl bg-linear-to-r from-orange-500 via-orange-500 to-rose-500 font-semibold text-white shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-orange-500/25 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-13 w-full rounded-2xl bg-linear-to-r from-orange-500 via-orange-500 to-rose-500 font-semibold text-white shadow-lg shadow-orange-500/20 dark:shadow-none transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-orange-500/25 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -151,11 +151,11 @@ export default function AuthForm() {
           </Button>
 
           <div className="text-center">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 dark:text-zinc-500">
               Didn&apos;t receive the code?{" "}
               <button
                 type="button"
-                className="font-semibold text-orange-500 transition-colors hover:text-orange-600"
+                className="font-semibold text-orange-500 dark:text-orange-400 transition-colors hover:text-orange-600 dark:hover:text-orange-300"
               >
                 Resend
               </button>
@@ -168,4 +168,3 @@ export default function AuthForm() {
     </div>
   );
 }
-
