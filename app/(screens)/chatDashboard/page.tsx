@@ -9,7 +9,6 @@ import { UserProfile } from "@/types/userProfile";
 import ChatNotification from "@/components/chat/features/ChatNotifications";
 import { getUserById } from "@/services/chats";
 import ChatSidebar from "@/components/chat/layout/ChatSidebar";
-import ChatArea from "@/components/chat/layout/ChatWindow";
 import ChatWindow from "@/components/chat/layout/ChatWindow";
 
 export default function ChatDashboard() {
@@ -17,10 +16,7 @@ export default function ChatDashboard() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [chatId, setChatId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
-  const [notification, setNotification] = useState<{
-    user: UserProfile;
-    message: string;
-  } | null>(null);
+  const [notification, setNotification] = useState<{ user: UserProfile;  message: string } | null>(null);
 
   const handleBackToSidebar = () => {
     setSelectedUserId(null);
