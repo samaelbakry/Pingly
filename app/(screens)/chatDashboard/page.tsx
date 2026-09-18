@@ -7,9 +7,9 @@ import { getUserChats } from "@/services/chats";
 import { listenToAllUserMessages } from "@/services/notifications";
 import { UserProfile } from "@/types/userProfile";
 import ChatNotification from "@/components/chat/features/ChatNotifications";
-import { getUserById } from "@/services/chats";
 import ChatSidebar from "@/components/chat/layout/ChatSidebar";
 import ChatWindow from "@/components/chat/layout/ChatWindow";
+import { getUserById } from "@/services/users";
 
 export default function ChatDashboard() {
   const { user: currentUser } = useAuth();
@@ -118,7 +118,7 @@ export default function ChatDashboard() {
             </div>
           )}
 
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden pb-1">
             <ChatWindow
               selectedUserId={selectedUserId}
               selectedUser={selectedUser}

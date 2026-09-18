@@ -2,12 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import {
-  createChat,
-  getArchivedChats,
-  getUserById,
-  getUserChats,
-} from "@/services/chats";
+import { createChat, getUserChats } from "@/services/chats";
 
 import ChatSkeleton from "@/components/skeletons/ChatSkeleton";
 import { ChatItem } from "@/types/chatType";
@@ -17,8 +12,15 @@ import AddNewChat from "../features/AddNewChat";
 import ChatListCard from "./ChatListCard";
 import NoMatchingChats from "./NoMatchingChats";
 import SidebarHeader from "./SidebarHeader";
+import { getUserById } from "@/services/users";
+import { getArchivedChats, unarchiveChat } from "@/services/chatActions";
 
-export default function ChatSidebar({selectedUserId,setSelectedUserId,setSelectedUser,setChatId}: SidebarChatsProps) {
+export default function ChatSidebar({
+  selectedUserId,
+  setSelectedUserId,
+  setSelectedUser,
+  setChatId,
+}: SidebarChatsProps) {
   const { user: currentUser } = useAuth();
 
   const [showArchived, setShowArchived] = useState(false);
@@ -122,6 +124,17 @@ export default function ChatSidebar({selectedUserId,setSelectedUserId,setSelecte
     }
   };
 
+  const handleUnarchive = async (chatId:string) => {
+    try {
+      if (!currentUser?.uid) return;
+      await unarchiveChat(currentUser?.uid, chatId as string);
+
+      setUserChats((prev) => prev.filter((chat) => chat.chatId !== chatId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="relative flex h-full flex-col rounded-[2.5rem] border border-white/40 dark:border-zinc-800 p-5 shadow-md dark:shadow-none backdrop-blur-3xl">
       <SidebarHeader
@@ -147,6 +160,8 @@ export default function ChatSidebar({selectedUserId,setSelectedUserId,setSelecte
                 chatUsers={chatUsers}
                 handleSelectChat={handleSelectChat}
                 selectedUserId={selectedUserId as string}
+                showArchived={showArchived}
+                onUnarchive={handleUnarchive}
               />
             );
           })

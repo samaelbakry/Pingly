@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { archiveChat, clearChat } from "@/services/chats";
+import { archiveChat, clearChat } from "@/services/chatActions";
 import { Message } from "@/types/messages";
 import { Archive, Trash2 } from "lucide-react";
 

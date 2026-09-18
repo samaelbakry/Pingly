@@ -38,3 +38,18 @@ export const getAllUsers = async (): Promise<UserProfile[]> => {
     ...(user as Omit<UserProfile, "uid">),
   }));
 };
+
+export async function getUserById(userId: string): Promise<UserProfile | null> {
+  const userRef = ref(database, `users/${userId}`);
+
+  const snapshot = await get(userRef);
+
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  return {
+    uid: userId,
+    ...(snapshot.val() as Omit<UserProfile, "uid">),
+  };
+}

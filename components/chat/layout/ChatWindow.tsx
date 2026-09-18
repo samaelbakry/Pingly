@@ -44,7 +44,7 @@ export default function ChatWindow({
     return <NoChatSelectedState />;
   }
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden scroll-smooth rounded-[2.5rem] border border-white/40 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 shadow-[0_8px_32px_0_rgba(249,115,22,0.06)] dark:shadow-none backdrop-blur-3xl">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden scroll-smooth rounded-[2.5rem] border border-white/40 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 shadow-md dark:shadow-none backdrop-blur-3xl">
       <ChatWindowHeader
         selectedUser={selectedUser!}
         currentUserId={currentUser?.uid ?? ""}
