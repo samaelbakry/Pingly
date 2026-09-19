@@ -4,7 +4,7 @@ import { Sparkles } from "lucide-react";
 export default function NoChatSelectedState() {
   return (
     <>
-      <div className="relative flex h-screen flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/80 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 p-8 text-center shadow-xl shadow-orange-500/5 dark:shadow-none backdrop-blur-2xl">
+      <div className="relative flex h-screen flex-col items-center justify-center overflow-hidden rounded-3xl border border-white dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 p-8 text-center shadow-2xl shadow-orange-500/5 dark:shadow-none backdrop-blur-2xl">
         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-linear-to-br from-amber-300/20 to-orange-400/20 dark:from-amber-600/10 dark:to-orange-600/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-linear-to-tr from-rose-400/20 to-orange-300/20 dark:from-rose-600/10 dark:to-orange-600/10 blur-3xl" />
 

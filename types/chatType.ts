@@ -1,16 +1,24 @@
-export interface ChatParticipants {
+export type ChatParticipants = {
   [userId: string]: boolean;
 }
 
-export interface ChatMessages {
+export type ChatMessages = {
   [messageId: string]: unknown;
 }
 
-export interface ChatItem {
+export type ChatType = "direct" | "group";
+
+export type ChatItem ={
   chatId: string;
+  type: ChatType;
+
+  name?: string;
+  photoURL?: string;
+  createdBy?: string;
+
   createdAt: number;
-  participants: ChatParticipants;
-  messages?: ChatMessages;
+
+  participants: Record<string, boolean>;
 }
 
 export type ChatListResponse = ChatItem[];

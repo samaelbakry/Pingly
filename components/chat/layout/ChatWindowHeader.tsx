@@ -12,40 +12,64 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { archiveChat, clearChat } from "@/services/chatActions";
+import { ChatItem } from "@/types/chatType";
 import { Message } from "@/types/messages";
+import { UserProfile } from "@/types/userProfile";
 import { Archive, Trash2 } from "lucide-react";
 
 export default function ChatWindowHeader({
   selectedUser,
+  selectedGroup,
+  isGroupChat,
   messages,
   chatId,
   currentUserId,
 }: {
-  selectedUser: { photoURL: string; name: string };
+ selectedUser: UserProfile | null;
+  selectedGroup: ChatItem | null;
+  isGroupChat: boolean;
   messages: Message[];
   chatId: string;
   currentUserId: string;
 }) {
+  const displayName = isGroupChat
+  ? selectedGroup?.name || "Unnamed Group"
+  : selectedUser?.name || "Unknown User";
+
+const displayPhoto = isGroupChat
+  ? selectedGroup?.photoURL || ""
+  : selectedUser?.photoURL || "";
   return (
     <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-zinc-800 px-6 py-3.5 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10 border border-slate-200 dark:border-zinc-700 shadow-xs">
-          <AvatarImage
-            src={selectedUser?.photoURL || ""}
-            alt={selectedUser?.name || "User"}
-          />
-          <AvatarFallback className="bg-linear-to-tr from-amber-400 to-orange-500 font-bold text-white">
-            {selectedUser?.name?.charAt(0).toUpperCase() || "U"}
-          </AvatarFallback>
+         <AvatarImage
+  src={displayPhoto}
+  alt={displayName}
+/>
+
+<AvatarFallback
+  className={
+    isGroupChat
+      ? "bg-linear-to-tr from-violet-500 to-purple-600 font-bold text-white"
+      : "bg-linear-to-tr from-amber-400 to-orange-500 font-bold text-white"
+  }
+>
+  {displayName.charAt(0).toUpperCase()}
+</AvatarFallback>
         </Avatar>
 
         <div>
           <h2 className="text-sm font-semibold tracking-tight text-slate-800 dark:text-zinc-100">
-            {selectedUser?.name || "Unknown User"}
+            {displayName}
           </h2>
-          <p className="mt-0.5 text-[11px] font-medium text-slate-400 dark:text-zinc-500">
-            {messages.length} {messages.length === 1 ? "message" : "messages"}
-          </p>
+         <p className="mt-0.5 text-[11px] font-medium text-slate-400 dark:text-zinc-500">
+  {isGroupChat
+    ? `${Object.keys(selectedGroup?.participants || {}).length} members`
+    : `${messages.length} ${
+        messages.length === 1 ? "message" : "messages"
+      }`}
+</p>
         </div>
       </div>
 

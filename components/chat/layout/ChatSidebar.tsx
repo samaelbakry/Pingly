@@ -1,25 +1,26 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { createChat, getUserChats } from "@/services/chats";
+import { createChat, createGroupChat, getUserChats } from "@/services/chats";
+import { useEffect, useMemo, useState } from "react";
 
 import ChatSkeleton from "@/components/skeletons/ChatSkeleton";
+import { getArchivedChats, unarchiveChat } from "@/services/chatActions";
+import { getUserById } from "@/services/users";
 import { ChatItem } from "@/types/chatType";
 import { SidebarChatsProps } from "@/types/Props";
 import { UserProfile } from "@/types/userProfile";
-import AddNewChat from "../features/AddNewChat";
+import ChatSidebarFooter from "../features/ChatSidebarFooter";
 import ChatListCard from "./ChatListCard";
 import NoMatchingChats from "./NoMatchingChats";
 import SidebarHeader from "./SidebarHeader";
-import { getUserById } from "@/services/users";
-import { getArchivedChats, unarchiveChat } from "@/services/chatActions";
 
 export default function ChatSidebar({
   selectedUserId,
   setSelectedUserId,
   setSelectedUser,
   setChatId,
+  setIsGroupChat,
 }: SidebarChatsProps) {
   const { user: currentUser } = useAuth();
 
@@ -48,21 +49,23 @@ export default function ChatSidebar({
         setUserChats(chatItems);
 
         const usersEntries = await Promise.all(
-          chatItems.map(async (chat) => {
-            const participantIds = Object.keys(chat?.participants);
+          chatItems
+            .filter((chat) => chat.type !== "group")
+            .map(async (chat) => {
+              const participantIds = Object.keys(chat?.participants);
 
-            const otherUserId = participantIds.find(
-              (id) => id !== currentUser.uid,
-            );
+              const otherUserId = participantIds.find(
+                (id) => id !== currentUser.uid,
+              );
 
-            if (!otherUserId) return null;
+              if (!otherUserId) return null;
 
-            const user = await getUserById(otherUserId);
+              const user = await getUserById(otherUserId);
 
-            if (!user) return null;
+              if (!user) return null;
 
-            return [otherUserId, user] as const;
-          }),
+              return [otherUserId, user] as const;
+            }),
         );
 
         const usersMap: Record<string, UserProfile> = {};
@@ -96,6 +99,9 @@ export default function ChatSidebar({
     }
 
     return userChats.filter((chat) => {
+      if (chat.type === "group") {
+        return chat.name?.toLowerCase().includes(query);
+      }
       const participantIds = Object.keys(chat.participants);
 
       const otherUserId = participantIds.find((id) => id !== currentUser?.uid);
@@ -111,20 +117,25 @@ export default function ChatSidebar({
     });
   }, [userChats, chatUsers, search, currentUser?.uid]);
 
-  const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
-    if (!currentUserID || !user?.uid) return;
+const handleSelectChat = async (
+  currentUserID: string,
+  user: UserProfile
+) => {
+  if (!currentUserID || !user?.uid) return;
 
-    try {
-      const chatID = await createChat(currentUserID, user.uid);
-      setSelectedUserId(user.uid);
-      setSelectedUser(user);
-      setChatId(chatID);
-    } catch (error) {
-      console.error("Failed to open chat:", error);
-    }
-  };
+  try {
+    const chatID = await createChat(currentUserID, user.uid);
 
-  const handleUnarchive = async (chatId:string) => {
+    setSelectedUserId(user.uid);
+    setSelectedUser(user);
+    setChatId(chatID);
+    setIsGroupChat(false);
+  } catch (error) {
+    console.error("Failed to open chat:", error);
+  }
+};
+
+  const handleUnarchive = async (chatId: string) => {
     try {
       if (!currentUser?.uid) return;
       await unarchiveChat(currentUser?.uid, chatId as string);
@@ -134,6 +145,36 @@ export default function ChatSidebar({
       console.log(error);
     }
   };
+
+  const handleCreateGroup = async (groupName: string, membersIds: string[]) => {
+    if (!currentUser?.uid || !groupName.trim() || membersIds.length === 0) {
+      return;
+    }
+
+    try {
+      const chatId = await createGroupChat(
+        currentUser.uid,
+        membersIds,
+        groupName.trim(),
+      );
+
+      const chats = await getUserChats(currentUser.uid);
+
+      setUserChats(chats as unknown as ChatItem[]);
+
+      console.log("Group created:", chatId);
+    } catch (error) {
+      console.error("Failed to create group:", error);
+    }
+  };
+const handleSelectGroup = (chatId: string) => {
+  if (!chatId) return;
+
+  setSelectedUserId(chatId);
+  setSelectedUser(null);
+  setChatId(chatId);
+  setIsGroupChat(true);
+};
 
   return (
     <div className="relative flex h-full flex-col rounded-[2.5rem] border border-white/40 dark:border-zinc-800 p-5 shadow-md dark:shadow-none backdrop-blur-3xl">
@@ -159,6 +200,7 @@ export default function ChatSidebar({
                 chat={chat}
                 chatUsers={chatUsers}
                 handleSelectChat={handleSelectChat}
+                handleSelectGroup={handleSelectGroup}
                 selectedUserId={selectedUserId as string}
                 showArchived={showArchived}
                 onUnarchive={handleUnarchive}
@@ -169,9 +211,10 @@ export default function ChatSidebar({
       </div>
 
       <div className="mt-2 border-t border-white/20 dark:border-zinc-800 pt-3 bg-white/10 dark:bg-zinc-900/10 backdrop-blur-md rounded-b-2xl p-1">
-        <AddNewChat
+        <ChatSidebarFooter
           currentUserId={currentUser?.uid as string}
           handleSelectChat={handleSelectChat}
+          onCreateGroup={handleCreateGroup}
         />
       </div>
     </div>

@@ -6,4 +6,5 @@ export type SidebarChatsProps = {
   setSelectedUserId: (userId: string | null) => void;
   selectedUser: UserProfile | null;
   setChatId: (chatId: string | null) => void;
+  setIsGroupChat: React.Dispatch<React.SetStateAction<boolean>>;
 };

@@ -1,6 +1,6 @@
 import { database } from "@/lib/firebaseConfig"
 import { ChatItem } from "@/types/chatType"
-import { get, ref, set } from "firebase/database"
+import { get, push, ref, set } from "firebase/database"
 
 export function getChatId(userOne: string, userTwo: string) {
     return [userOne, userTwo].sort().join("_")
@@ -17,6 +17,7 @@ export async function createChat(currentUserID: string, otherUserID: string) {
     if(!snapshot.exists()){
 
         await set(chatRef , {
+          type:"direct",
             participants:{
                 [currentUserID]:true,
                 [otherUserID]:true,
@@ -57,5 +58,27 @@ export async function getUserChats(currentUserId: string) {
     }));
 }
 
+export async function createGroupChat( creatorId: string, membersIds: string[], groupName: string) {
+  
+  const chatRef = ref(database, "chats");
+  const newChatRef = push(chatRef);
+
+  const participants: Record<string, boolean> = {};
+
+  [creatorId, ...membersIds].forEach((userId) => {
+    participants[userId] = true;
+  });
+
+  await set(newChatRef, {
+    type: "group",
+    name: groupName,
+    photoUrl: "",
+    createdBy: creatorId,
+    participants,
+    createdAt: Date.now(),
+  });
+
+  return newChatRef.key;
+}
 
 

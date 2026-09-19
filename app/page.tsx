@@ -12,7 +12,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-amber-50/40 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-250 h-150 bg-linear-to-tr from-amber-300/40 via-orange-300/40 to-red-300/40 dark:from-amber-500/10 dark:via-orange-600/10 dark:to-red-600/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-250 h-150 bg-linear-to-tr from-amber-300/40 via-orange-300/40 to-red-300/40 dark:from-amber-500/10 dark:via-orange-600/10 dark:to-red-600/10 blur-[130px] rounded-full pointer-events-none z-50" />
       <div className="absolute top-1/3 -left-32 w-96 h-96 bg-orange-400/30 dark:bg-orange-600/15 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 -right-32 w-125 h-125 bg-rose-400/25 dark:bg-rose-600/15 blur-[140px] rounded-full pointer-events-none" />
 

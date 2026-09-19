@@ -102,7 +102,7 @@ export default function MessageBubble({
                       </div>
                     </div>
                   ) : (
-                    <p className="whitespace-pre-wrap break-words text-[13px] leading-5 sm:text-sm">
+                    <p className="whitespace-pre-wrap wrap-break-words text-[13px] leading-5 sm:text-sm">
                       {message.text}
                     </p>
                   )}
