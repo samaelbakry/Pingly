@@ -15,16 +15,8 @@ import ChatListCard from "./ChatListCard";
 import NoMatchingChats from "./NoMatchingChats";
 import SidebarHeader from "./SidebarHeader";
 
-export default function ChatSidebar({
-  selectedUserId,
-  setSelectedUserId,
-  setSelectedUser,
-  setChatId,
-  setIsGroupChat,
-}: SidebarChatsProps) {
+export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSelectedUser, setChatId, setIsGroupChat, showArchived }: SidebarChatsProps) {
   const { user: currentUser } = useAuth();
-
-  const [showArchived, setShowArchived] = useState(false);
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -117,23 +109,20 @@ export default function ChatSidebar({
     });
   }, [userChats, chatUsers, search, currentUser?.uid]);
 
-const handleSelectChat = async (
-  currentUserID: string,
-  user: UserProfile
-) => {
-  if (!currentUserID || !user?.uid) return;
+  const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
+    if (!currentUserID || !user?.uid) return;
 
-  try {
-    const chatID = await createChat(currentUserID, user.uid);
+    try {
+      const chatID = await createChat(currentUserID, user.uid);
 
-    setSelectedUserId(user.uid);
-    setSelectedUser(user);
-    setChatId(chatID);
-    setIsGroupChat(false);
-  } catch (error) {
-    console.error("Failed to open chat:", error);
-  }
-};
+      setSelectedUserId(user.uid);
+      setSelectedUser(user);
+      setChatId(chatID);
+      setIsGroupChat(false);
+    } catch (error) {
+      console.error("Failed to open chat:", error);
+    }
+  };
 
   const handleUnarchive = async (chatId: string) => {
     try {
@@ -167,21 +156,20 @@ const handleSelectChat = async (
       console.error("Failed to create group:", error);
     }
   };
-const handleSelectGroup = (chatId: string) => {
-  if (!chatId) return;
+  const handleSelectGroup = (chatId: string) => {
+    if (!chatId) return;
 
-  setSelectedUserId(chatId);
-  setSelectedUser(null);
-  setChatId(chatId);
-  setIsGroupChat(true);
-};
+    setSelectedUserId(chatId);
+    setSelectedUser(null);
+    setChatId(chatId);
+    setIsGroupChat(true);
+  };
 
   return (
-    <div className="relative flex h-full flex-col rounded-[2.5rem] border border-white/40 dark:border-zinc-800 p-5 shadow-md dark:shadow-none backdrop-blur-3xl">
+    <div className="relative flex h-full min-h-0 flex-col rounded-[2.5rem] border border-white/40 p-5 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:shadow-none">
+      {" "}
       <SidebarHeader
         userChats={userChats}
-        setShowArchived={setShowArchived}
-        showArchived={showArchived}
         search={search}
         setSearch={setSearch}
       />
@@ -209,8 +197,8 @@ const handleSelectGroup = (chatId: string) => {
           })
         )}
       </div>
-
-      <div className="mt-2 border-t border-white/20 dark:border-zinc-800 pt-3 bg-white/10 dark:bg-zinc-900/10 backdrop-blur-md rounded-b-2xl p-1">
+      <div className="mt-2 shrink-0 rounded-b-2xl border-t border-white/20 bg-white/10 p-1 pt-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/10">
+        {" "}
         <ChatSidebarFooter
           currentUserId={currentUser?.uid as string}
           handleSelectChat={handleSelectChat}

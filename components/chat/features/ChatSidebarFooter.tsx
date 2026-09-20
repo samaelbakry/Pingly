@@ -10,14 +10,12 @@ import CreateGroupDialog from "./CreateGroupDialog";
 export default function ChatSidebarFooter({
   currentUserId,
   handleSelectChat,
-  onCreateGroup
+  onCreateGroup,
 }: {
   currentUserId: string;
   handleSelectChat: (currentUserID: string, user: UserProfile) => Promise<void>;
-onCreateGroup: (
-  groupName: string,
-  membersIds: string[],
-) => Promise<void>;}) {
+  onCreateGroup: (groupName: string, membersIds: string[]) => Promise<void>;
+}) {
   const [isNewChatOpen, setIsNewChatOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
 
@@ -49,11 +47,11 @@ onCreateGroup: (
         onSelectUser={handleSelectChat}
       />
       <CreateGroupDialog
-  isCreateGroupOpen={isCreateGroupOpen}
-  setIsCreateGroupOpen={setIsCreateGroupOpen}
-  currentUserId={currentUserId}
-  onCreateGroup={onCreateGroup}
-/>
+        isCreateGroupOpen={isCreateGroupOpen}
+        setIsCreateGroupOpen={setIsCreateGroupOpen}
+        currentUserId={currentUserId}
+        onCreateGroup={onCreateGroup}
+      />
     </>
   );
 }

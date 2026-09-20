@@ -22,12 +22,7 @@ type Props = {
   onCreateGroup: (groupName: string, membersIds: string[]) => void;
 };
 
-export default function CreateGroupDialog({
-  isCreateGroupOpen,
-  setIsCreateGroupOpen,
-  currentUserId,
-  onCreateGroup,
-}: Props) {
+export default function CreateGroupDialog({ isCreateGroupOpen, setIsCreateGroupOpen, currentUserId, onCreateGroup }: Props) {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [groupName, setGroupName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -50,8 +45,7 @@ export default function CreateGroupDialog({
   }, [isCreateGroupOpen, currentUserId]);
 
   const handleToggleUser = (userId: string) => {
-    setSelectedUsers((prev) =>
-      prev.includes(userId)
+    setSelectedUsers((prev) => prev.includes(userId)
         ? prev.filter((id) => id !== userId)
         : [...prev, userId]
     );

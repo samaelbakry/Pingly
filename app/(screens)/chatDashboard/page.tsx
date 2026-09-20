@@ -1,22 +1,22 @@
 "use client";
+import ChatNotification from "@/components/chat/features/ChatNotifications";
+import ChatNavRail from "@/components/chat/layout/ChatNavRail";
+import ChatSidebar from "@/components/chat/layout/ChatSidebar";
+import ChatWindow from "@/components/chat/layout/ChatWindow";
 import Navbar from "@/components/common/Navbar";
-import { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { getUserChats } from "@/services/chats";
 import { listenToAllUserMessages } from "@/services/notifications";
-import { UserProfile } from "@/types/userProfile";
-import ChatNotification from "@/components/chat/features/ChatNotifications";
-import ChatSidebar from "@/components/chat/layout/ChatSidebar";
-import ChatWindow from "@/components/chat/layout/ChatWindow";
 import { getUserById } from "@/services/users";
-import ChatNavRail from "@/components/chat/layout/ChatNavRail";
-import { ChatItem } from "@/types/chatType";
+import { UserProfile } from "@/types/userProfile";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function ChatDashboard() {
   const { user: currentUser } = useAuth();
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [chatId, setChatId] = useState<string | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [isGroupChat, setIsGroupChat] = useState(false);
   const [notification, setNotification] = useState<{
@@ -24,12 +24,12 @@ export default function ChatDashboard() {
     message: string;
   } | null>(null);
 
- const handleBackToSidebar = () => {
-  setSelectedUserId(null);
-  setChatId(null);
-  setSelectedUser(null);
-  setIsGroupChat(false);
-};
+  const handleBackToSidebar = () => {
+    setSelectedUserId(null);
+    setChatId(null);
+    setSelectedUser(null);
+    setIsGroupChat(false);
+  };
 
   useEffect(() => {
     if (!currentUser?.uid) return;
@@ -87,11 +87,14 @@ export default function ChatDashboard() {
 
       <Navbar />
 
-      <main className="relative z-10 min-h-0 flex max-w-8xl w-full mx-auto p-3 sm:p-6 gap-4 overflow-hidden">
-        <ChatNavRail />
-
+      <main className="relative z-10 flex min-h-0 flex-1 max-w-8xl w-full mx-auto p-3 sm:p-6 gap-4 overflow-hidden">
+        {" "}
+        <ChatNavRail
+          setShowArchived={setShowArchived}
+          showArchived={showArchived}
+        />
         <div
-          className={`w-full sm:w-96 h-full min-h-0 transition-all duration-300 ease-in-out ${
+          className={`w-full sm:w-96 h-full min-h-0 transition-all duration-300 ease-in-out shrink-0 ${
             selectedUserId
               ? "hidden sm:block"
               : "block animate-in fade-in zoom-in-95 duration-200"
@@ -104,9 +107,10 @@ export default function ChatDashboard() {
             selectedUser={selectedUser}
             setSelectedUser={setSelectedUser}
             setIsGroupChat={setIsGroupChat}
+            setShowArchived={setShowArchived}
+            showArchived={showArchived}
           />
         </div>
-
         <div
           className={`flex-1 h-full flex flex-col transition-all duration-300 ease-in-out ${
             selectedUserId
@@ -136,7 +140,6 @@ export default function ChatDashboard() {
             />
           </div>
         </div>
-
         {notification && (
           <ChatNotification
             user={notification.user}

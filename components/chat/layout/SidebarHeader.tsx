@@ -3,19 +3,14 @@
 import { Input } from "@base-ui/react";
 import { Search, Sparkles } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-import AddToArchiveButton from "../features/AddToArchiveButton";
 import { ChatItem } from "@/types/chatType";
 
 export default function SidebarHeader({
   userChats,
-  setShowArchived,
-  showArchived,
   search,
   setSearch,
 }: {
   userChats: ChatItem[];
-  setShowArchived: Dispatch<SetStateAction<boolean>>;
-  showArchived: boolean;
   search: string;
   setSearch: Dispatch<SetStateAction<string>>;
 }) {
@@ -29,27 +24,16 @@ export default function SidebarHeader({
           </h2>
 
           <p className="mt-0.5 text-[11px] font-medium text-slate-400 dark:text-zinc-500">
-            {showArchived
-              ? `${userChats.length} archived conversations`
-              : `${userChats.length} conversations`}
+            {userChats.length} Conversations
           </p>
         </div>
-
-        <AddToArchiveButton
-          setShowArchived={setShowArchived}
-          showArchived={showArchived}
-        />
       </div>
 
       <div className="relative my-3">
         <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
 
         <Input
-          placeholder={
-            showArchived
-              ? "Search archived conversations..."
-              : "Search conversations..."
-          }
+          placeholder={"Search conversations..."}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="h-10 w-full rounded-full border border-white/40 dark:border-zinc-800 bg-white/40 dark:bg-zinc-800/60 pl-9 pr-4 text-xs text-slate-900 dark:text-zinc-100 backdrop-blur-md transition-all placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus-visible:border-orange-400 dark:focus-visible:border-orange-500 focus-visible:bg-white/60 dark:focus-visible:bg-zinc-800 focus-visible:ring-4 focus-visible:ring-orange-500/10 shadow-inner outline-none"
