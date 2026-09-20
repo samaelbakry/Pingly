@@ -14,6 +14,7 @@ import ChatSidebarFooter from "../features/ChatSidebarFooter";
 import ChatListCard from "./ChatListCard";
 import NoMatchingChats from "./NoMatchingChats";
 import SidebarHeader from "./SidebarHeader";
+import { toast } from "sonner";
 
 export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSelectedUser, setChatId, setIsGroupChat, showArchived }: SidebarChatsProps) {
   const { user: currentUser } = useAuth();
@@ -128,6 +129,7 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
     try {
       if (!currentUser?.uid) return;
       await unarchiveChat(currentUser?.uid, chatId as string);
+      toast.success("Removed From Archive")
 
       setUserChats((prev) => prev.filter((chat) => chat.chatId !== chatId));
     } catch (error) {

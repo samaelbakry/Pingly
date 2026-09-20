@@ -37,7 +37,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-20 w-full backdrop-blur-3xl bg-opacity-25 bg-amber-50/40 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white transition-all">
+    <header className="sticky top-0 z-20 w-full backdrop-blur-3xl bg-opacity-25 shadow bg-amber-50/40 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
             <Logo withText={true} />

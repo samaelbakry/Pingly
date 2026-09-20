@@ -1,22 +1,14 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { archiveChat } from "@/services/chatActions";
-import { Archive } from "lucide-react";
-import ClearChatButton from "../features/ClearChatButton";
-import { chatWindowProps } from "@/types/Props";
-import { useEffect, useState } from "react";
-import { UserProfile } from "@/types/userProfile";
 import { getUserById } from "@/services/users";
+import { chatWindowProps } from "@/types/Props";
+import { UserProfile } from "@/types/userProfile";
+import { useEffect, useState } from "react";
+import ClearChatButton from "../features/ClearChatButton";
+import LeaveGroupButton from "../features/LeaveGroupButton";
+import ArchiveButton from "../features/ArchiveButton";
 
-export default function ChatWindowHeader({
-  selectedUser,
-  selectedGroup,
-  isGroupChat,
-  messages,
-  chatId,
-  currentUserId,
-}: chatWindowProps) {
+export default function ChatWindowHeader({ selectedUser, selectedGroup, isGroupChat, messages, chatId, currentUserId }: chatWindowProps) {
   const [groupMembers, setGroupMembers] = useState<UserProfile[]>([]);
 
   const displayName = isGroupChat
@@ -91,16 +83,12 @@ export default function ChatWindowHeader({
       </div>
 
       <div className="flex items-center gap-3">
-        {messages.length > 0 && <ClearChatButton chatId={chatId} />}
-        <Button
-          onClick={() => archiveChat(currentUserId, chatId)}
-          variant="ghost"
-          size="sm"
-          aria-label="Archive chat"
-          className="text-slate-500 hover:text-orange-600 dark:text-zinc-400 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
-        >
-          <Archive className="size-4" />
-        </Button>
+        {messages.length > 0 
+        && <ClearChatButton chatId={chatId} />}
+
+        <ArchiveButton chatId={chatId} currentUserId={currentUserId} />
+        {isGroupChat && (
+          <LeaveGroupButton userId={currentUserId} chatId={chatId} />)}
       </div>
     </div>
   );
