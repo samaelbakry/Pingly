@@ -10,11 +10,11 @@ import { getUserById } from "@/services/users";
 import { ChatItem } from "@/types/chatType";
 import { SidebarChatsProps } from "@/types/Props";
 import { UserProfile } from "@/types/userProfile";
-import ChatSidebarFooter from "../features/ChatSidebarFooter";
 import ChatListCard from "./ChatListCard";
 import NoMatchingChats from "./NoMatchingChats";
 import SidebarHeader from "./SidebarHeader";
 import { toast } from "sonner";
+import ChatSidebarFooter from "./ChatSidebarFooter";
 
 export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSelectedUser, setChatId, setIsGroupChat, showArchived }: SidebarChatsProps) {
   const { user: currentUser } = useAuth();
@@ -168,7 +168,7 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
   };
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col rounded-[2.5rem] border border-white/40 p-5 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:shadow-none">
+    <div className="relative chat-scroll flex h-full min-h-0 flex-col rounded-[2.5rem] border border-white/40 p-5 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:shadow-none">
       {" "}
       <SidebarHeader
         userChats={userChats}

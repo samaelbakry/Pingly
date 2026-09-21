@@ -36,9 +36,9 @@ export default function LeaveGroupButton({
         onClick={handleLeave}
         disabled={loading}
         title="Leave Group"
-        className="p-2 text-red-600 hover:bg-red-50 rounded-md disabled:opacity-50 transition-colors cursor-pointer"
+        className="p-2 text-slate-500 rounded-md cursor-pointer transition-colors hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:opacity-50"
       >
-        <LogOut className={`w-4 h-4 ${loading ? "animate-pulse" : ""}`} />
+        <LogOut className={`size-4 ${loading ? "animate-pulse" : ""}`} />
       </button>
       {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>

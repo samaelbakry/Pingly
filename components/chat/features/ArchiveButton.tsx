@@ -21,7 +21,7 @@ export default function ArchiveButton({
         variant="ghost"
         size="sm"
         aria-label="Archive chat"
-        className="text-slate-500 hover:text-orange-600 dark:text-zinc-400 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
+        className="text-slate-500 cursor-pointer hover:text-orange-600 dark:text-zinc-400 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
       >
         <Archive className="size-4" />
       </Button>
