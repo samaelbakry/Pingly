@@ -1,6 +1,7 @@
 "use client";
 
 import { auth } from "@/lib/firebaseConfig";
+import { setUserOnline } from "@/services/presence";
 import { onAuthStateChanged, User , signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -30,12 +31,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
+     let unsubscribePresence: (() => void) | undefined;
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+
+      if(unsubscribePresence){
+         unsubscribePresence();
+        unsubscribePresence = undefined;
+      }
+      if(currentUser){
+        unsubscribePresence = setUserOnline(currentUser.uid)
+      }
+
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe()
+      unsubscribePresence?.();
+    };
   }, []);
 
   const logout = async () => {
