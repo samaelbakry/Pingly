@@ -31,6 +31,13 @@ export default function ChatDashboard() {
     setIsGroupChat(false);
   };
 
+   const handleLeaveChat = () => {
+    setSelectedUserId(null);
+    setSelectedUser(null);
+    setChatId(null);
+    setIsGroupChat(false);
+  };
+
   useEffect(() => {
     if (!currentUser?.uid) return;
 
@@ -52,7 +59,7 @@ export default function ChatDashboard() {
             if (sender) {
               setNotification({
                 user: sender,
-                message: message.text,
+                message: message.text!,
               });
             }
           },
@@ -136,6 +143,7 @@ export default function ChatDashboard() {
               selectedUserId={selectedUserId}
               selectedUser={selectedUser}
               chatId={chatId}
+              handleLeaveChat={handleLeaveChat}
               isGroupChat={isGroupChat}
             />
           </div>

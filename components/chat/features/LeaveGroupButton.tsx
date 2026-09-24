@@ -7,10 +7,12 @@ import { toast } from "sonner";
 type LeaveGroupButtonProps = {
   userId: string;
   chatId: string;
+  handleLeaveChat:()=>void
 };
 export default function LeaveGroupButton({
   userId,
   chatId,
+  handleLeaveChat
 }: LeaveGroupButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,6 +24,7 @@ export default function LeaveGroupButton({
       await leaveGroupChat(userId, chatId);
       await getUserChats(userId);
       toast.success("Leaving and deleting the group chat..");
+      handleLeaveChat()
     } catch (err) {
       console.error("Failed to leave group:", err);
       setError(err instanceof Error ? err.message : "Failed to leave group");

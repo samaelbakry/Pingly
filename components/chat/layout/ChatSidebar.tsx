@@ -160,7 +160,6 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
   };
   const handleSelectGroup = (chatId: string) => {
     if (!chatId) return;
-
     setSelectedUserId(chatId);
     setSelectedUser(null);
     setChatId(chatId);

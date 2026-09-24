@@ -68,6 +68,7 @@ export default function ChatProfileAvatar({
         >
           {displayName.charAt(0).toUpperCase()}
         </AvatarFallback>
+        
       </Avatar>
 
       {!isGroupChat && (

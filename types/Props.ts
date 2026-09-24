@@ -21,4 +21,5 @@ export type chatWindowProps = {
   messages: Message[];
   chatId: string;
   currentUserId: string;
+  handleLeaveChat:()=>void
 };

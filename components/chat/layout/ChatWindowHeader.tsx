@@ -16,6 +16,7 @@ export default function ChatWindowHeader({
   messages,
   chatId,
   currentUserId,
+  handleLeaveChat
 }: chatWindowProps) {
   const [groupMembers, setGroupMembers] = useState<UserProfile[]>([]);
 
@@ -108,7 +109,7 @@ export default function ChatWindowHeader({
           <>
             <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-zinc-700" />
             <div className="rounded-lg transition-colors hover:bg-rose-50 dark:hover:bg-rose-950/30">
-              <LeaveGroupButton userId={currentUserId} chatId={chatId} />
+              <LeaveGroupButton userId={currentUserId} chatId={chatId} handleLeaveChat={handleLeaveChat} />
             </div>
           </>
         )}

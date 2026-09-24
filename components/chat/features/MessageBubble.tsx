@@ -41,6 +41,7 @@ export default function MessageBubble({
     );
   }
 
+
   return (
    <div className="flex flex-col gap-3">
   {messages.map((message) => {
@@ -49,6 +50,20 @@ export default function MessageBubble({
     const sender = chatUsers[message.senderId];
     const senderName = sender?.name || "Unknown User";
     const senderAvatar = sender?.photoURL || null;
+
+    if(message.type==="system" && message.action=== "left"){
+      const user = chatUsers[message.userId ?? ""]
+      return (
+          <div
+      key={message.id}
+      className="my-3 flex justify-center"
+    >
+      <span className="rounded-full bg-zinc-100 px-3 py-1.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+        {user?.name ?? "Someone"} left the group
+      </span>
+    </div>
+      )
+    }
 
     return (
       <div

@@ -52,6 +52,7 @@ export function listenToMessages(
     }
 
     const data = snapshot.val();
+    console.log("RAW SNAPSHOT", data)
 
     const messages: Message[] = Object.entries(data).map(
       ([id, message]) => ({
