@@ -3,68 +3,65 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import { ChatItem } from "@/types/chatType";
-import { UserProfile } from "@/types/userProfile";
+import { ChatListCardProps } from "@/types/Props";
 import { ArchiveRestore, Users } from "lucide-react";
 
 export default function ChatListCard({
   chat,
   chatUsers,
-  selectedUserId,
+  selectedChatId,
   handleSelectChat,
   handleSelectGroup,
   showArchived,
   onUnarchive,
-}: {
-  chat: ChatItem;
-  chatUsers: Record<string, UserProfile>;
-  selectedUserId?: string;
- handleSelectChat: (
-  currentUserID: string,
-  user: UserProfile
-) => Promise<void>;
-
-handleSelectGroup: (chatId: string) => void;
-  showArchived: boolean;
-  onUnarchive: (chatId: string) => Promise<void>;
-}) {
+}: ChatListCardProps) {
   const { user: currentUser } = useAuth();
 
   const isGroup = chat.type === "group";
-  const participantIds = Object.keys(chat.participants);
+
+  const participantIds = Object.keys(chat.participants ?? {});
 
   const groupParticipants = participantIds
     .filter((id) => id !== currentUser?.uid)
     .map((id) => chatUsers[id])
     .filter(Boolean);
 
-  const otherUserId = participantIds.find((id) => id !== currentUser?.uid);
-  const otherUser = otherUserId ? chatUsers[otherUserId] : undefined;
+ 
+  const otherUserId = participantIds.find(
+    (id) => id !== currentUser?.uid
+  );
 
-  const isSelected = isGroup ? false : selectedUserId === otherUserId;
+  const otherUser = otherUserId
+    ? chatUsers[otherUserId]
+    : undefined;
+
+  const isSelected = selectedChatId === chat.chatId;
 
   return (
     <div
       className={`group relative flex items-center rounded-2xl transition-all duration-200 ${
         isSelected
-          ? "bg-linear-to-r from-orange-500/15 via-amber-500/10 to-rose-500/10 dark:from-orange-500/20 dark:via-amber-500/15 dark:to-rose-500/15 shadow-sm"
+          ? "bg-linear-to-r from-orange-500/15 via-amber-500/10 to-rose-500/10 shadow-sm dark:from-orange-500/20 dark:via-amber-500/15 dark:to-rose-500/15"
           : "hover:bg-white/40 dark:hover:bg-zinc-800/50"
       }`}
     >
       <button
         type="button"
-       onClick={() => {
-  if (!currentUser?.uid) return;
+        onClick={() => {
+          if (!currentUser?.uid) return;
 
-  if (isGroup) {
-    handleSelectGroup(chat.chatId);
-    return;
-  }
+          if (isGroup) {
+            handleSelectGroup(chat.chatId);
+            return;
+          }
 
-  if (otherUser) {
-    handleSelectChat(currentUser.uid, otherUser);
-  }
-}}
+          if (otherUser) {
+            handleSelectChat(
+              currentUser.uid,
+              otherUser
+            );
+          }
+        }}
         className="group relative flex min-w-0 flex-1 cursor-pointer items-center gap-3.5 rounded-2xl border border-transparent p-3 text-left"
       >
         {isSelected && (
@@ -72,14 +69,19 @@ handleSelectGroup: (chatId: string) => void;
         )}
 
         {isGroup ? (
-          <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-tr from-violet-500/20 to-purple-600/20 border border-violet-500/30 text-violet-600 dark:text-violet-400 shadow-sm">
+          <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-500/30 bg-linear-to-tr from-violet-500/20 to-purple-600/20 text-violet-600 shadow-sm dark:text-violet-400">
             {groupParticipants.length >= 2 ? (
-              <div className="relative w-full h-full flex items-center justify-center">
-                <span className="absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-violet-500 text-[10px] font-bold text-white shadow-xs border border-white dark:border-zinc-900">
-                  {groupParticipants[0]?.name?.charAt(0).toUpperCase() || "G"}
+              <div className="relative flex h-full w-full items-center justify-center">
+                <span className="absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full border border-white bg-violet-500 text-[10px] font-bold text-white shadow-xs dark:border-zinc-900">
+                  {groupParticipants[0]?.name
+                    ?.charAt(0)
+                    .toUpperCase() || "G"}
                 </span>
-                <span className="absolute right-1 bottom-1 flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-[10px] font-bold text-white shadow-xs border border-white dark:border-zinc-900">
-                  {groupParticipants[1]?.name?.charAt(0).toUpperCase() || "2"}
+
+                <span className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full border border-white bg-purple-600 text-[10px] font-bold text-white shadow-xs dark:border-zinc-900">
+                  {groupParticipants[1]?.name
+                    ?.charAt(0)
+                    .toUpperCase() || "2"}
                 </span>
               </div>
             ) : (
@@ -87,9 +89,11 @@ handleSelectGroup: (chatId: string) => void;
             )}
           </div>
         ) : (
-          <Avatar className="h-11 w-11 border border-white/80 dark:border-zinc-700 shadow-xs">
-            <AvatarFallback className="bg-linear-to-tr from-amber-400 to-orange-500 font-bold text-white text-xs">
-              {otherUser?.name?.charAt(0).toUpperCase() || "U"}
+          <Avatar className="h-11 w-11 border border-white/80 shadow-xs dark:border-zinc-700">
+            <AvatarFallback className="bg-linear-to-tr from-amber-400 to-orange-500 text-xs font-bold text-white">
+              {otherUser?.name
+                ?.charAt(0)
+                .toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
         )}
@@ -97,15 +101,18 @@ handleSelectGroup: (chatId: string) => void;
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <p className="truncate text-xs font-semibold text-slate-800 dark:text-zinc-100">
-              {isGroup ? chat.name || "Unnamed Group" : otherUser?.name || "Unknown User"}
+              {isGroup
+                ? chat.name || "Unnamed Group"
+                : otherUser?.name || "Unknown User"}
             </p>
-           
           </div>
 
           <p className="mt-0.5 truncate text-[11px] font-medium text-slate-400 dark:text-zinc-500">
             {isGroup
               ? `${participantIds.length} members`
-              : otherUser?.email || otherUser?.phoneNumber || "No contact info"}
+              : otherUser?.email ||
+                otherUser?.phoneNumber ||
+                "No contact info"}
           </p>
         </div>
       </button>

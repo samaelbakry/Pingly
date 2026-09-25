@@ -6,152 +6,202 @@ import { listenToMessages } from "@/services/messages";
 import { Message } from "@/types/messages";
 
 import { useAuth } from "@/context/AuthContext";
-import { UserProfile } from "@/types/userProfile";
+import { useChat } from "@/context/ChatProvider";
+
 import MessageBubble from "../features/MessageBubble";
 import MessageComposer from "../features/MessageComposer";
 import NoChatSelectedState from "./NoChatSelectedState";
 import ChatWindowHeader from "./ChatWindowHeader";
-import { ChatItem } from "@/types/chatType";
+
 import { database } from "@/lib/firebaseConfig";
 import { get, ref } from "firebase/database";
 
-type ChatPropsType = {
-  selectedUserId: string | null;
-  selectedUser: UserProfile | null;
-  chatId: string | null;
-  isGroupChat: boolean;
-  handleLeaveChat:()=>void
-};
+import { UserProfile } from "@/types/userProfile";
 
-export default function ChatWindow({
-  selectedUserId,
-  selectedUser,
-  chatId,
-  isGroupChat,
-  handleLeaveChat
-}: ChatPropsType) {
+export default function ChatWindow({ handleLeaveChat}: {handleLeaveChat: () => void}) {
   const { user: currentUser } = useAuth();
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<ChatItem | null>(null);
+  const { selectedChat } = useChat();
+
+  const [messages, setMessages] = useState<Message[]>(
+    []
+  );
+
   const [chatUsers, setChatUsers] = useState<Record<string, UserProfile>>({});
 
-useEffect(() => {
-  if (!chatId) return;
+  const chatId = selectedChat?.chatId ?? null;
 
-  const loadChat = async () => {
-    try {
-      const snapshot = await get(ref(database, `chats/${chatId}`));
+  const isGroupChat = selectedChat?.type === "group";
 
-      if (!snapshot.exists()) return;
+  const selectedUser = selectedChat?.type === "user" ? selectedChat.user : null;
 
-      const chat = snapshot.val() as ChatItem;
+  const selectedGroup =  selectedChat?.type === "group" ? selectedChat.group : null;
 
-      const messagesSnapshot = await get(
-        ref(database, `chats/${chatId}/messages`),
-      );
+  useEffect(() => {
+    if (!chatId) {
+      return;
+    }
 
-      const messagesData = messagesSnapshot.exists()
-        ? messagesSnapshot.val()
-        : {};
-
-      const fetchedMessages: Message[] = Object.entries(messagesData).map(
-        ([id, message]) => ({
-          id,
-          ...(message as Omit<Message, "id">),
-        }),
-      );
-
-      setMessages(fetchedMessages);
-
-      if (chat.type === "group") {
-        setSelectedGroup({
-          ...chat,
-          chatId,
-        });
-
-        const participantIds = Object.keys(chat.participants || {});
-
-        const leftUserIds = fetchedMessages
-          .filter(
-            (message) =>
-              message.type === "system" &&
-              message.action === "left" &&
-              message.userId,
-          )
-          .map((message) => message.userId!);
-
-        const userIds = [...new Set([...participantIds, ...leftUserIds])];
-
-        const usersEntries = await Promise.all(
-          userIds.map(async (userId) => {
-            const userSnapshot = await get(
-              ref(database, `users/${userId}`),
-            );
-
-            if (!userSnapshot.exists()) return null;
-
-            return [
-              userId,
-              {
-                uid: userId,
-                ...userSnapshot.val(),
-              },
-            ] as const;
-          }),
+    const loadChat = async () => {
+      try {
+        const snapshot = await get(
+          ref(database, `chats/${chatId}`)
         );
 
-        const usersMap: Record<string, UserProfile> = {};
+        if (!snapshot.exists()) {
+          return;
+        }
 
-        usersEntries.forEach((entry) => {
-          if (!entry) return;
+        const chat = snapshot.val();
 
-          const [userId, user] = entry;
-          usersMap[userId] = user;
-        });
+        const messagesSnapshot = await get(
+          ref(
+            database,
+            `chats/${chatId}/messages`
+          )
+        );
 
-        setChatUsers(usersMap);
-      } else {
-        setSelectedGroup(null);
-        setChatUsers({});
+        const messagesData =
+          messagesSnapshot.exists()
+            ? messagesSnapshot.val()
+            : {};
+
+        const fetchedMessages: Message[] =
+          Object.entries(messagesData).map(
+            ([id, message]) => ({
+              id,
+              ...(message as Omit<Message, "id">),
+            })
+          );
+
+        setMessages(fetchedMessages);
+
+        if (chat.type === "group") {
+          const participantIds = Object.keys(
+            chat.participants || {}
+          );
+
+          const leftUserIds =
+            fetchedMessages
+              .filter(
+                (message) =>
+                  message.type === "system" &&
+                  message.action === "left" &&
+                  message.userId
+              )
+              .map(
+                (message) =>
+                  message.userId!
+              );
+
+          const userIds = [
+            ...new Set([
+              ...participantIds,
+              ...leftUserIds,
+            ]),
+          ];
+
+          const usersEntries =
+            await Promise.all(
+              userIds.map(
+                async (userId) => {
+                  const userSnapshot =
+                    await get(
+                      ref(
+                        database,
+                        `users/${userId}`
+                      )
+                    );
+
+                  if (
+                    !userSnapshot.exists()
+                  ) {
+                    return null;
+                  }
+
+                  return [
+                    userId,
+                    {
+                      uid: userId,
+                      ...userSnapshot.val(),
+                    },
+                  ] as const;
+                }
+              )
+            );
+
+          const usersMap: Record<
+            string,
+            UserProfile
+          > = {};
+
+          usersEntries.forEach((entry) => {
+            if (!entry) return;
+
+            const [userId, user] =
+              entry;
+
+            usersMap[userId] = user;
+          });
+
+          setChatUsers(usersMap);
+        } else {
+          setChatUsers({});
+        }
+      } catch (error) {
+        console.error(
+          "Failed to load chat:",
+          error
+        );
       }
-    } catch (error) {
-      console.error("Failed to load chat:", error);
-    }
-  };
+    };
 
-  loadChat();
+    loadChat();
 
-  const unsubscribe = listenToMessages(chatId, (fetchedMessages) => {
-    setMessages(fetchedMessages);
-  });
+    const unsubscribe =
+      listenToMessages(
+        chatId,
+        (fetchedMessages) => {
+          setMessages(fetchedMessages);
+        }
+      );
 
-  return () => {
-    unsubscribe();
-  };
-}, [chatId]);
-  if (!selectedUserId || !chatId) {
+    return () => {
+      unsubscribe();
+    };
+  }, [chatId]);
+
+ 
+  if (!selectedChat || !chatId) {
     return <NoChatSelectedState />;
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden scroll-smooth rounded-[2.5rem] border border-white/40 dark:border-zinc-800 bg-white/30 dark:bg-zinc-900/40 shadow-md dark:shadow-none backdrop-blur-3xl">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden scroll-smooth rounded-[2.5rem] border border-white/40 bg-white/30 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 dark:shadow-none">
       <ChatWindowHeader
         selectedUser={selectedUser}
         selectedGroup={selectedGroup}
         isGroupChat={isGroupChat}
-        currentUserId={currentUser?.uid ?? ""}
+        currentUserId={ currentUser?.uid ?? ""}
         messages={messages}
         chatId={chatId}
         handleLeaveChat={handleLeaveChat}
       />
+
       <div className="chat-scroll flex-1 min-h-0 overflow-y-auto p-5 space-y-3.5">
-        <MessageBubble messages={messages} chatId={chatId} chatUsers={chatUsers} isGroupChat={isGroupChat} />
+        <MessageBubble
+          messages={messages}
+          chatId={chatId}
+          chatUsers={chatUsers}
+          isGroupChat={isGroupChat}
+        />
       </div>
 
       <MessageComposer
         chatId={chatId}
-        currentUserId={currentUser?.uid as string}
+        currentUserId={
+          currentUser?.uid as string
+        }
       />
     </div>
   );

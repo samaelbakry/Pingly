@@ -1,18 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
-import { UserProfile } from "./userProfile";
 import { ChatItem } from "./chatType";
 import { Message } from "./messages";
-
-export type SidebarChatsProps = {
-  selectedUserId: string | null;
-  setSelectedUser: (user: UserProfile | null) => void;
-  setSelectedUserId: (userId: string | null) => void;
-  selectedUser: UserProfile | null;
-  setChatId: (chatId: string | null) => void;
-  setIsGroupChat: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowArchived: Dispatch<SetStateAction<boolean>>;
-  showArchived: boolean;
-};
+import { UserProfile } from "./userProfile";
 
 export type chatWindowProps = {
   selectedUser: UserProfile | null;
@@ -21,5 +9,18 @@ export type chatWindowProps = {
   messages: Message[];
   chatId: string;
   currentUserId: string;
-  handleLeaveChat:()=>void
+  handleLeaveChat: () => void;
+};
+
+export type ChatListCardProps = {
+  chat: ChatItem;
+  chatUsers: Record<string, UserProfile>;
+  selectedChatId?: string | null;
+
+  handleSelectChat: (currentUserID: string, user: UserProfile) => Promise<void>;
+
+  handleSelectGroup: (chatId: string) => void;
+
+  showArchived: boolean;
+  onUnarchive: (chatId: string) => Promise<void>;
 };

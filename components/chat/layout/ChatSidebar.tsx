@@ -1,37 +1,56 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { createChat, createGroupChat, getUserChats } from "@/services/chats";
+import { useChat } from "@/context/ChatProvider";
+
+import {
+  createChat,
+  createGroupChat,
+  getUserChats,
+} from "@/services/chats";
+
+import { getArchivedChats, unarchiveChat } from "@/services/chatActions";
+import { getUserById } from "@/services/users";
+
 import { useEffect, useMemo, useState } from "react";
 
 import ChatSkeleton from "@/components/skeletons/ChatSkeleton";
-import { getArchivedChats, unarchiveChat } from "@/services/chatActions";
-import { getUserById } from "@/services/users";
 import { ChatItem } from "@/types/chatType";
-import { SidebarChatsProps } from "@/types/Props";
 import { UserProfile } from "@/types/userProfile";
+
 import ChatListCard from "./ChatListCard";
 import NoMatchingChats from "./NoMatchingChats";
 import SidebarHeader from "./SidebarHeader";
-import { toast } from "sonner";
 import ChatSidebarFooter from "./ChatSidebarFooter";
 
-export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSelectedUser, setChatId, setIsGroupChat, showArchived }: SidebarChatsProps) {
+import { toast } from "sonner";
+
+type ChatSidebarProps = {
+  showArchived: boolean;
+};
+
+export default function ChatSidebar({
+  showArchived,
+}: ChatSidebarProps) {
   const { user: currentUser } = useAuth();
+
+  const { selectedChat, selectUserChat, selectGroupChat } = useChat();
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   const [userChats, setUserChats] = useState<ChatItem[]>([]);
 
-  const [chatUsers, setChatUsers] = useState<Record<string, UserProfile>>({});
+  const [chatUsers, setChatUsers] = useState<
+    Record<string, UserProfile>
+  >({});
 
   useEffect(() => {
     const loadChats = async () => {
       try {
         setLoading(true);
 
-        if (!currentUser) return;
+        if (!currentUser?.uid) return;
 
         const chats = showArchived
           ? await getArchivedChats(currentUser.uid)
@@ -45,10 +64,12 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
           chatItems
             .filter((chat) => chat.type !== "group")
             .map(async (chat) => {
-              const participantIds = Object.keys(chat?.participants);
+              const participantIds = Object.keys(
+                chat.participants ?? {}
+              );
 
               const otherUserId = participantIds.find(
-                (id) => id !== currentUser.uid,
+                (id) => id !== currentUser.uid
               );
 
               if (!otherUserId) return null;
@@ -58,7 +79,7 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
               if (!user) return null;
 
               return [otherUserId, user] as const;
-            }),
+            })
         );
 
         const usersMap: Record<string, UserProfile> = {};
@@ -82,7 +103,7 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
     if (currentUser?.uid) {
       loadChats();
     }
-  }, [currentUser?.uid, showArchived, currentUser]);
+  }, [currentUser?.uid, showArchived]);
 
   const filteredChats = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -92,53 +113,88 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
     }
 
     return userChats.filter((chat) => {
+    
       if (chat.type === "group") {
         return chat.name?.toLowerCase().includes(query);
       }
-      const participantIds = Object.keys(chat.participants);
 
-      const otherUserId = participantIds.find((id) => id !== currentUser?.uid);
+      const participantIds = Object.keys(
+        chat.participants ?? {}
+      );
+
+      const otherUserId = participantIds.find(
+        (id) => id !== currentUser?.uid
+      );
 
       if (!otherUserId) return false;
 
       const otherUser = chatUsers[otherUserId];
 
       return (
-        otherUser?.name?.toLowerCase().includes(query) ||
-        otherUser?.email?.toLowerCase().includes(query)
+        otherUser?.name
+          ?.toLowerCase()
+          .includes(query) ||
+        otherUser?.email
+          ?.toLowerCase()
+          .includes(query)
       );
     });
-  }, [userChats, chatUsers, search, currentUser?.uid]);
+  }, [
+    userChats,
+    chatUsers,
+    search,
+    currentUser?.uid,
+  ]);
 
-  const handleSelectChat = async (currentUserID: string, user: UserProfile) => {
-    if (!currentUserID || !user?.uid) return;
+  const handleSelectChat = async (
+    currentUserId: string,
+    user: UserProfile
+  ) => {
+    if (!currentUserId || !user?.uid) return;
 
     try {
-      const chatID = await createChat(currentUserID, user.uid);
+      const chatId = await createChat(
+        currentUserId,
+        user.uid
+      );
 
-      setSelectedUserId(user.uid);
-      setSelectedUser(user);
-      setChatId(chatID);
-      setIsGroupChat(false);
+      selectUserChat(chatId, user);
     } catch (error) {
-      console.error("Failed to open chat:", error);
+      console.error(
+        "Failed to open chat:",
+        error
+      );
     }
   };
 
-  const handleUnarchive = async (chatId: string) => {
+  const handleUnarchive = async (
+    chatId: string
+  ) => {
     try {
       if (!currentUser?.uid) return;
-      await unarchiveChat(currentUser?.uid, chatId as string);
-      toast.success("Removed From Archive")
 
-      setUserChats((prev) => prev.filter((chat) => chat.chatId !== chatId));
+      await unarchiveChat(
+        currentUser.uid,
+        chatId
+      );
+
+      toast.success("Removed From Archive");
+
+      setUserChats((prev) =>
+        prev.filter(
+          (chat) => chat.chatId !== chatId
+        )
+      );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
-  const handleCreateGroup = async (groupName: string, membersIds: string[]) => {
-    if (!currentUser?.uid || !groupName.trim() || membersIds.length === 0) {
+  const handleCreateGroup = async (
+    groupName: string,
+    membersIds: string[]
+  ) => {
+    if (!currentUser?.uid || !groupName.trim() || membersIds.length === 0 ) {
       return;
     }
 
@@ -146,34 +202,48 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
       const chatId = await createGroupChat(
         currentUser.uid,
         membersIds,
-        groupName.trim(),
+        groupName.trim()
       );
 
-      const chats = await getUserChats(currentUser.uid);
+      const chats = await getUserChats(
+        currentUser.uid
+      );
 
-      setUserChats(chats as unknown as ChatItem[]);
+      setUserChats(
+        chats as unknown as ChatItem[]
+      );
 
       console.log("Group created:", chatId);
     } catch (error) {
-      console.error("Failed to create group:", error);
+      console.error(
+        "Failed to create group:",
+        error
+      );
     }
   };
+
   const handleSelectGroup = (chatId: string) => {
     if (!chatId) return;
-    setSelectedUserId(chatId);
-    setSelectedUser(null);
-    setChatId(chatId);
-    setIsGroupChat(true);
+
+    const group = userChats.find(
+      (chat) => chat.chatId === chatId
+    );
+
+    if (!group || group.type !== "group") {
+      return;
+    }
+
+    selectGroupChat(chatId, group);
   };
 
   return (
     <div className="relative chat-scroll flex h-full min-h-0 flex-col rounded-[2.5rem] border border-white/40 p-5 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:shadow-none">
-      {" "}
       <SidebarHeader
         userChats={userChats}
         search={search}
         setSearch={setSearch}
       />
+
       <div className="custom-scrollbar -mr-1 flex-1 space-y-1.5 overflow-y-auto pr-1">
         {loading ? (
           Array.from({ length: 5 }).map((_, index) => (
@@ -182,24 +252,22 @@ export default function ChatSidebar({ selectedUserId, setSelectedUserId, setSele
         ) : filteredChats.length === 0 ? (
           <NoMatchingChats />
         ) : (
-          filteredChats.map((chat) => {
-            return (
-              <ChatListCard
-                key={chat.chatId}
-                chat={chat}
-                chatUsers={chatUsers}
-                handleSelectChat={handleSelectChat}
-                handleSelectGroup={handleSelectGroup}
-                selectedUserId={selectedUserId as string}
-                showArchived={showArchived}
-                onUnarchive={handleUnarchive}
-              />
-            );
-          })
+          filteredChats.map((chat) => (
+            <ChatListCard
+              key={chat.chatId}
+              chat={chat}
+              chatUsers={chatUsers}
+              handleSelectChat={handleSelectChat}
+              handleSelectGroup={handleSelectGroup}
+              selectedChatId={selectedChat?.chatId ?? null}
+              showArchived={showArchived}
+              onUnarchive={handleUnarchive}
+            />
+          ))
         )}
       </div>
+
       <div className="mt-2 shrink-0 rounded-b-2xl border-t border-white/20 bg-white/10 p-1 pt-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/10">
-        {" "}
         <ChatSidebarFooter
           currentUserId={currentUser?.uid as string}
           handleSelectChat={handleSelectChat}
