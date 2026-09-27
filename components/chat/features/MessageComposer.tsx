@@ -3,19 +3,39 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { sendMessage } from "@/services/messages";
+import { setTyping } from "@/services/typing";
 import { uploadImagetoChat } from "@/services/uploads";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { Image, Loader2, Send, SmilePlus } from "lucide-react";
-import React, { useState, type FormEvent } from "react";
-
-export default function MessageComposer({chatId,currentUserId }: {chatId: string; currentUserId: string }) {
-
+import React, { useEffect, useRef, useState, type FormEvent } from "react";
+export default function MessageComposer({
+  chatId,
+  currentUserId,
+}: {
+  chatId: string;
+  currentUserId: string;
+}) {
   const [messageText, setMessageText] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  // const {theme} = useTheme()
   const [sending, setSending] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // send message
+  const handleTyping = (value: string) => {
+    setMessageText(value);
+
+    if (!chatId || !currentUserId) return;
+
+    setTyping(chatId, currentUserId, true);
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      setTyping(chatId, currentUserId, false);
+    }, 1500);
+  };
+
   const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -31,6 +51,10 @@ export default function MessageComposer({chatId,currentUserId }: {chatId: string
         type: "text",
         text,
       });
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      await setTyping(chatId, currentUserId, false);
     } catch (error) {
       console.error("Failed to send message:", error);
     } finally {
@@ -38,35 +62,45 @@ export default function MessageComposer({chatId,currentUserId }: {chatId: string
     }
   };
 
-const handleImageSelect = async (
-  e: React.ChangeEvent<HTMLInputElement>
-) => {
-  const file = e.target.files?.[0];
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
 
-  if (!file || !chatId || !currentUserId) return;
+    if (!file || !chatId || !currentUserId) return;
 
-  try {
-    setSending(true);
+    try {
+      setSending(true);
 
-    const imageUrl = await uploadImagetoChat(file);
+      const imageUrl = await uploadImagetoChat(file);
 
-    await sendMessage(chatId, currentUserId, {
-      type: "image",
-      imageUrl,
-    });
+      await sendMessage(chatId, currentUserId, {
+        type: "image",
+        imageUrl,
+      });
 
-    console.log("Image message sent:", imageUrl);
-  } catch (error) {
-    console.error("Failed to send image:", error);
-  } finally {
-    setSending(false);
-    e.target.value = "";
-  }
-};
+      console.log("Image message sent:", imageUrl);
+    } catch (error) {
+      console.error("Failed to send image:", error);
+    } finally {
+      setSending(false);
+      e.target.value = "";
+    }
+  };
 
   const handleEmojiPicker = (emojiData: EmojiClickData) => {
     setMessageText((prev) => prev + emojiData.emoji);
   };
+
+  useEffect(() => {
+  return () => {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    if (chatId && currentUserId) {
+      setTyping(chatId, currentUserId, false);
+    }
+  };
+}, [chatId, currentUserId]);
 
   return (
     <form
@@ -99,7 +133,10 @@ const handleImageSelect = async (
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-slate-100"
           >
             {sending ? (
-              <Loader2 aria-label="Sending image" className="size-5 animate-spin" />
+              <Loader2
+                aria-label="Sending image"
+                className="size-5 animate-spin"
+              />
             ) : (
               <Image aria-label="Upload image" className="size-5" />
             )}
@@ -119,7 +156,7 @@ const handleImageSelect = async (
 
         <Input
           value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
+          onChange={(e) => handleTyping(e.target.value)}
           placeholder="Type a message..."
           disabled={sending}
           className="h-11 flex-1 rounded-full border-white/40 dark:border-zinc-800 bg-white/40 dark:bg-zinc-800/60 px-4 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 backdrop-blur-md focus-visible:border-orange-400 dark:focus-visible:border-orange-500 focus-visible:bg-white/60 dark:focus-visible:bg-zinc-800 focus-visible:ring-4 focus-visible:ring-orange-500/10 transition-all shadow-inner"

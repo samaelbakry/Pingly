@@ -15,17 +15,21 @@ import ChatWindowHeader from "./ChatWindowHeader";
 
 import { database } from "@/lib/firebaseConfig";
 import { get, ref } from "firebase/database";
+import { listenToTyping } from "@/services/typing";
 
 import { UserProfile } from "@/types/userProfile";
 
-export default function ChatWindow({ handleLeaveChat}: {handleLeaveChat: () => void}) {
+export default function ChatWindow({
+  handleLeaveChat,
+}: {
+  handleLeaveChat: () => void;
+}) {
   const { user: currentUser } = useAuth();
 
   const { selectedChat } = useChat();
 
-  const [messages, setMessages] = useState<Message[]>(
-    []
-  );
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   const [chatUsers, setChatUsers] = useState<Record<string, UserProfile>>({});
 
@@ -35,7 +39,10 @@ export default function ChatWindow({ handleLeaveChat}: {handleLeaveChat: () => v
 
   const selectedUser = selectedChat?.type === "user" ? selectedChat.user : null;
 
-  const selectedGroup =  selectedChat?.type === "group" ? selectedChat.group : null;
+  const selectedGroup =
+    selectedChat?.type === "group" ? selectedChat.group : null;
+
+  const isSomeoneTyping = typingUsers.length > 0;
 
   useEffect(() => {
     if (!chatId) {
@@ -44,9 +51,7 @@ export default function ChatWindow({ handleLeaveChat}: {handleLeaveChat: () => v
 
     const loadChat = async () => {
       try {
-        const snapshot = await get(
-          ref(database, `chats/${chatId}`)
-        );
+        const snapshot = await get(ref(database, `chats/${chatId}`));
 
         if (!snapshot.exists()) {
           return;
@@ -55,91 +60,60 @@ export default function ChatWindow({ handleLeaveChat}: {handleLeaveChat: () => v
         const chat = snapshot.val();
 
         const messagesSnapshot = await get(
-          ref(
-            database,
-            `chats/${chatId}/messages`
-          )
+          ref(database, `chats/${chatId}/messages`),
         );
 
-        const messagesData =
-          messagesSnapshot.exists()
-            ? messagesSnapshot.val()
-            : {};
+        const messagesData = messagesSnapshot.exists()
+          ? messagesSnapshot.val()
+          : {};
 
-        const fetchedMessages: Message[] =
-          Object.entries(messagesData).map(
-            ([id, message]) => ({
-              id,
-              ...(message as Omit<Message, "id">),
-            })
-          );
+        const fetchedMessages: Message[] = Object.entries(messagesData).map(
+          ([id, message]) => ({
+            id,
+            ...(message as Omit<Message, "id">),
+          }),
+        );
 
         setMessages(fetchedMessages);
 
         if (chat.type === "group") {
-          const participantIds = Object.keys(
-            chat.participants || {}
+          const participantIds = Object.keys(chat.participants || {});
+
+          const leftUserIds = fetchedMessages
+            .filter(
+              (message) =>
+                message.type === "system" &&
+                message.action === "left" &&
+                message.userId,
+            )
+            .map((message) => message.userId!);
+
+          const userIds = [...new Set([...participantIds, ...leftUserIds])];
+
+          const usersEntries = await Promise.all(
+            userIds.map(async (userId) => {
+              const userSnapshot = await get(ref(database, `users/${userId}`));
+
+              if (!userSnapshot.exists()) {
+                return null;
+              }
+
+              return [
+                userId,
+                {
+                  uid: userId,
+                  ...userSnapshot.val(),
+                },
+              ] as const;
+            }),
           );
 
-          const leftUserIds =
-            fetchedMessages
-              .filter(
-                (message) =>
-                  message.type === "system" &&
-                  message.action === "left" &&
-                  message.userId
-              )
-              .map(
-                (message) =>
-                  message.userId!
-              );
-
-          const userIds = [
-            ...new Set([
-              ...participantIds,
-              ...leftUserIds,
-            ]),
-          ];
-
-          const usersEntries =
-            await Promise.all(
-              userIds.map(
-                async (userId) => {
-                  const userSnapshot =
-                    await get(
-                      ref(
-                        database,
-                        `users/${userId}`
-                      )
-                    );
-
-                  if (
-                    !userSnapshot.exists()
-                  ) {
-                    return null;
-                  }
-
-                  return [
-                    userId,
-                    {
-                      uid: userId,
-                      ...userSnapshot.val(),
-                    },
-                  ] as const;
-                }
-              )
-            );
-
-          const usersMap: Record<
-            string,
-            UserProfile
-          > = {};
+          const usersMap: Record<string, UserProfile> = {};
 
           usersEntries.forEach((entry) => {
             if (!entry) return;
 
-            const [userId, user] =
-              entry;
+            const [userId, user] = entry;
 
             usersMap[userId] = user;
           });
@@ -149,29 +123,35 @@ export default function ChatWindow({ handleLeaveChat}: {handleLeaveChat: () => v
           setChatUsers({});
         }
       } catch (error) {
-        console.error(
-          "Failed to load chat:",
-          error
-        );
+        console.error("Failed to load chat:", error);
       }
     };
 
     loadChat();
 
-    const unsubscribe =
-      listenToMessages(
-        chatId,
-        (fetchedMessages) => {
-          setMessages(fetchedMessages);
-        }
-      );
+    const unsubscribe = listenToMessages(chatId, (fetchedMessages) => {
+      setMessages(fetchedMessages);
+    });
 
     return () => {
       unsubscribe();
     };
   }, [chatId]);
 
- 
+  useEffect(() => {
+    if (!chatId || !currentUser?.uid) {
+      return;
+    }
+
+    const unsubscribe = listenToTyping(chatId, (users) => {
+      setTypingUsers(users.filter((userId) => userId !== currentUser.uid));
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [chatId, currentUser?.uid]);
+
   if (!selectedChat || !chatId) {
     return <NoChatSelectedState />;
   }
@@ -182,7 +162,7 @@ export default function ChatWindow({ handleLeaveChat}: {handleLeaveChat: () => v
         selectedUser={selectedUser}
         selectedGroup={selectedGroup}
         isGroupChat={isGroupChat}
-        currentUserId={ currentUser?.uid ?? ""}
+        currentUserId={currentUser?.uid ?? ""}
         messages={messages}
         chatId={chatId}
         handleLeaveChat={handleLeaveChat}
@@ -196,12 +176,38 @@ export default function ChatWindow({ handleLeaveChat}: {handleLeaveChat: () => v
           isGroupChat={isGroupChat}
         />
       </div>
+      {isSomeoneTyping && (
+        <div className="mt-2 flex items-end gap-2.5">
+          <div className="shrink-0">
+            {chatUsers[typingUsers[0]]?.photoURL || selectedUser?.photoURL ? (
+              <img
+                src={
+                  chatUsers[typingUsers[0]]?.photoURL ||
+                  selectedUser?.photoURL ||
+                  ""
+                }
+                alt=""
+                className="h-7 w-7 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-100 text-[10px] font-bold text-orange-600 dark:bg-orange-950/60 dark:text-orange-400">
+                {(chatUsers[typingUsers[0]]?.name || selectedUser?.name || "?")
+                  .charAt(0)
+                  .toUpperCase()}
+              </div>
+            )}
+          </div>
 
+          <div className="flex h-9 items-center gap-1 rounded-2xl rounded-bl-md border border-zinc-200/80 bg-white/90 px-3.5 shadow-sm backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/90">
+            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.3s] dark:bg-zinc-500" />
+            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.15s] dark:bg-zinc-500" />
+            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 dark:bg-zinc-500" />
+          </div>
+        </div>
+      )}
       <MessageComposer
         chatId={chatId}
-        currentUserId={
-          currentUser?.uid as string
-        }
+        currentUserId={currentUser?.uid as string}
       />
     </div>
   );
