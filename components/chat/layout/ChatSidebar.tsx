@@ -65,11 +65,11 @@ export default function ChatSidebar({
             .filter((chat) => chat.type !== "group")
             .map(async (chat) => {
               const participantIds = Object.keys(
-                chat.participants ?? {}
+                chat.participants ?? {},
               );
 
               const otherUserId = participantIds.find(
-                (id) => id !== currentUser.uid
+                (id) => id !== currentUser.uid,
               );
 
               if (!otherUserId) return null;
@@ -79,7 +79,7 @@ export default function ChatSidebar({
               if (!user) return null;
 
               return [otherUserId, user] as const;
-            })
+            }),
         );
 
         const usersMap: Record<string, UserProfile> = {};
@@ -113,17 +113,16 @@ export default function ChatSidebar({
     }
 
     return userChats.filter((chat) => {
-    
       if (chat.type === "group") {
         return chat.name?.toLowerCase().includes(query);
       }
 
       const participantIds = Object.keys(
-        chat.participants ?? {}
+        chat.participants ?? {},
       );
 
       const otherUserId = participantIds.find(
-        (id) => id !== currentUser?.uid
+        (id) => id !== currentUser?.uid,
       );
 
       if (!otherUserId) return false;
@@ -131,59 +130,40 @@ export default function ChatSidebar({
       const otherUser = chatUsers[otherUserId];
 
       return (
-        otherUser?.name
-          ?.toLowerCase()
-          .includes(query) ||
-        otherUser?.email
-          ?.toLowerCase()
-          .includes(query)
+        otherUser?.name?.toLowerCase().includes(query) ||
+        otherUser?.email?.toLowerCase().includes(query)
       );
     });
-  }, [
-    userChats,
-    chatUsers,
-    search,
-    currentUser?.uid,
-  ]);
+  }, [userChats, chatUsers, search, currentUser?.uid]);
 
   const handleSelectChat = async (
     currentUserId: string,
-    user: UserProfile
+    user: UserProfile,
   ) => {
     if (!currentUserId || !user?.uid) return;
 
     try {
       const chatId = await createChat(
         currentUserId,
-        user.uid
+        user.uid,
       );
 
       selectUserChat(chatId, user);
     } catch (error) {
-      console.error(
-        "Failed to open chat:",
-        error
-      );
+      console.error("Failed to open chat:", error);
     }
   };
 
-  const handleUnarchive = async (
-    chatId: string
-  ) => {
+  const handleUnarchive = async (chatId: string) => {
     try {
       if (!currentUser?.uid) return;
 
-      await unarchiveChat(
-        currentUser.uid,
-        chatId
-      );
+      await unarchiveChat(currentUser.uid, chatId);
 
       toast.success("Removed From Archive");
 
       setUserChats((prev) =>
-        prev.filter(
-          (chat) => chat.chatId !== chatId
-        )
+        prev.filter((chat) => chat.chatId !== chatId),
       );
     } catch (error) {
       console.error(error);
@@ -192,9 +172,13 @@ export default function ChatSidebar({
 
   const handleCreateGroup = async (
     groupName: string,
-    membersIds: string[]
+    membersIds: string[],
   ) => {
-    if (!currentUser?.uid || !groupName.trim() || membersIds.length === 0 ) {
+    if (
+      !currentUser?.uid ||
+      !groupName.trim() ||
+      membersIds.length === 0
+    ) {
       return;
     }
 
@@ -202,23 +186,16 @@ export default function ChatSidebar({
       const chatId = await createGroupChat(
         currentUser.uid,
         membersIds,
-        groupName.trim()
+        groupName.trim(),
       );
 
-      const chats = await getUserChats(
-        currentUser.uid
-      );
+      const chats = await getUserChats(currentUser.uid);
 
-      setUserChats(
-        chats as unknown as ChatItem[]
-      );
+      setUserChats(chats as unknown as ChatItem[]);
 
       console.log("Group created:", chatId);
     } catch (error) {
-      console.error(
-        "Failed to create group:",
-        error
-      );
+      console.error("Failed to create group:", error);
     }
   };
 
@@ -226,7 +203,7 @@ export default function ChatSidebar({
     if (!chatId) return;
 
     const group = userChats.find(
-      (chat) => chat.chatId === chatId
+      (chat) => chat.chatId === chatId,
     );
 
     if (!group || group.type !== "group") {
@@ -237,16 +214,20 @@ export default function ChatSidebar({
   };
 
   return (
-    <div className="relative chat-scroll flex h-full min-h-0 flex-col rounded-[2.5rem] border border-white/40 p-5 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:shadow-none">
+    <aside className="relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[2rem] border border-orange-100/70 bg-white/55 p-3 shadow-[0_20px_70px_rgba(249,115,22,0.08)] backdrop-blur-2xl dark:border-zinc-800 dark:bg-zinc-950/55 dark:shadow-none">
+      
+      <div className="pointer-events-none absolute -right-16 -top-20 h-40 w-40 rounded-full bg-orange-400/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-40 w-40 rounded-full bg-violet-500/10 blur-3xl" />
+
       <SidebarHeader
         userChats={userChats}
         search={search}
         setSearch={setSearch}
       />
 
-      <div className="custom-scrollbar -mr-1 flex-1 space-y-1.5 overflow-y-auto pr-1">
+      <div className="custom-scrollbar relative z-10 -mr-1 flex-1 space-y-1 overflow-y-auto px-1 pb-2 pr-1">
         {loading ? (
-          Array.from({ length: 5 }).map((_, index) => (
+          Array.from({ length: 6 }).map((_, index) => (
             <ChatSkeleton key={index} />
           ))
         ) : filteredChats.length === 0 ? (
@@ -267,13 +248,13 @@ export default function ChatSidebar({
         )}
       </div>
 
-      <div className="mt-2 shrink-0 rounded-b-2xl border-t border-white/20 bg-white/10 p-1 pt-3 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/10">
+      <div className="relative z-10 mt-2 border-t border-zinc-200/60 pt-2 dark:border-zinc-800/70">
         <ChatSidebarFooter
           currentUserId={currentUser?.uid as string}
           handleSelectChat={handleSelectChat}
           onCreateGroup={handleCreateGroup}
         />
       </div>
-    </div>
+    </aside>
   );
 }
