@@ -6,10 +6,8 @@ type Props = {
   chatUsers: Record<string, UserProfile>;
 };
 
-export default function SystemMessage({
-  message,
-  chatUsers,
-}: Props) {
+export default function SystemMessage({ message, chatUsers}: Props) {
+  
   if (message.action !== "left") {
     return null;
   }

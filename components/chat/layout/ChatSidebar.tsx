@@ -225,7 +225,7 @@ export default function ChatSidebar({
         setSearch={setSearch}
       />
 
-      <div className="custom-scrollbar relative z-10 -mr-1 flex-1 space-y-1 overflow-y-auto px-1 pb-2 pr-1">
+      <div className="custom-scrollbar  relative z-10 -mr-1 flex-1 space-y-1 overflow-y-auto px-1 pb-2 pr-1">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
             <ChatSkeleton key={index} />

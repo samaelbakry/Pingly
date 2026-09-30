@@ -17,14 +17,10 @@ type Props = {
   chatUsers: Record<string, UserProfile>;
 };
 
-export default function MessageBubble({
-  messages,
-  chatId,
-  isGroupChat,
-  chatUsers,
-}: Props) {
-  const { user: currentUser } = useAuth();
+export default function MessageBubble({messages,chatId, isGroupChat, chatUsers}: Props) {
 
+  const { user: currentUser } = useAuth();
+  
   if (messages.length === 0) {
     return <EmptyChatState />;
   }

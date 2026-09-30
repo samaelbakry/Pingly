@@ -89,7 +89,7 @@ export default function ChatDashboardContent() {
   }, [notification]);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-slate-50/50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white flex flex-col">
+    <div className="relative chat-scroll h-screen w-full overflow-hidden bg-slate-50/50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white flex flex-col">
 
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-100 bg-linear-to-tr from-amber-400/20 via-orange-400/20 to-red-400/20 dark:from-amber-600/10 dark:via-orange-600/10 dark:to-red-600/10 blur-[140px] rounded-full pointer-events-none z-50" />
 
