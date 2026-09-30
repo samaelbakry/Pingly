@@ -1,65 +1,74 @@
-import { database } from "@/lib/firebaseConfig"
-import { ChatItem } from "@/types/chatType"
-import { get, push, ref, set } from "firebase/database"
+import { database } from "@/lib/firebaseConfig";
+import { ChatItem } from "@/types/chatType";
+import {
+  get,
+  push,
+  ref,
+  set
+} from "firebase/database";
 
 export function getChatId(userOne: string, userTwo: string) {
-    return [userOne, userTwo].sort().join("_")
+  return [userOne, userTwo].sort().join("_");
 }
 
 export async function createChat(currentUserID: string, otherUserID: string) {
+  const chatID = getChatId(currentUserID, otherUserID);
 
-    const chatID = getChatId(currentUserID, otherUserID)
+  const chatRef = ref(database, `chats/${chatID}`);
 
-    const chatRef = ref(database , `chats/${chatID}`)
+  const snapshot = await get(chatRef);
 
-    const snapshot = await get(chatRef);
+  if (!snapshot.exists()) {
+    await set(chatRef, {
+      type: "direct",
+      participants: {
+        [currentUserID]: true,
+        [otherUserID]: true,
+      },
+      createdAt: Date.now(),
+    });
+  }
 
-    if(!snapshot.exists()){
-
-        await set(chatRef , {
-          type:"direct",
-            participants:{
-                [currentUserID]:true,
-                [otherUserID]:true,
-            },
-             createdAt: Date.now(),
-        })
-        
-    }
-
-    return chatID
+  return chatID;
 }
 
-export async function getUserChats(currentUserId: string) {
+export async function getUserChats(currentUserId: string): Promise<ChatItem[]> {
+  if (!currentUserId) {
+    return [];
+  }
+
   const chatsRef = ref(database, "chats");
-  const archiveRef = ref(database , `users/${currentUserId}/archivedChats`)
 
-  const [chatsSnapshots , archivedSnapshot] = await Promise.all([
+  const archiveRef = ref(database, `users/${currentUserId}/archivedChats`);
+
+  const [chatsSnapshot, archivedSnapshot] = await Promise.all([
     get(chatsRef),
-    get(archiveRef)
-  ])
+    get(archiveRef),
+  ]);
 
-  const chatsData = chatsSnapshots.val() 
-  const archivedChats = archivedSnapshot.exists() ? archivedSnapshot.val() : {}
+  const chatsData = chatsSnapshot.val() ?? {};
+  const archivedChats = archivedSnapshot.val() ?? {};
 
-
-   return Object.entries(chatsData)
+  return Object.entries(chatsData)
     .filter(([chatId, chat]) => {
-      const participants = (chat as ChatItem).participants;
+      const chatData = chat as ChatItem;
 
-      return (
-        participants?.[currentUserId] === true &&
-        !archivedChats[chatId]
-      );
+      const isParticipant = chatData.participants?.[currentUserId] === true;
+
+      const isArchived = archivedChats[chatId] === true;
+
+      return isParticipant && !isArchived;
     })
-    .map(([chatId, chat]) => ({
-      chatId,
-      ...(chat as object),
+    .map(([, chat]) => ({
+      ...(chat as ChatItem),
     }));
 }
 
-export async function createGroupChat( creatorId: string, membersIds: string[], groupName: string) {
-  
+export async function createGroupChat(
+  creatorId: string,
+  membersIds: string[],
+  groupName: string,
+) {
   const chatRef = ref(database, "chats");
   const newChatRef = push(chatRef);
 
@@ -80,5 +89,3 @@ export async function createGroupChat( creatorId: string, membersIds: string[], 
 
   return newChatRef.key;
 }
-
-

@@ -177,7 +177,7 @@ export default function ChatWindow({
         />
       </div>
       {isSomeoneTyping && (
-        <div className="mt-2 flex items-end gap-2.5">
+        <div className="m-4 flex items-end gap-2.5">
           <div className="shrink-0">
             {chatUsers[typingUsers[0]]?.photoURL || selectedUser?.photoURL ? (
               <img
