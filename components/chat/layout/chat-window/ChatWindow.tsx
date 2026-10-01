@@ -8,16 +8,16 @@ import { Message } from "@/types/messages";
 import { useAuth } from "@/context/AuthContext";
 import { useChat } from "@/context/ChatProvider";
 
-import MessageBubble from "../features/MessageBubble";
-import MessageComposer from "../features/MessageComposer";
-import NoChatSelectedState from "./NoChatSelectedState";
-import ChatWindowHeader from "./ChatWindowHeader";
 
 import { database } from "@/lib/firebaseConfig";
-import { get, ref } from "firebase/database";
 import { listenToTyping } from "@/services/typing";
+import { get, ref } from "firebase/database";
 
 import { UserProfile } from "@/types/userProfile";
+import MessageBubble from "../../message/MessageBubble";
+import MessageComposer from "../../message/MessageComposer";
+import NoChatSelectedState from "../../states/NoChatSelectedState";
+import ChatWindowHeader from "./ChatWindowHeader";
 
 export default function ChatWindow({
   handleLeaveChat,

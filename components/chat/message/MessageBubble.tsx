@@ -4,10 +4,9 @@ import { useAuth } from "@/context/AuthContext";
 import { Message } from "@/types/messages";
 import { UserProfile } from "@/types/userProfile";
 
-
-import MessageItem from "../ui/message/MessageItem";
-import SystemMessage from "../ui/message/SystemMessage";
-import EmptyChatState from "../ui/message/EmptyChatState";
+import EmptyChatState from "../states/EmptyChatState";
+import SystemMessage from "./SystemMessage";
+import MessageItem from "./MessageItem";
 
 
 type Props = {

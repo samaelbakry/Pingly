@@ -3,11 +3,12 @@ import { getUserById } from "@/services/users";
 import { chatWindowProps } from "@/types/Props";
 import { UserProfile } from "@/types/userProfile";
 import { useEffect, useState } from "react";
-import ClearChatButton from "../features/ClearChatButton";
-import LeaveGroupButton from "../features/LeaveGroupButton";
-import ArchiveButton from "../features/ArchiveButton";
-import AddMembersDialog from "../features/AddMembersDialog";
-import ChatProfileAvatar from "./ChatProfileAvatar";
+import ChatProfileAvatar from "../ChatProfileAvatar";
+import ClearChatButton from "../../actions/ClearChatButton";
+import AddMembersDialog from "../../dialogs/AddMembersDialog";
+import ArchiveButton from "../../actions/ArchiveButton";
+import LeaveGroupButton from "../../actions/LeaveGroupButton";
+
 
 export default function ChatWindowHeader({
   selectedUser,

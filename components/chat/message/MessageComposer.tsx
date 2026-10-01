@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { sendMessage } from "@/services/messages";
 import { setTyping } from "@/services/typing";
-import { uploadImagetoChat } from "@/services/uploads";
+import { uploadImage } from "@/services/uploads";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { Image, Loader2, Send, SmilePlus } from "lucide-react";
 import React, { useEffect, useRef, useState, type FormEvent } from "react";
@@ -70,7 +70,7 @@ export default function MessageComposer({
     try {
       setSending(true);
 
-      const imageUrl = await uploadImagetoChat(file);
+      const imageUrl = await uploadImage(file);
 
       await sendMessage(chatId, currentUserId, {
         type: "image",

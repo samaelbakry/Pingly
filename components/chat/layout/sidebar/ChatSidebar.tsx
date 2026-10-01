@@ -3,11 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useChat } from "@/context/ChatProvider";
 
-import {
-  createChat,
-  createGroupChat,
-  getUserChats,
-} from "@/services/chats";
+import { createChat, createGroupChat, getUserChats } from "@/services/chats";
 
 import { getArchivedChats, unarchiveChat } from "@/services/chatActions";
 import { getUserById } from "@/services/users";
@@ -18,8 +14,8 @@ import ChatSkeleton from "@/components/skeletons/ChatSkeleton";
 import { ChatItem } from "@/types/chatType";
 import { UserProfile } from "@/types/userProfile";
 
-import ChatListCard from "./ChatListCard";
-import NoMatchingChats from "./NoMatchingChats";
+import ChatListCard from "../../chat-list/ChatListCard";
+import NoMatchingChats from "../../states/NoMatchingChats";
 import SidebarHeader from "./SidebarHeader";
 import ChatSidebarFooter from "./ChatSidebarFooter";
 
@@ -29,9 +25,7 @@ type ChatSidebarProps = {
   showArchived: boolean;
 };
 
-export default function ChatSidebar({
-  showArchived,
-}: ChatSidebarProps) {
+export default function ChatSidebar({ showArchived }: ChatSidebarProps) {
   const { user: currentUser } = useAuth();
 
   const { selectedChat, selectUserChat, selectGroupChat } = useChat();
@@ -41,9 +35,7 @@ export default function ChatSidebar({
 
   const [userChats, setUserChats] = useState<ChatItem[]>([]);
 
-  const [chatUsers, setChatUsers] = useState<
-    Record<string, UserProfile>
-  >({});
+  const [chatUsers, setChatUsers] = useState<Record<string, UserProfile>>({});
 
   useEffect(() => {
     const loadChats = async () => {
@@ -64,9 +56,7 @@ export default function ChatSidebar({
           chatItems
             .filter((chat) => chat.type !== "group")
             .map(async (chat) => {
-              const participantIds = Object.keys(
-                chat.participants ?? {},
-              );
+              const participantIds = Object.keys(chat.participants ?? {});
 
               const otherUserId = participantIds.find(
                 (id) => id !== currentUser.uid,
@@ -117,13 +107,9 @@ export default function ChatSidebar({
         return chat.name?.toLowerCase().includes(query);
       }
 
-      const participantIds = Object.keys(
-        chat.participants ?? {},
-      );
+      const participantIds = Object.keys(chat.participants ?? {});
 
-      const otherUserId = participantIds.find(
-        (id) => id !== currentUser?.uid,
-      );
+      const otherUserId = participantIds.find((id) => id !== currentUser?.uid);
 
       if (!otherUserId) return false;
 
@@ -136,17 +122,11 @@ export default function ChatSidebar({
     });
   }, [userChats, chatUsers, search, currentUser?.uid]);
 
-  const handleSelectChat = async (
-    currentUserId: string,
-    user: UserProfile,
-  ) => {
+  const handleSelectChat = async (currentUserId: string, user: UserProfile) => {
     if (!currentUserId || !user?.uid) return;
 
     try {
-      const chatId = await createChat(
-        currentUserId,
-        user.uid,
-      );
+      const chatId = await createChat(currentUserId, user.uid);
 
       selectUserChat(chatId, user);
     } catch (error) {
@@ -162,23 +142,14 @@ export default function ChatSidebar({
 
       toast.success("Removed From Archive");
 
-      setUserChats((prev) =>
-        prev.filter((chat) => chat.chatId !== chatId),
-      );
+      setUserChats((prev) => prev.filter((chat) => chat.chatId !== chatId));
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleCreateGroup = async (
-    groupName: string,
-    membersIds: string[],
-  ) => {
-    if (
-      !currentUser?.uid ||
-      !groupName.trim() ||
-      membersIds.length === 0
-    ) {
+  const handleCreateGroup = async (groupName: string, membersIds: string[]) => {
+    if (!currentUser?.uid || !groupName.trim() || membersIds.length === 0) {
       return;
     }
 
@@ -202,9 +173,7 @@ export default function ChatSidebar({
   const handleSelectGroup = (chatId: string) => {
     if (!chatId) return;
 
-    const group = userChats.find(
-      (chat) => chat.chatId === chatId,
-    );
+    const group = userChats.find((chat) => chat.chatId === chatId);
 
     if (!group || group.type !== "group") {
       return;
@@ -215,7 +184,6 @@ export default function ChatSidebar({
 
   return (
     <aside className="relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[2rem] border border-orange-100/70 bg-white/55 p-3 shadow-[0_20px_70px_rgba(249,115,22,0.08)] backdrop-blur-2xl dark:border-zinc-800 dark:bg-zinc-950/55 dark:shadow-none">
-      
       <div className="pointer-events-none absolute -right-16 -top-20 h-40 w-40 rounded-full bg-orange-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-20 -left-16 h-40 w-40 rounded-full bg-violet-500/10 blur-3xl" />
 

@@ -1,4 +1,4 @@
-export async function uploadImagetoChat(file: File) {
+export async function uploadImage(file: File) {
 
   const formData = new FormData();
 
@@ -19,3 +19,4 @@ export async function uploadImagetoChat(file: File) {
 
   return data.secure_url;
 }
+

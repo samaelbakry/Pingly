@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Plus, Users } from "lucide-react";
 import { useState } from "react";
 import { UserProfile } from "@/types/userProfile";
-import AddNewChatDialog from "../features/AddNewChatDialog";
-import CreateGroupDialog from "../features/CreateGroupDialog";
+import AddNewChatDialog from "../../dialogs/AddNewChatDialog";
+import CreateGroupDialog from "../../dialogs/CreateGroupDialog";
+
 
 export default function ChatSidebarFooter({
   currentUserId,

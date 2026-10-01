@@ -1,9 +1,8 @@
 "use client";
 
-import ChatNotification from "@/components/chat/features/ChatNotifications";
+import ChatNotification from "@/components/chat/actions/ChatNotifications";
 import ChatNavRail from "@/components/chat/layout/ChatNavRail";
-import ChatSidebar from "@/components/chat/layout/ChatSidebar";
-import ChatWindow from "@/components/chat/layout/ChatWindow";
+import ChatSidebar from "@/components/chat/layout/sidebar/ChatSidebar";
 import Navbar from "@/components/common/Navbar";
 
 import { useAuth } from "@/context/AuthContext";
@@ -17,11 +16,12 @@ import { UserProfile } from "@/types/userProfile";
 
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
+import ChatWindow from "../chat/layout/chat-window/ChatWindow";
 
 export default function ChatDashboardContent() {
   const { user: currentUser } = useAuth();
 
-  const { selectedChat , clearSelectedChat  } = useChat();
+  const { selectedChat, clearSelectedChat } = useChat();
 
   const [showArchived, setShowArchived] = useState(false);
 
@@ -41,9 +41,7 @@ export default function ChatDashboardContent() {
       try {
         const chats = await getUserChats(currentUser.uid);
 
-        const chatIds = chats.map(
-          (chat) => chat.chatId
-        );
+        const chatIds = chats.map((chat) => chat.chatId);
 
         if (chatIds.length === 0) return;
 
@@ -51,9 +49,7 @@ export default function ChatDashboardContent() {
           chatIds,
           currentUser.uid,
           async (message) => {
-            const sender = await getUserById(
-              message?.senderId
-            );
+            const sender = await getUserById(message?.senderId);
 
             if (sender) {
               setNotification({
@@ -61,13 +57,10 @@ export default function ChatDashboardContent() {
                 message: message.text!,
               });
             }
-          }
+          },
         );
       } catch (error) {
-        console.error(
-          "Failed to setup message listener:",
-          error
-        );
+        console.error("Failed to setup message listener:", error);
       }
     };
 
@@ -90,7 +83,6 @@ export default function ChatDashboardContent() {
 
   return (
     <div className="relative chat-scroll h-screen w-full overflow-hidden bg-slate-50/50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 selection:bg-orange-500 selection:text-white flex flex-col">
-
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-100 bg-linear-to-tr from-amber-400/20 via-orange-400/20 to-red-400/20 dark:from-amber-600/10 dark:via-orange-600/10 dark:to-red-600/10 blur-[140px] rounded-full pointer-events-none z-50" />
 
       <div className="absolute top-1/3 -left-32 w-96 h-96 bg-orange-500/15 dark:bg-orange-600/10 blur-[120px] rounded-full pointer-events-none" />
@@ -100,7 +92,6 @@ export default function ChatDashboardContent() {
       <Navbar />
 
       <main className="relative z-10 flex min-h-0 flex-1 max-w-8xl w-full mx-auto p-3 sm:p-6 gap-4 overflow-hidden">
-        
         <ChatNavRail
           setShowArchived={setShowArchived}
           showArchived={showArchived}
@@ -113,9 +104,7 @@ export default function ChatDashboardContent() {
               : "block animate-in fade-in zoom-in-95 duration-200"
           }`}
         >
-          <ChatSidebar
-            showArchived={showArchived}
-          />
+          <ChatSidebar showArchived={showArchived} />
         </div>
 
         <div
@@ -133,16 +122,13 @@ export default function ChatDashboardContent() {
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 dark:bg-zinc-900/80 border border-white/80 dark:border-zinc-800 text-xs font-semibold text-slate-700 dark:text-zinc-200 backdrop-blur-2xl shadow-sm active:scale-95 transition-all"
               >
                 <ArrowLeft className="h-4 w-4 stroke-[2.5] text-orange-500 dark:text-orange-400" />
-
                 Conversations
               </button>
             </div>
           )}
 
           <div className="flex flex-col flex-1 min-h-0 overflow-hidden pb-1">
-            <ChatWindow
-              handleLeaveChat={clearSelectedChat}
-            />
+            <ChatWindow handleLeaveChat={clearSelectedChat} />
           </div>
         </div>
 
