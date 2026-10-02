@@ -91,12 +91,12 @@ export default function ChatDashboardContent() {
 
       <Navbar />
 
-      <main className="relative z-10 flex min-h-0 flex-1 max-w-8xl w-full mx-auto p-3 sm:p-6 gap-4 overflow-hidden">
+      <main className="relative z-10 flex min-h-0 flex-1 max-w-8xl w-full mx-auto p-3 sm:p-6 gap-4 overflow-hidden pb-20 sm:pb-6">
+        {" "}
         <ChatNavRail
           setShowArchived={setShowArchived}
           showArchived={showArchived}
         />
-
         <div
           className={`w-full sm:w-96 h-full min-h-0 transition-all duration-300 ease-in-out shrink-0 ${
             hasSelectedChat
@@ -106,7 +106,6 @@ export default function ChatDashboardContent() {
         >
           <ChatSidebar showArchived={showArchived} />
         </div>
-
         <div
           className={`flex-1 h-full flex flex-col transition-all duration-300 ease-in-out ${
             hasSelectedChat
@@ -131,7 +130,6 @@ export default function ChatDashboardContent() {
             <ChatWindow handleLeaveChat={clearSelectedChat} />
           </div>
         </div>
-
         {notification && (
           <ChatNotification
             user={notification.user}
