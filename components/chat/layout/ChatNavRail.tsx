@@ -21,12 +21,12 @@ export default function ChatNavRail({
 
   return (
     <>
-      <aside className="hidden sm:flex h-full w-20 shrink-0 flex-col items-center justify-between rounded-2xl border border-white/90 bg-white/70 py-5 shadow-xl shadow-slate-900/5 backdrop-blur-2xl transition-all duration-300 dark:border-zinc-800/80 dark:bg-zinc-900/70">
+      <aside className="hidden sm:flex h-full w-20 shrink-0 flex-col items-center justify-between rounded-2xl  border border-zinc-200/80 dark:border-zinc-800/80  bg-white/55 p-3 shadow-[0_20px_70px_rgba(249,115,22,0.08)] backdrop-blur-2xl  dark:shadow-none transition-all duration-300  dark:bg-zinc-950/55">
         <div className="flex w-full flex-col items-center gap-3 px-3">
           <Link
             href="/chatDashboard"
             onClick={() => setShowArchived(false)}
-            className={`group flex size-11 items-center justify-center rounded-2xl transition-all duration-300 ${
+            className={`group flex size-11 items-center justify-center rounded-4xl transition-all duration-300 ${
               isChatsActive
                 ? "scale-105 bg-linear-to-tr from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30"
                 : "text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100"
@@ -38,7 +38,7 @@ export default function ChatNavRail({
           <button
             type="button"
             onClick={() => setShowArchived((prev) => !prev)}
-            className={`group flex size-11 items-center justify-center rounded-2xl transition-all duration-300 ${
+            className={`group flex size-11 items-center justify-center rounded-4xl transition-all duration-300 ${
               showArchived
                 ? "scale-105 bg-linear-to-tr from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30"
                 : "text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100"
@@ -50,7 +50,7 @@ export default function ChatNavRail({
           <Link
             href="/userProfile"
             onClick={() => setShowArchived(false)}
-            className={`group flex size-11 items-center justify-center rounded-2xl transition-all duration-300 ${
+            className={`group flex size-11 items-center justify-center rounded-4xl transition-all duration-300 ${
               isProfileActive
                 ? "scale-105 bg-linear-to-tr from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30"
                 : "text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800/70 dark:hover:text-zinc-100"
@@ -67,7 +67,7 @@ export default function ChatNavRail({
           <Link
             href="/chatDashboard"
             onClick={() => setShowArchived(false)}
-            className={`group flex size-12 items-center justify-center rounded-2xl transition-all duration-300 ${
+            className={`group flex size-12 items-center justify-center rounded-4xl transition-all duration-300 ${
               isChatsActive
                 ? "bg-linear-to-tr from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30"
                 : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
@@ -79,7 +79,7 @@ export default function ChatNavRail({
           <button
             type="button"
             onClick={() => setShowArchived((prev) => !prev)}
-            className={`group flex size-12 items-center justify-center rounded-2xl transition-all duration-300 ${
+            className={`group flex size-12 items-center justify-center rounded-4xl transition-all duration-300 ${
               showArchived
                 ? "bg-linear-to-tr from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30"
                 : "text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"

@@ -2,38 +2,47 @@ import {
   onValue,
   push,
   ref,
-  set,
-  serverTimestamp,
   remove,
+  serverTimestamp,
+  update
 } from "firebase/database";
 
 import { database } from "@/lib/firebaseConfig";
 import { Message } from "@/types/messages";
 
-export async function sendMessage( chatId: string, senderId: string, data: {
+export async function sendMessage(
+  chatId: string,
+  senderId: string,
+  data: {
     type: "text" | "image";
     imageUrl?: string;
     text?: string;
-  }
+  },
 ) {
   const messagesRef = ref(
     database,
-    `chats/${chatId}/messages`
+    `chats/${chatId}/messages`,
   );
 
   const newMessageRef = push(messagesRef);
-  
-  await set(newMessageRef, {
+
+  const messageData = {
     senderId,
     type: data.type,
     text: data.text ?? "",
     imageUrl: data.imageUrl ?? "",
     createdAt: serverTimestamp(),
-  });
+  };
+
+  const updates = {
+     [`chats/${chatId}/messages/${newMessageRef.key}`]: messageData,
+     [`chats/${chatId}/lastMessage`]: messageData,
+  };
+
+  await update(ref(database), updates);
 
   return newMessageRef.key;
 }
-
 
 
 export function listenToMessages(

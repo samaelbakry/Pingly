@@ -157,7 +157,7 @@ export default function ChatWindow({
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col mb-3 overflow-hidden scroll-smooth rounded-[2.5rem] border border-white/40 bg-white/30 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 dark:shadow-none">
+    <div className="flex h-full min-h-0 flex-col mb-3 overflow-hidden scroll-smooth rounded-[2.5rem]  border border-zinc-200/80 bg-white/30 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 dark:shadow-none">
       <ChatWindowHeader
         selectedUser={selectedUser}
         selectedGroup={selectedGroup}

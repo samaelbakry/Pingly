@@ -183,7 +183,7 @@ export default function ChatSidebar({ showArchived }: ChatSidebarProps) {
   };
 
   return (
-    <aside className="relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[2rem] border border-orange-100/70 bg-white/55 p-3 shadow-[0_20px_70px_rgba(249,115,22,0.08)] backdrop-blur-2xl dark:border-zinc-800 dark:bg-zinc-950/55 dark:shadow-none">
+    <aside className="relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[2rem]  border border-zinc-200/80 dark:border-zinc-800/80 bg-white/55 p-3 shadow-[0_20px_70px_rgba(249,115,22,0.08)] backdrop-blur-2xl  dark:bg-zinc-950/55 dark:shadow-none">
       <div className="pointer-events-none absolute -right-16 -top-20 h-40 w-40 rounded-full bg-orange-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-20 -left-16 h-40 w-40 rounded-full bg-violet-500/10 blur-3xl" />
 

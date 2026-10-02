@@ -25,7 +25,7 @@ export default function MessageItem({
 
   return (
     <div
-      className={`group flex items-end  ${
+      className={`group flex items-end gap-2 ${
         isMine ? "justify-end" : "justify-start"
       }`}
     >

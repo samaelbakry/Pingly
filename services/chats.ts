@@ -59,8 +59,9 @@ export async function getUserChats(currentUserId: string): Promise<ChatItem[]> {
 
       return isParticipant && !isArchived;
     })
-    .map(([, chat]) => ({
-      ...(chat as ChatItem),
+    .map(([chatId, chat]) => ({
+      chatId,
+      ...(chat as Omit<ChatItem, "chatId">),
     }));
 }
 
