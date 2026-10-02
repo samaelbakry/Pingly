@@ -7,12 +7,13 @@ import { toast } from "sonner";
 type LeaveGroupButtonProps = {
   userId: string;
   chatId: string;
-  handleLeaveChat:()=>void
+  handleLeaveChat: () => void;
 };
+
 export default function LeaveGroupButton({
   userId,
   chatId,
-  handleLeaveChat
+  handleLeaveChat,
 }: LeaveGroupButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,29 +22,56 @@ export default function LeaveGroupButton({
     try {
       setLoading(true);
       setError(null);
+
       await leaveGroupChat(userId, chatId);
       await getUserChats(userId);
-      toast.success("Leaving and deleting the group chat..");
-      handleLeaveChat()
+
+      toast.success("Leaving and deleting the group chat...");
+      handleLeaveChat();
     } catch (err) {
       console.error("Failed to leave group:", err);
-      setError(err instanceof Error ? err.message : "Failed to leave group");
+
+      setError(
+        err instanceof Error ? err.message : "Failed to leave group"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
+    <>
       <button
         onClick={handleLeave}
         disabled={loading}
         title="Leave Group"
-        className="p-2 text-slate-500 rounded-md cursor-pointer transition-colors hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 disabled:opacity-50"
+        className="
+          flex w-full items-center gap-2
+          rounded-lg px-2 py-2
+          text-sm font-medium
+          text-red-600
+          transition-colors
+          hover:bg-red-50
+          dark:text-red-400
+          dark:hover:bg-red-950/30
+          disabled:cursor-not-allowed
+          disabled:opacity-50
+        "
       >
-        <LogOut className={`size-4 ${loading ? "animate-pulse" : ""}`} />
+        <LogOut
+          className={`size-4 shrink-0 ${
+            loading ? "animate-pulse" : ""
+          }`}
+        />
+
+        <span>Leave Group</span>
       </button>
-      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-    </div>
+
+      {error && (
+        <p className="mt-1 px-2 text-xs text-red-500">
+          {error}
+        </p>
+      )}
+    </>
   );
 }

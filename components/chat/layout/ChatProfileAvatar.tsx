@@ -10,6 +10,7 @@ type Props = {
   selectedUser: UserProfile | null;
   selectedGroup: ChatItem | null;
   isGroupChat: boolean;
+  groupMembers: UserProfile[];
 };
 
 type Presence = {
@@ -21,6 +22,7 @@ export default function ChatProfileAvatar({
   selectedUser,
   selectedGroup,
   isGroupChat,
+  groupMembers
 }: Props) {
   const [presence, setPresence] = useState<Presence | null>(null);
 
@@ -49,46 +51,55 @@ export default function ChatProfileAvatar({
 
   const isOnline = presence?.state === "online";
 
-
   return (
-    <div className="relative shrink-0">
-      <Avatar className="h-11 w-11 border-2 border-white dark:border-zinc-900 shadow-md shadow-slate-900/5 ring-1 ring-slate-200/80 dark:ring-zinc-700/80 transition-transform duration-300 hover:scale-105">
-        <AvatarImage
-          src={displayPhoto}
-          alt={displayName}
-          className="object-cover"
-        />
-
-        <AvatarFallback
-          className={
-            isGroupChat
-              ? "bg-linear-to-br from-violet-500 via-purple-500 to-fuchsia-600 font-bold text-white text-sm tracking-wide"
-              : "bg-linear-to-br from-amber-400 via-orange-500 to-rose-500 font-bold text-white text-sm tracking-wide"
-          }
-        >
-          {displayName.charAt(0).toUpperCase()}
-        </AvatarFallback>
-        
-      </Avatar>
-
-      {!isGroupChat && (
-        <span
-          className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white dark:border-zinc-900 shadow-sm transition-colors duration-300 ${
-            isOnline ? "bg-emerald-400" : "bg-zinc-400 dark:bg-zinc-600"
-          }`}
-        />
-      )}
-
-      {isGroupChat && (
-        <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-linear-to-br from-violet-500 to-purple-600 border-2 border-white dark:border-zinc-900 shadow-sm">
-          <svg
-            viewBox="0 0 24 24"
-            className="h-2.5 w-2.5 fill-white"
+    <><div className="group flex items-center gap-3.5 py-1.5 px-2 rounded-xl transition-all duration-200 hover:bg-slate-100/60 dark:hover:bg-zinc-800/50 cursor-pointer">
+      <div className="relative shrink-0">
+        <Avatar className="h-10 w-10 ring-2 ring-slate-200/60 dark:ring-zinc-700/60 transition-transform duration-300 group-hover:scale-105">
+          <AvatarImage
+            src={displayPhoto}
+            alt={displayName}
+            className="object-cover"
+          />
+          <AvatarFallback
+            className={
+              isGroupChat
+                ? "bg-linear-to-br from-indigo-500 to-purple-600 font-semibold text-white text-xs tracking-wider"
+                : "bg-linear-to-br from-amber-500 to-rose-500 font-semibold text-white text-xs tracking-wider"
+            }
           >
-            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-          </svg>
-        </span>
-      )}
+            {displayName.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <h2 className="text-sm font-semibold tracking-tight text-slate-900 dark:text-zinc-100 truncate">
+          {displayName}
+        </h2>
+        <p className="text-xs font-medium text-slate-500 dark:text-zinc-400 truncate mt-0.5">
+          {isGroupChat ? (
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-purple-600 dark:text-purple-400 font-medium">
+                {groupMembers.length} {groupMembers.length === 1 ? "member" : "members"}
+              </span>
+              <span className="text-slate-300 dark:text-zinc-600">•</span>
+              <span className="truncate text-slate-400 dark:text-zinc-500">
+                {groupMembers.map((m) => m.name).join(", ") || "No members"}
+              </span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5">
+              <span
+                className={`inline-block size-2 rounded-full ${
+                  isOnline ? "bg-emerald-500 animate-pulse" : "bg-slate-400 dark:bg-zinc-500"
+                }`}
+              />
+              {isOnline ? "Active now" : "Offline"}
+            </span>
+          )}
+        </p>
+      </div>
     </div>
+    </>
   );
 }

@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { archiveChat } from "@/services/chatActions";
 import { Archive } from "lucide-react";
@@ -12,19 +13,24 @@ export default function ArchiveButton({
   chatId: string;
 }) {
   return (
-    <>
-      <Button
-        onClick={() => {
-          archiveChat(currentUserId, chatId);
-          toast.success("chat added to archive!");
-        }}
-        variant="ghost"
-        size="sm"
-        aria-label="Archive chat"
-        className="text-slate-500 cursor-pointer hover:text-orange-600 dark:text-zinc-400 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
-      >
-        <Archive className="size-4" />
-      </Button>
-    </>
+    <Button
+      onClick={() => {
+        archiveChat(currentUserId, chatId);
+        toast.success("Chat added to archive!");
+      }}
+      variant="ghost"
+      size="sm"
+      aria-label="Archive chat"
+      className="
+        w-full justify-start gap-2
+        text-slate-600
+        hover:bg-orange-50 hover:text-orange-600
+        dark:text-zinc-300
+        dark:hover:bg-orange-950/30 dark:hover:text-orange-400
+      "
+    >
+      <Archive className="size-4 shrink-0" />
+      <span>Archive Chat</span>
+    </Button>
   );
 }

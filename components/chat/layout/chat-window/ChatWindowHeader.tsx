@@ -4,10 +4,7 @@ import { chatWindowProps } from "@/types/Props";
 import { UserProfile } from "@/types/userProfile";
 import { useEffect, useState } from "react";
 import ChatProfileAvatar from "../ChatProfileAvatar";
-import ClearChatButton from "../../actions/ClearChatButton";
-import AddMembersDialog from "../../dialogs/AddMembersDialog";
-import ArchiveButton from "../../actions/ArchiveButton";
-import LeaveGroupButton from "../../actions/LeaveGroupButton";
+import ChatWindowHeaderDropdown from "./ChatWindowHeaderDropdown";
 
 
 export default function ChatWindowHeader({
@@ -21,12 +18,7 @@ export default function ChatWindowHeader({
 }: chatWindowProps) {
   const [groupMembers, setGroupMembers] = useState<UserProfile[]>([]);
 
-  const displayName = isGroupChat
-    ? selectedGroup?.name || "Unnamed Group"
-    : selectedUser?.name || "Unknown User";
-
-  const isGroupCreator =
-    isGroupChat && selectedGroup?.createdBy === currentUserId;
+  const isGroupCreator = isGroupChat && selectedGroup?.createdBy === currentUserId;
 
   useEffect(() => {
     if (!isGroupChat || !selectedGroup?.participants) {
@@ -58,63 +50,19 @@ export default function ChatWindowHeader({
           selectedGroup={selectedGroup}
           selectedUser={selectedUser}
           isGroupChat={isGroupChat}
+          groupMembers={groupMembers}
         />
-
-        <div className="min-w-0">
-          <h2 className="text-[15px] font-semibold tracking-tight text-slate-900 dark:text-zinc-50 leading-tight truncate">
-            {displayName}
-          </h2>
-          <p className="mt-1 text-[11.5px] font-medium text-slate-400 dark:text-zinc-500 truncate max-w-60 sm:max-w-xs">
-            {isGroupChat ? (
-              <span className="inline-flex items-center gap-1.5">
-                <span className="relative flex h-1.5 w-1.5 shrink-0">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-orange-500" />
-                </span>
-                <span className="truncate">
-                  {groupMembers.map((member) => member.name).join(", ") ||
-                    "No members"}
-                </span>
-              </span>
-            ) : (
-              <span className="tabular-nums">
-                {messages.length}{" "}
-                {messages.length === 1 ? "message" : "messages"}
-              </span>
-            )}
-          </p>
-        </div>
       </div>
 
-      <div className="flex items-center gap-1.5">
-        {messages.length > 0 && (
-          <div className="rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-zinc-800">
-            <ClearChatButton chatId={chatId} />
-          </div>
-        )}
-
-        {isGroupCreator && selectedGroup && (
-          <div className="rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-zinc-800">
-            <AddMembersDialog
-              chatId={chatId}
-              existingMemberIds={Object.keys(selectedGroup.participants)}
-            />
-          </div>
-        )}
-
-        <div className="rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-zinc-800">
-          <ArchiveButton chatId={chatId} currentUserId={currentUserId} />
-        </div>
-
-        {isGroupChat && (
-          <>
-            <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-zinc-700" />
-            <div className="rounded-lg transition-colors hover:bg-rose-50 dark:hover:bg-rose-950/30">
-              <LeaveGroupButton userId={currentUserId} chatId={chatId} handleLeaveChat={handleLeaveChat} />
-            </div>
-          </>
-        )}
-      </div>
+     <ChatWindowHeaderDropdown
+        messages={messages}
+        chatId={chatId}
+        currentUserId={currentUserId}
+        isGroupCreator={isGroupCreator}
+        selectedGroup={selectedGroup }
+        isGroupChat={isGroupChat}
+        handleLeaveChat={handleLeaveChat}
+      />
     </div>
   );
 }

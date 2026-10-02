@@ -1,35 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserPlus, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import { getAllUsers } from "@/services/users";
-import { addGroupMember } from "@/services/groupChatActions";
-import { UserProfile } from "@/types/userProfile";
 import { useAuth } from "@/context/AuthContext";
+import { addGroupMember } from "@/services/groupChatActions";
+import { getAllUsers } from "@/services/users";
+import { UserProfile } from "@/types/userProfile";
 
 export default function AddMembersDialog({
   existingMemberIds,
   chatId,
+  open,
+  onOpenChange,
 }: {
   existingMemberIds: string[];
   chatId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [addingUserId, setAddingUserId] = useState<string | null>(null);
-
-  const [open, setOpen] = useState(false);
 
   const handleAddMember = async (memberId: string) => {
     try {
@@ -70,21 +71,7 @@ export default function AddMembersDialog({
   }, [open, existingMemberIds]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            title="Add members"
-            className="rounded-full cursor-pointer text-zinc-400 hover:bg-violet-500/10 hover:text-violet-500 dark:text-zinc-500 dark:hover:text-violet-400 transition-colors"
-          >
-            <UserPlus className="size-4" />
-          </Button>
-        }
-      ></DialogTrigger>
-
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md sm:max-w-lg p-6">
         <DialogHeader className="mb-4">
           <DialogTitle className="text-lg font-semibold tracking-tight">
