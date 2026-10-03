@@ -100,3 +100,27 @@ export async function addGroupMember(
 
   await set(ref(database, `chats/${chatId}/participants/${memberId}`), true);
 }
+
+export async function updateGroupPhoto(chatID:string , userID:string, newPhotoURL:string){
+
+  const chatRef = ref(database , `chats/${chatID}`)
+
+  const snapshot = await get(chatRef);
+
+   if (!snapshot.exists()) {
+    throw new Error("Group not found");
+  }
+
+  const chat = snapshot.val() 
+
+   if (chat.type !== "group") {
+    throw new Error("This chat is not a group");
+  }
+
+  if(chat.createdBy !== userID){
+    throw new Error("Only the group creator can update the group photo");
+  }
+
+  await update(chatRef , {photoURL :newPhotoURL})
+
+}

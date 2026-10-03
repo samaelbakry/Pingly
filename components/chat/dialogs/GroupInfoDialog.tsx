@@ -38,7 +38,7 @@ export default function GroupInfoDialog({
     <Dialog>
       <DialogTrigger render={children} />
 
-      <DialogContent className="w-[calc(100%-2rem)] max-w-md overflow-hidden rounded-3xl border border-zinc-200/80 bg-white/95 p-0 shadow-2xl backdrop-blur-2xl dark:border-zinc-800 dark:bg-zinc-950/95">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md chat-scroll overflow-hidden rounded-3xl border border-zinc-200/80 bg-white/95 p-0 shadow-2xl backdrop-blur-2xl dark:border-zinc-800 dark:bg-zinc-950/95">
         <div className="relative overflow-hidden border-b border-zinc-200/70 px-6 py-6 dark:border-zinc-800">
           <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-violet-500/10 blur-3xl" />
 

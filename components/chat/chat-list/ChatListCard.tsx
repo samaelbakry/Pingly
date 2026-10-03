@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { ChatListCardProps } from "@/types/Props";
@@ -75,15 +75,45 @@ export default function ChatListCard({
         >
           {isGroup ? (
             <div className="relative h-11 w-11 shrink-0">
-              {groupParticipants.length >= 2 ? (
-                <>
-                  <span className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl border-2 border-white bg-linear-to-br from-violet-500 to-purple-600 text-[10px] font-bold text-white shadow-md dark:border-zinc-950">
-                    {groupParticipants[0]?.name?.charAt(0).toUpperCase() || "G"}
-                  </span>
+              {chat.photoURL ? (
+                <Avatar className="h-11 w-11 rounded-2xl border-2 border-white shadow-md dark:border-zinc-900">
+                  <AvatarImage
+                    src={chat.photoURL}
+                    alt={chat.name || "Group"}
+                    className="h-full w-full rounded-2xl object-cover"
+                  />
 
-                  <span className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-xl border-2 border-white bg-linear-to-br from-orange-400 to-amber-500 text-[10px] font-bold text-white shadow-md dark:border-zinc-950">
-                    {groupParticipants[1]?.name?.charAt(0).toUpperCase() || "G"}
-                  </span>
+                  <AvatarFallback className="rounded-2xl bg-linear-to-br from-violet-500 to-purple-600 text-xs font-bold text-white">
+                    {chat.name?.charAt(0).toUpperCase() || "G"}
+                  </AvatarFallback>
+                </Avatar>
+              ) : groupParticipants.length >= 2 ? (
+                <>
+                  <Avatar className="absolute left-0 top-0 h-8 w-8 rounded-xl border-2 border-white shadow-md dark:border-zinc-950">
+                    <AvatarImage
+                      src={groupParticipants[0]?.photoURL || undefined}
+                      alt={groupParticipants[0]?.name || "Member"}
+                      className="rounded-xl object-cover"
+                    />
+
+                    <AvatarFallback className="rounded-xl bg-linear-to-br from-violet-500 to-purple-600 text-[10px] font-bold text-white">
+                      {groupParticipants[0]?.name?.charAt(0).toUpperCase() ||
+                        "G"}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <Avatar className="absolute bottom-0 right-0 h-8 w-8 rounded-xl border-2 border-white shadow-md dark:border-zinc-950">
+                    <AvatarImage
+                      src={groupParticipants[1]?.photoURL || undefined}
+                      alt={groupParticipants[1]?.name || "Member"}
+                      className="rounded-xl object-cover"
+                    />
+
+                    <AvatarFallback className="rounded-xl bg-linear-to-br from-orange-400 to-amber-500 text-[10px] font-bold text-white">
+                      {groupParticipants[1]?.name?.charAt(0).toUpperCase() ||
+                        "G"}
+                    </AvatarFallback>
+                  </Avatar>
                 </>
               ) : (
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-violet-200 bg-linear-to-br from-violet-500/15 to-purple-500/20 text-violet-600 dark:border-violet-500/20 dark:text-violet-400">
@@ -93,12 +123,17 @@ export default function ChatListCard({
             </div>
           ) : (
             <Avatar className="h-11 w-11 shrink-0 rounded-2xl border-2 border-white shadow-md dark:border-zinc-900">
+              <AvatarImage
+                src={otherUser?.photoURL || undefined}
+                alt={otherUser?.name || "User"}
+                className="rounded-2xl object-cover"
+              />
+
               <AvatarFallback className="rounded-2xl bg-linear-to-br from-orange-400 to-amber-500 text-xs font-bold text-white">
                 {otherUser?.name?.charAt(0).toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
           )}
-
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
               <p className="truncate text-[12px] font-bold text-zinc-800 dark:text-zinc-100">
