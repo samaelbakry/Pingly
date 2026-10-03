@@ -83,7 +83,7 @@ export default function ChatWindow({
             .filter(
               (message) =>
                 message.type === "system" &&
-                message.action === "left" &&
+                message.action === "left" || message.action === "admin_changed" &&
                 message.userId,
             )
             .map((message) => message.userId!);

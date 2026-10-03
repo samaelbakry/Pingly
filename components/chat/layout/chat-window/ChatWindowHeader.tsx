@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import ChatProfileAvatar from "../ChatProfileAvatar";
 import ChatWindowHeaderDropdown from "./ChatWindowHeaderDropdown";
 
-
 export default function ChatWindowHeader({
   selectedUser,
   selectedGroup,
@@ -14,11 +13,12 @@ export default function ChatWindowHeader({
   messages,
   chatId,
   currentUserId,
-  handleLeaveChat
+  handleLeaveChat,
 }: chatWindowProps) {
   const [groupMembers, setGroupMembers] = useState<UserProfile[]>([]);
 
-  const isGroupCreator = isGroupChat && selectedGroup?.createdBy === currentUserId;
+  const isGroupCreator =
+    isGroupChat && selectedGroup?.createdBy === currentUserId;
 
   useEffect(() => {
     if (!isGroupChat || !selectedGroup?.participants) {
@@ -52,14 +52,15 @@ export default function ChatWindowHeader({
           isGroupChat={isGroupChat}
           groupMembers={groupMembers}
         />
+        
       </div>
 
-     <ChatWindowHeaderDropdown
+      <ChatWindowHeaderDropdown
         messages={messages}
         chatId={chatId}
         currentUserId={currentUserId}
         isGroupCreator={isGroupCreator}
-        selectedGroup={selectedGroup }
+        selectedGroup={selectedGroup}
         isGroupChat={isGroupChat}
         handleLeaveChat={handleLeaveChat}
       />

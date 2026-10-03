@@ -1,13 +1,12 @@
 import { database } from "@/lib/firebaseConfig";
 import { ChatItem } from "@/types/chatType";
-import { get, push, ref, remove, serverTimestamp, set } from "firebase/database";
+import { get, push, ref, remove, serverTimestamp, set, update } from "firebase/database";
 
 export async function leaveGroupChat(
   userId: string,
   chatId: string,
 ) {
   const chatRef = ref(database, `chats/${chatId}`);
-
   const snapshot = await get(chatRef);
 
   if (!snapshot.exists()) {
@@ -24,18 +23,53 @@ export async function leaveGroupChat(
     throw new Error("You are not a member of this group");
   }
 
-  const messagesRef = ref(database, `chats/${chatId}/messages`);
+  const participantIds = Object.keys(
+    chat.participants ?? {},
+  );
+
+  const remainingMemberIds = participantIds.filter(
+    (id) => id !== userId,
+  );
+
+  const messagesRef = ref( database, `chats/${chatId}/messages` );
+
   const newMessageRef = push(messagesRef);
 
   await set(newMessageRef, {
+    senderId: userId,
     type: "system",
     action: "left",
     userId,
     createdAt: serverTimestamp(),
   });
 
-  await remove(
-    ref(database, `chats/${chatId}/participants/${userId}`),
+  if (chat.createdBy === userId) {
+    if (remainingMemberIds.length === 0) {
+      await remove(chatRef);
+      return;
+    }
+
+    const newAdminId = remainingMemberIds[0];
+
+    await update(chatRef, {
+      createdBy: newAdminId,
+    });
+
+    const adminMessageRef = push(messagesRef);
+
+    await set(adminMessageRef, {
+      senderId: newAdminId,
+      type: "system",
+      action: "admin_changed",
+      userId: newAdminId,
+      createdAt: serverTimestamp(),
+    });
+  }
+
+  await remove( ref(
+      database,
+      `chats/${chatId}/participants/${userId}`,
+    ),
   );
 }
 

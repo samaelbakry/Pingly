@@ -7,35 +7,37 @@ type Props = {
 };
 
 export default function SystemMessage({ message, chatUsers}: Props) {
-  
-  if (message.action !== "left") {
+  if (message.type !== "system") {
     return null;
   }
 
   const user = chatUsers[message.userId ?? ""];
 
-  return (
-    <div className="flex justify-center py-2">
+  if (message.action === "left") {
+    return (
       <div
-        className="
-          rounded-full
-          border border-zinc-200/70
-          bg-zinc-50
-          px-3.5 py-1.5
-          text-[10px]
-          font-medium
-          text-zinc-400
-          shadow-sm
-          dark:border-zinc-800
-          dark:bg-zinc-900
-          dark:text-zinc-500
-        "
+        key={message.id}
+        className="my-3 flex justify-center"
       >
-        <span className="text-zinc-500 dark:text-zinc-400">
-          {user?.name ?? "Someone"}
-        </span>{" "}
-        left the group
+        <span className="rounded-full bg-zinc-100 px-3 py-1.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+          {user?.name ?? "Someone"} left the group
+        </span>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (message.action === "admin_changed") {
+    return (
+      <div
+        key={message.id}
+        className="my-3 flex justify-center"
+      >
+        <span className="rounded-full bg-violet-50 px-3 py-1.5 text-xs font-medium text-violet-500 dark:bg-violet-950/30 dark:text-violet-400">
+          {user?.name ?? "Someone"} is now the group admin
+        </span>
+      </div>
+    );
+  }
+
+  return null;
 }

@@ -1,6 +1,6 @@
 export type MessageType = "text" | "image" | "system";
 
-export type SystemAction = "left";
+export type SystemAction = "left" | "admin_changed";
 
 export interface Message {
   id: string;
