@@ -14,13 +14,7 @@ type Props = {
   sender?: UserProfile;
 };
 
-export default function MessageItem({
-  message,
-  chatId,
-  isMine,
-  isGroupChat,
-  sender,
-}: Props) {
+export default function MessageItem({ message, chatId, isMine, isGroupChat, sender }: Props) {
   const senderName = sender?.name || "Unknown User";
 
   return (
