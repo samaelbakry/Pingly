@@ -12,7 +12,15 @@ export type ReactionEmoji =
 
 export type MessageReactions = Record<string, ReactionEmoji>;
 
-export interface Message {
+export type ReplyTo  ={
+  messageId: string;
+  senderId: string;
+  type: "text" | "image";
+  text?: string;
+  senderName?: string;
+  imageUrl?: string;
+}
+export type Message  ={
   id: string;
   senderId: string;
   type: MessageType;
@@ -22,4 +30,5 @@ export interface Message {
   userId?: string;
   createdAt: number;
   reactions?: MessageReactions;
+  replyTo?: ReplyTo;
 }

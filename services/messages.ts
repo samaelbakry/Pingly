@@ -8,7 +8,7 @@ import {
 } from "firebase/database";
 
 import { database } from "@/lib/firebaseConfig";
-import { Message } from "@/types/messages";
+import { Message, ReplyTo } from "@/types/messages";
 
 export async function sendMessage(
   chatId: string,
@@ -17,6 +17,7 @@ export async function sendMessage(
     type: "text" | "image";
     imageUrl?: string;
     text?: string;
+    replyTo?: ReplyTo;
   },
 ) {
   const messagesRef = ref(
@@ -31,6 +32,7 @@ export async function sendMessage(
     type: data.type,
     text: data.text ?? "",
     imageUrl: data.imageUrl ?? "",
+    ...(data.replyTo && {replyTo: data.replyTo}),
     createdAt: serverTimestamp(),
   };
 

@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 
 import { listenToMessages } from "@/services/messages";
-import { Message } from "@/types/messages";
+import { Message, ReplyTo } from "@/types/messages";
 
 import { useAuth } from "@/context/AuthContext";
 import { useChat } from "@/context/ChatProvider";
-
 
 import { database } from "@/lib/firebaseConfig";
 import { listenToTyping } from "@/services/typing";
@@ -32,6 +31,7 @@ export default function ChatWindow({
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   const [chatUsers, setChatUsers] = useState<Record<string, UserProfile>>({});
+  const [replyingTo, setReplyingTo] = useState<ReplyTo | null>(null);
 
   const chatId = selectedChat?.chatId ?? null;
 
@@ -82,9 +82,8 @@ export default function ChatWindow({
           const leftUserIds = fetchedMessages
             .filter(
               (message) =>
-                message.type === "system" &&
-                message.action === "left" || message.action === "admin_changed" &&
-                message.userId,
+                (message.type === "system" && message.action === "left") ||
+                (message.action === "admin_changed" && message.userId),
             )
             .map((message) => message.userId!);
 
@@ -174,6 +173,23 @@ export default function ChatWindow({
           chatId={chatId}
           chatUsers={chatUsers}
           isGroupChat={isGroupChat}
+          onReply={(message) => {
+            const senderName =
+              message.senderId === currentUser?.uid
+                ? "You"
+                : chatUsers[message.senderId]?.name ||
+                  selectedUser?.name ||
+                  "Unknown User";
+
+            setReplyingTo({
+              messageId: message.id,
+              senderId: message.senderId,
+              senderName,
+              type: message.type as "text" | "image",
+              text: message.text,
+              imageUrl: message.imageUrl,
+            });
+          }}
         />
       </div>
       {isSomeoneTyping && (
@@ -208,6 +224,8 @@ export default function ChatWindow({
       <MessageComposer
         chatId={chatId}
         currentUserId={currentUser?.uid as string}
+        replyingTo={replyingTo}
+        onCancelReply={() => setReplyingTo(null)}
       />
     </div>
   );

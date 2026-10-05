@@ -12,9 +12,10 @@ type Props = {
   isMine: boolean;
   isGroupChat: boolean;
   sender?: UserProfile;
+  onReply: (message: Message) => void;
 };
 
-export default function MessageItem({ message, chatId, isMine, isGroupChat, sender }: Props) {
+export default function MessageItem({ message, chatId, isMine, isGroupChat, sender , onReply }: Props) {
   const senderName = sender?.name || "Unknown User";
 
   return (
@@ -36,7 +37,7 @@ export default function MessageItem({ message, chatId, isMine, isGroupChat, send
           </span>
         )}
 
-        <MessageContent message={message} chatId={chatId} isMine={isMine} />
+        <MessageContent message={message} chatId={chatId} isMine={isMine} onReply={onReply} isGroupChat={isGroupChat} />
 
         <MessageMeta message={message} isMine={isMine} />
       </div>

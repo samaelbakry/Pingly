@@ -14,9 +14,10 @@ type Props = {
   chatId: string;
   isGroupChat: boolean;
   chatUsers: Record<string, UserProfile>;
+  onReply: (message: Message) => void;
 };
 
-export default function MessageBubble({messages,chatId, isGroupChat, chatUsers}: Props) {
+export default function MessageBubble({messages,chatId, isGroupChat, chatUsers ,onReply}: Props) {
 
   const { user: currentUser } = useAuth();
   
@@ -48,6 +49,7 @@ export default function MessageBubble({messages,chatId, isGroupChat, chatUsers}:
             isMine={isMine}
             isGroupChat={isGroupChat}
             sender={sender}
+            onReply={onReply}
           />
         );
       })}
