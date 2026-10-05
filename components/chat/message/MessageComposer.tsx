@@ -7,8 +7,9 @@ import { setTyping } from "@/services/typing";
 import { uploadImage } from "@/services/uploads";
 import { ReplyTo } from "@/types/messages";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { Image, Loader2, Reply, Send, SmilePlus, X } from "lucide-react";
+import { Image, Loader2, Send, SmilePlus } from "lucide-react";
 import React, { useEffect, useRef, useState, type FormEvent } from "react";
+import ReplyingToPreview from "./MessageContent/ReplyPreview/ReplyingToPreview";
 export default function MessageComposer({
   chatId,
   currentUserId,
@@ -115,32 +116,7 @@ export default function MessageComposer({
       className="relative shrink-0 border-t border-white/20 dark:border-zinc-800 p-4 bg-white/20 dark:bg-zinc-900/20 backdrop-blur-xl"
     >
       {replyingTo && (
-        <div className="mb-3 flex items-center gap-3 rounded-2xl border border-orange-200/70 bg-orange-50/70 px-3 py-2.5 dark:border-orange-500/20 dark:bg-orange-500/5">
-          <div className="h-9 w-1 rounded-full bg-orange-500" />
-
-          <Reply className="h-4 w-4 shrink-0 text-orange-500" />
-
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-orange-500">
-              Replying to
-            </p>
-
-            <p className="truncate text-xs font-medium text-zinc-600 dark:text-zinc-300">
-              {replyingTo.type === "image"
-                ? "📷 Photo"
-                : replyingTo.text || "Message"}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={onCancelReply}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-white hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
-            aria-label="Cancel reply"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+      <ReplyingToPreview onCancel={onCancelReply} replyTo={replyingTo} />
       )}
       {showEmojiPicker && (
         <div className="absolute bottom-full left-4 mb-3 z-50 shadow-2xl rounded-2xl overflow-hidden border border-slate-200 dark:border-zinc-800 animate-in fade-in zoom-in-95 duration-150">
@@ -148,7 +124,6 @@ export default function MessageComposer({
             onEmojiClick={handleEmojiPicker}
             width={320}
             height={400}
-            // theme={theme}
           />
         </div>
       )}

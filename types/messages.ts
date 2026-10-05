@@ -29,6 +29,7 @@ export type Message  ={
   action?: SystemAction;
   userId?: string;
   createdAt: number;
+  seen?: boolean;
   reactions?: MessageReactions;
   replyTo?: ReplyTo;
 }

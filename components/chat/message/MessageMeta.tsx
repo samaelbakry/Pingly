@@ -6,10 +6,7 @@ type Props = {
   isMine: boolean;
 };
 
-export default function MessageMeta({
-  message,
-  isMine,
-}: Props) {
+export default function MessageMeta({ message, isMine }: Props) {
   const time = message.createdAt
     ? new Date(message.createdAt).toLocaleTimeString([], {
         hour: "2-digit",
@@ -24,13 +21,27 @@ export default function MessageMeta({
         ${isMine ? "flex-row-reverse" : "flex-row"}
       `}
     >
-      <span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-600">
+      {isMine && (
+        <CheckCheck
+          className={`
+      h-3.5 w-3.5
+      ${
+        message?.seen
+          ? "text-blue-500 dark:text-blue-400"
+          : "text-zinc-400 dark:text-zinc-500"
+      }
+    `}
+        />
+      )}
+
+      <span
+        className="
+          text-[10px] font-medium
+           text-slate-500 dark:text-slate-100
+        "
+      >
         {time}
       </span>
-
-      {isMine && (
-        <CheckCheck className="h-3.5 w-3.5 text-orange-500 dark:text-orange-400" />
-      )}
     </div>
   );
 }

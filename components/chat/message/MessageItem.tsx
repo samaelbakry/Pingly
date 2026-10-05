@@ -2,9 +2,8 @@
 
 import { Message } from "@/types/messages";
 import { UserProfile } from "@/types/userProfile";
-import MessageContent from "./MessageContent";
-import MessageMeta from "./MessageMeta";
 import MessageAvatar from "./MessageAvatar";
+import MessageContent from "./MessageContent/MessageContent";
 
 type Props = {
   message: Message;
@@ -39,7 +38,6 @@ export default function MessageItem({ message, chatId, isMine, isGroupChat, send
 
         <MessageContent message={message} chatId={chatId} isMine={isMine} onReply={onReply} isGroupChat={isGroupChat} />
 
-        <MessageMeta message={message} isMine={isMine} />
       </div>
     </div>
   );
