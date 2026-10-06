@@ -12,20 +12,12 @@ type Props = {
   variant: "outside" | "inside";
 };
 
-export default function ReplyMessagePreview({
-  replyTo,
-  isMine,
-  variant,
-}: Props) {
+export default function ReplyMessagePreview({ replyTo, isMine, variant}: Props) {
   const isImage = replyTo.type === "image";
 
-  const senderColor = isMine
-    ? "text-orange-600 dark:text-orange-300"
-    : "text-sky-600 dark:text-sky-300";
+  const senderColor = isMine ? "text-orange-600 dark:text-orange-300" : "text-sky-600 dark:text-sky-300";
 
-  const messageColor = isMine
-    ? "text-indigo-900/70 dark:text-orange-100/70"
-    : "text-slate-500 dark:text-slate-400";
+  const messageColor = isMine ? "text-indigo-900/70 dark:text-orange-100/70" : "text-slate-500 dark:text-slate-400";
 
   const imagePreview = (
     <div className="flex min-w-0 items-center gap-1.5">

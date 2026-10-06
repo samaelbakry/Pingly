@@ -6,7 +6,7 @@ import { ChatItem } from "@/types/chatType";
 import { UserProfile } from "@/types/userProfile";
 import { listenToUserPresence } from "@/services/presence";
 import GroupInfoDialog from "../dialogs/GroupInfoDialog";
-import { Camera, Edit, Loader } from "lucide-react";
+import { Edit, Loader } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { uploadImage } from "@/services/uploads";
 import { toast } from "sonner";
@@ -33,6 +33,7 @@ export default function ChatProfileAvatar({
   const [presence, setPresence] = useState<Presence | null>(null);
   const [uploading, setUploading] = useState(false);
   const [groupPhoto, setGroupPhoto] = useState("");
+
   const { user: currentUser } = useAuth();
 
   useEffect(() => {
@@ -51,12 +52,14 @@ export default function ChatProfileAvatar({
   }, [selectedUser?.uid, isGroupChat]);
 
   useEffect(() => {
-  if (isGroupChat) {
-    setGroupPhoto(selectedGroup?.photoURL || "");
-  }
-}, [isGroupChat, selectedGroup?.photoURL]);
+    if (isGroupChat) {
+      setGroupPhoto(selectedGroup?.photoURL || "");
+    }
+  }, [isGroupChat, selectedGroup?.photoURL]);
 
-  const displayName = isGroupChat ? selectedGroup?.name || "Unnamed Group" : selectedUser?.name || "Unknown User";
+  const displayName = isGroupChat
+    ? selectedGroup?.name || "Unnamed Group"
+    : selectedUser?.name || "Unknown User";
 
   const displayPhoto = isGroupChat ? groupPhoto : selectedUser?.photoURL || "";
 
@@ -81,7 +84,9 @@ export default function ChatProfileAvatar({
         currentUser.uid,
         newPhotoURL,
       );
+
       setGroupPhoto(newPhotoURL);
+
       toast.success("Group picture updated");
     } catch (error) {
       console.error("Failed to update group picture:", error);
@@ -97,12 +102,13 @@ export default function ChatProfileAvatar({
     }
   };
 
-  const canUpdateGroupPhoto = isGroupChat && selectedGroup?.createdBy === currentUser?.uid && !uploading;
+  const canUpdateGroupPhoto =
+    isGroupChat && selectedGroup?.createdBy === currentUser?.uid && !uploading;
 
   return (
     <>
       {isGroupChat && selectedGroup ? (
-        <div className="relative flex items-center">
+        <div className="relative min-w-0 w-full">
           <GroupInfoDialog
             groupName={displayName}
             groupPhotoURL={displayPhoto}
@@ -111,40 +117,127 @@ export default function ChatProfileAvatar({
           >
             <button
               type="button"
-              className="group flex items-center gap-3.5 rounded-xl px-2 py-1.5 text-left transition-all duration-200 hover:bg-slate-100/60 dark:hover:bg-zinc-800/50"
+              className="
+                group
+                flex
+                w-full
+                min-w-0
+                items-center
+                gap-2.5
+                rounded-xl
+                px-1.5
+                py-1.5
+                text-left
+                transition-all
+                duration-200
+                hover:bg-slate-100/60
+
+                sm:gap-3.5
+                sm:px-2
+
+                dark:hover:bg-zinc-800/50
+              "
             >
-              <Avatar className="h-10 w-10 shrink-0 ring-2 ring-slate-200/60 transition-transform duration-300 group-hover:scale-105 dark:ring-zinc-700/60">
+              <Avatar
+                className="
+                  h-9 w-9
+                  shrink-0
+                  ring-2
+                  ring-slate-200/60
+                  transition-transform
+                  duration-300
+                  group-hover:scale-105
+
+                  sm:h-10
+                  sm:w-10
+
+                  dark:ring-zinc-700/60
+                "
+              >
                 <AvatarImage
                   src={displayPhoto}
                   alt={displayName}
                   className="object-cover"
                 />
 
-                <AvatarFallback className="bg-linear-to-br from-indigo-500 to-purple-600 text-xs font-semibold tracking-wider text-white">
+                <AvatarFallback
+                  className="
+                    bg-linear-to-br
+                    from-indigo-500
+                    to-purple-600
+                    text-xs
+                    font-semibold
+                    tracking-wider
+                    text-white
+                  "
+                >
                   {displayName.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
 
-              <div className="min-w-0 flex-1">
-                <h2 className="truncate text-sm font-semibold tracking-tight text-slate-900 dark:text-zinc-100">
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <h2
+                  className="
+                    truncate
+                    text-sm
+                    font-semibold
+                    tracking-tight
+                    text-slate-900
+                    dark:text-zinc-100
+                  "
+                >
                   {displayName}
                 </h2>
 
-                <p className="mt-0.5 truncate text-xs font-medium text-slate-500 dark:text-zinc-400">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="font-medium text-purple-600 dark:text-purple-400">
-                      {groupMembers.length}{" "}
-                      {groupMembers.length === 1 ? "member" : "members"}
-                    </span>
-
-                    <span className="text-slate-300 dark:text-zinc-600">•</span>
-
-                    <span className="truncate text-slate-400 dark:text-zinc-500">
-                      {groupMembers.map((m) => m.name).join(", ") ||
-                        "No members"}
-                    </span>
+                <div
+                  className="
+                    mt-0.5
+                    flex
+                    min-w-0
+                    items-center
+                    gap-1.5
+                    overflow-hidden
+                    text-xs
+                    font-medium
+                  "
+                >
+                  <span
+                    className="
+                      shrink-0
+                      whitespace-nowrap
+                      font-medium
+                      text-purple-600
+                      dark:text-purple-400
+                    "
+                  >
+                    {groupMembers.length}{" "}
+                    {groupMembers.length === 1 ? "member" : "members"}
                   </span>
-                </p>
+
+                  <span
+                    className="
+                      shrink-0
+                      text-slate-300
+                      dark:text-zinc-600
+                    "
+                  >
+                    •
+                  </span>
+
+                  <span
+                    className="
+                      min-w-0
+                      flex-1
+                      truncate
+                      text-slate-400
+                      dark:text-zinc-500
+                    "
+                    title={groupMembers.map((member) => member.name).join(", ")}
+                  >
+                    {groupMembers.map((member) => member.name).join(", ") ||
+                      "No members"}
+                  </span>
+                </div>
               </div>
             </button>
           </GroupInfoDialog>
@@ -154,7 +247,30 @@ export default function ChatProfileAvatar({
               <label
                 htmlFor="group-image"
                 title="Change group picture"
-                className="absolute left-8 top-8 z-20 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-linear-to-br from-slate-500 to-slate-400 text-white shadow-md transition-all hover:scale-110 dark:border-zinc-950"
+                className="
+                  absolute
+                  left-8
+                  top-8
+                  z-20
+                  flex
+                  h-6
+                  w-6
+                  cursor-pointer
+                  items-center
+                  justify-center
+                  rounded-full
+                  border-2
+                  border-white
+                  bg-linear-to-br
+                  from-slate-500
+                  to-slate-400
+                  text-white
+                  shadow-md
+                  transition-all
+                  hover:scale-110
+
+                  dark:border-zinc-950
+                "
               >
                 {uploading ? (
                   <Loader className="h-3 w-3 animate-spin" />
@@ -175,35 +291,102 @@ export default function ChatProfileAvatar({
           )}
         </div>
       ) : (
-        <div className="group flex cursor-pointer items-center gap-3.5 rounded-xl px-2 py-1.5 transition-all duration-200 hover:bg-slate-100/60 dark:hover:bg-zinc-800/50">
+        <div
+          className="
+            group
+            flex
+            min-w-0
+            cursor-pointer
+            items-center
+            gap-2.5
+            rounded-xl
+            px-1.5
+            py-1.5
+            transition-all
+            duration-200
+            hover:bg-slate-100/60
+
+            sm:gap-3.5
+            sm:px-2
+
+            dark:hover:bg-zinc-800/50
+          "
+        >
           <div className="relative shrink-0">
-            <Avatar className="h-10 w-10 ring-2 ring-slate-200/60 transition-transform duration-300 group-hover:scale-105 dark:ring-zinc-700/60">
+            <Avatar
+              className="
+                h-9 w-9
+                ring-2
+                ring-slate-200/60
+                transition-transform
+                duration-300
+                group-hover:scale-105
+
+                sm:h-10
+                sm:w-10
+
+                dark:ring-zinc-700/60
+              "
+            >
               <AvatarImage
                 src={displayPhoto}
                 alt={displayName}
                 className="object-cover"
               />
 
-              <AvatarFallback className="bg-linear-to-br from-amber-500 to-rose-500 text-xs font-semibold tracking-wider text-white">
+              <AvatarFallback
+                className="
+                  bg-linear-to-br
+                  from-amber-500
+                  to-rose-500
+                  text-xs
+                  font-semibold
+                  tracking-wider
+                  text-white
+                "
+              >
                 {displayName.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </div>
-          <div className="min-w-0 flex-1">
-            <h2 className="truncate text-sm font-semibold tracking-tight text-slate-900 dark:text-zinc-100">
+
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <h2
+              className="
+                truncate
+                text-sm
+                font-semibold
+                tracking-tight
+                text-slate-900
+                dark:text-zinc-100
+              "
+            >
               {displayName}
             </h2>
 
-            <p className="mt-0.5 inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-zinc-400">
+            <p
+              className="
+                mt-0.5
+                flex
+                items-center
+                gap-1.5
+                text-xs
+                font-medium
+                text-slate-500
+                dark:text-zinc-400
+              "
+            >
               <span
-                className={`inline-block size-2 rounded-full ${
+                className={`inline-block size-2 shrink-0 rounded-full ${
                   isOnline
                     ? "animate-pulse bg-emerald-500"
                     : "bg-slate-400 dark:bg-zinc-500"
                 }`}
               />
 
-              {isOnline ? "Active now" : "Offline"}
+              <span className="truncate">
+                {isOnline ? "Active now" : "Offline"}
+              </span>
             </p>
           </div>
         </div>

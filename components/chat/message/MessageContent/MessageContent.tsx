@@ -7,6 +7,7 @@ import MessageActions from "./MessageActions/MessageActions";
 import ImageMessage from "../ImageMessage";
 import ReactionList from "./Reactions/ReactionList";
 import MessageMeta from "../MessageMeta";
+import React, { useState } from "react";
 
 type Props = {
   message: Message;
@@ -23,6 +24,14 @@ export default function MessageContent({
   onReply,
   isGroupChat,
 }: Props) {
+  const [showActions, setShowActions] = useState(false);
+
+  const handleMessagePress = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch") {
+      setShowActions((prev) => !prev);
+    }
+  };
+
   const isImage = message.type === "image";
 
   return (
@@ -63,14 +72,23 @@ export default function MessageContent({
                 chatId={chatId}
                 isMine={isMine}
                 onReply={onReply}
+                showActions={showActions}
               />
 
               <div
+                onPointerDown={handleMessagePress}
                 className={`
-                  relative flex w-fit min-w-25
-                  max-w-[min(75vw,520px)]
-                  flex-col
-                  transition-all duration-200
+    relative
+    flex
+    w-fit
+    min-w-25
+    max-w-[calc(100vw-85px)]
+    flex-col
+    transition-all
+    duration-200
+
+    sm:max-w-[min(75vw,520px)]
+
 
                   ${
                     isImage

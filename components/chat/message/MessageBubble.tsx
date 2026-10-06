@@ -8,7 +8,6 @@ import EmptyChatState from "../states/EmptyChatState";
 import SystemMessage from "./SystemMessage";
 import MessageItem from "./MessageItem";
 
-
 type Props = {
   messages: Message[];
   chatId: string;
@@ -17,16 +16,34 @@ type Props = {
   onReply: (message: Message) => void;
 };
 
-export default function MessageBubble({messages,chatId, isGroupChat, chatUsers ,onReply}: Props) {
-
+export default function MessageBubble({
+  messages,
+  chatId,
+  isGroupChat,
+  chatUsers,
+  onReply,
+}: Props) {
   const { user: currentUser } = useAuth();
-  
+
   if (messages.length === 0) {
     return <EmptyChatState />;
   }
 
   return (
-    <div className="flex flex-col gap-5 px-1 py-4">
+    <div
+      className="
+        flex
+        w-full
+        min-w-0
+        flex-col
+        gap-4
+        px-1
+        py-3
+
+        sm:gap-5
+        sm:py-4
+      "
+    >
       {messages.map((message) => {
         if (message.type === "system") {
           return (

@@ -8,8 +8,14 @@ import { uploadImage } from "@/services/uploads";
 import { ReplyTo } from "@/types/messages";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { Image, Loader2, Send, SmilePlus } from "lucide-react";
-import React, { useEffect, useRef, useState, type FormEvent } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import ReplyingToPreview from "./MessageContent/ReplyPreview/ReplyingToPreview";
+
 export default function MessageComposer({
   chatId,
   currentUserId,
@@ -24,6 +30,7 @@ export default function MessageComposer({
   const [messageText, setMessageText] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [sending, setSending] = useState(false);
+
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleTyping = (value: string) => {
@@ -58,10 +65,13 @@ export default function MessageComposer({
         text,
         replyTo: replyingTo ?? undefined,
       });
+
       onCancelReply?.();
+
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
+
       await setTyping(chatId, currentUserId, false);
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -70,7 +80,9 @@ export default function MessageComposer({
     }
   };
 
-  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
 
     if (!file || !chatId || !currentUserId) return;
@@ -113,23 +125,56 @@ export default function MessageComposer({
   return (
     <form
       onSubmit={handleSendMessage}
-      className="relative shrink-0 border-t border-white/20 dark:border-zinc-800 p-4 bg-white/20 dark:bg-zinc-900/20 backdrop-blur-xl"
+      className="
+        relative shrink-0
+        border-t border-white/20
+        bg-white/20
+        px-2.5 py-2.5
+        backdrop-blur-xl
+        sm:px-4 sm:py-4
+        dark:border-zinc-800
+        dark:bg-zinc-900/20
+      "
     >
       {replyingTo && (
-      <ReplyingToPreview onCancel={onCancelReply} replyTo={replyingTo} />
-      )}
-      {showEmojiPicker && (
-        <div className="absolute bottom-full left-4 mb-3 z-50 shadow-2xl rounded-2xl overflow-hidden border border-slate-200 dark:border-zinc-800 animate-in fade-in zoom-in-95 duration-150">
-          <EmojiPicker
-            onEmojiClick={handleEmojiPicker}
-            width={320}
-            height={400}
+        <div className="mb-2">
+          <ReplyingToPreview
+            onCancel={onCancelReply}
+            replyTo={replyingTo}
           />
         </div>
       )}
 
-      <div className="flex items-center gap-2">
-        <div className="relative">
+      {showEmojiPicker && (
+        <div
+          className="
+            absolute
+            bottom-full
+            left-2
+            z-50
+            mb-2
+            overflow-hidden
+            rounded-2xl
+            border border-slate-200
+            shadow-2xl
+            animate-in fade-in zoom-in-95 duration-150
+
+            sm:left-4
+            sm:mb-3
+
+            dark:border-zinc-800
+          "
+        >
+          <EmojiPicker
+            onEmojiClick={handleEmojiPicker}
+            width="min(320px, calc(100vw - 24px))"
+            height={380}
+          />
+        </div>
+      )}
+
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+        <div className="relative shrink-0">
           <input
             id="chat-image"
             type="file"
@@ -140,44 +185,131 @@ export default function MessageComposer({
 
           <label
             htmlFor="chat-image"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-slate-100"
+            aria-label="Upload image"
+            className="
+              flex
+              h-9 w-9
+              cursor-pointer
+              items-center
+              justify-center
+              rounded-full
+              text-slate-500
+              transition-colors
+              hover:bg-slate-100
+              hover:text-slate-700
+
+              sm:h-10 sm:w-10
+
+              dark:text-zinc-400
+              dark:hover:bg-zinc-800
+              dark:hover:text-zinc-200
+            "
           >
             {sending ? (
               <Loader2
                 aria-label="Sending image"
-                className="size-5 animate-spin"
+                className="size-4 animate-spin sm:size-5"
               />
             ) : (
-              <Image aria-label="Upload image" className="size-5" />
+              <Image
+                aria-label="Upload image"
+                className="size-4 sm:size-5"
+              />
             )}
           </label>
         </div>
-        <div className="relative">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowEmojiPicker((prev) => !prev)}
-            className="shrink-0 rounded-full text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-white/40 dark:hover:bg-zinc-800/60"
-          >
-            <SmilePlus className="size-6" />
-          </Button>
-        </div>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={() => setShowEmojiPicker((prev) => !prev)}
+          aria-label="Open emoji picker"
+          className="
+            h-9 w-9
+            shrink-0
+            rounded-full
+            text-slate-500
+            hover:bg-white/40
+            hover:text-slate-700
+
+            sm:h-10 sm:w-10
+
+            dark:text-zinc-400
+            dark:hover:bg-zinc-800/60
+            dark:hover:text-zinc-200
+          "
+        >
+          <SmilePlus className="size-5 sm:size-6" />
+        </Button>
 
         <Input
           value={messageText}
           onChange={(e) => handleTyping(e.target.value)}
           placeholder="Type a message..."
           disabled={sending}
-          className="h-11 flex-1 rounded-full border-white/40 dark:border-zinc-800 bg-white/40 dark:bg-zinc-800/60 px-4 text-xs sm:text-sm text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 backdrop-blur-md focus-visible:border-orange-400 dark:focus-visible:border-orange-500 focus-visible:bg-white/60 dark:focus-visible:bg-zinc-800 focus-visible:ring-4 focus-visible:ring-orange-500/10 transition-all shadow-inner"
+          className="
+            h-10
+            min-w-0
+            flex-1
+            rounded-full
+            border-white/40
+            bg-white/40
+            px-3
+            text-xs
+            text-slate-900
+            shadow-inner
+            backdrop-blur-md
+            transition-all
+
+            placeholder:text-slate-400
+
+            focus-visible:border-orange-400
+            focus-visible:bg-white/60
+            focus-visible:ring-4
+            focus-visible:ring-orange-500/10
+
+            sm:h-11
+            sm:px-4
+            sm:text-sm
+
+            dark:border-zinc-800
+            dark:bg-zinc-800/60
+            dark:text-zinc-100
+            dark:placeholder:text-zinc-500
+            dark:focus-visible:border-orange-500
+            dark:focus-visible:bg-zinc-800
+          "
         />
 
         <Button
           type="submit"
           disabled={sending || !messageText.trim()}
-          className="h-11 w-11 shrink-0 rounded-full bg-linear-to-r from-amber-500 via-orange-500 to-red-500 p-0 text-white shadow-lg shadow-orange-500/20 dark:shadow-none hover:opacity-95 active:scale-95 transition-all disabled:opacity-50"
+          aria-label="Send message"
+          className="
+            h-10 w-10
+            shrink-0
+            rounded-full
+            bg-linear-to-r
+            from-amber-500
+            via-orange-500
+            to-red-500
+            p-0
+            text-white
+            shadow-lg
+            shadow-orange-500/20
+            transition-all
+
+            hover:opacity-95
+            active:scale-95
+            disabled:opacity-50
+
+            sm:h-11 sm:w-11
+
+            dark:shadow-none
+          "
         >
-          <Send className="h-4 w-4" />
+          <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </Button>
       </div>
     </form>
