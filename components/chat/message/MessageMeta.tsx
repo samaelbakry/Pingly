@@ -24,22 +24,17 @@ export default function MessageMeta({ message, isMine }: Props) {
       {isMine && (
         <CheckCheck
           className={`
-      h-3.5 w-3.5
-      ${
-        message?.seen
-          ? "text-blue-500 dark:text-blue-400"
-          : "text-zinc-400 dark:text-zinc-500"
-      }
-    `}
+            h-3.5 w-3.5
+            transition-colors duration-500 ease-in-out
+            ${
+              message.seen
+                ? "text-blue-500 dark:text-blue-400"
+                : "text-zinc-400 dark:text-zinc-500"
+            }
+          `}
         />
       )}
-
-      <span
-        className="
-          text-[10px] font-medium
-           text-slate-500 dark:text-slate-100
-        "
-      >
+      <span className="text-[10px] font-medium text-slate-500 dark:text-slate-100">
         {time}
       </span>
     </div>

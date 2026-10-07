@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { listenToMessages } from "@/services/messages";
+import { listenToMessages, markMessagesAsSeen } from "@/services/messages";
 import { Message, ReplyTo } from "@/types/messages";
 
 import { useAuth } from "@/context/AuthContext";
@@ -43,6 +43,8 @@ export default function ChatWindow({
     selectedChat?.type === "group" ? selectedChat.group : null;
 
   const isSomeoneTyping = typingUsers.length > 0;
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!chatId) {
@@ -151,6 +153,27 @@ export default function ChatWindow({
     };
   }, [chatId, currentUser?.uid]);
 
+  useEffect(() => {
+    if (!chatId || !currentUser?.uid || messages.length === 0) {
+      return;
+    }
+
+    markMessagesAsSeen(chatId, currentUser.uid).catch((error) => {
+      console.error("Failed to mark messages as seen:", error);
+    });
+  }, [chatId, currentUser?.uid, messages]);
+
+  useEffect(() => {
+    if (!chatId || messages.length === 0) return;
+
+    requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({
+        behavior: "instant",
+        block: "end",
+      });
+    });
+  }, [chatId, messages.length]);
+
   if (!selectedChat || !chatId) {
     return <NoChatSelectedState />;
   }
@@ -191,6 +214,7 @@ export default function ChatWindow({
             });
           }}
         />
+        <div ref={messagesEndRef} />
       </div>
       {isSomeoneTyping && (
         <div className="m-4 flex items-end gap-2.5">
