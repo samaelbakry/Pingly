@@ -1,9 +1,8 @@
 import {
-  Bell,
   Lock,
   Palette,
   Settings,
-  UserRound,
+  UserRound
 } from "lucide-react";
 
 export const profileSections = [
@@ -24,12 +23,6 @@ export const profileSections = [
     label: "Appearance",
     description: "Customize your experience",
     icon: Palette,
-  },
-  {
-    id: "notifications",
-    label: "Notifications",
-    description: "Manage your alerts",
-    icon: Bell,
   },
   {
     id: "privacy",

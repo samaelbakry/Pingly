@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import Logo from "@/components/ui/Logo";
-import { LogOut, User, LogIn, Sun, Moon } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useTheme } from "@/context/ThemeProvider";
+import { LogIn, LogOut, User } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -44,18 +42,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={toggleTheme}
-            className="relative h-10 w-10 rounded-full overflow-hidden border border-white/60 dark:border-slate-700/60 bg-white/40 dark:bg-slate-800/40 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 shadow-xs hover:border-orange-400 dark:hover:border-orange-400 focus:outline-none focus:ring-4 focus:ring-orange-500/10 backdrop-blur-md transition-all"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4 stroke-[2.5]" />
-            ) : (
-              <Moon className="h-4 w-4 stroke-[2.5]" />
-            )}
-          </button>
-
+        
           {user ? (
             <div className="relative" ref={dropdownRef}>
               <div className="flex items-center gap-3">

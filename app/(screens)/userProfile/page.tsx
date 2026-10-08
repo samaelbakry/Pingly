@@ -6,6 +6,7 @@ import ProfileContent from "@/components/profile/features/ProfileContent";
 import Navbar from "@/components/common/Navbar";
 import { useState } from "react";
 import ManageAccount from "@/components/profile/features/ManageAccount";
+import ProfileAppearance from "@/components/profile/features/ProfileAppearance";
 
 export default function UserProfile() {
   const [activeSection, setActiveSection] = useState("profile");
@@ -42,7 +43,6 @@ export default function UserProfile() {
             relative z-10
             flex min-h-0
             w-full shrink-0
-
             sm:w-72
           "
         >
@@ -63,6 +63,7 @@ export default function UserProfile() {
           {activeSection === "profile" && <ProfileContent />}
 
           {activeSection === "account" && <ManageAccount />}
+          {activeSection === "appearance" && <ProfileAppearance />}
         </section>
       </main>
     </div>

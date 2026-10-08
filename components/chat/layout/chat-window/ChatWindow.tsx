@@ -215,29 +215,8 @@ export default function ChatWindow({
           }}
         />
         <div ref={messagesEndRef} />
-      </div>
       {isSomeoneTyping && (
-        <div className="m-4 flex items-end gap-2.5">
-          <div className="shrink-0">
-            {chatUsers[typingUsers[0]]?.photoURL || selectedUser?.photoURL ? (
-              <img
-                src={
-                  chatUsers[typingUsers[0]]?.photoURL ||
-                  selectedUser?.photoURL ||
-                  ""
-                }
-                alt=""
-                className="h-7 w-7 rounded-full object-cover"
-              />
-            ) : (
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-100 text-[10px] font-bold text-orange-600 dark:bg-orange-950/60 dark:text-orange-400">
-                {(chatUsers[typingUsers[0]]?.name || selectedUser?.name || "?")
-                  .charAt(0)
-                  .toUpperCase()}
-              </div>
-            )}
-          </div>
-
+        <div className="mt-2 flex items-end gap-2.5">
           <div className="flex h-9 items-center gap-1 rounded-2xl rounded-bl-md border border-zinc-200/80 bg-white/90 px-3.5 shadow-sm backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/90">
             <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.3s] dark:bg-zinc-500" />
             <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.15s] dark:bg-zinc-500" />
@@ -245,6 +224,7 @@ export default function ChatWindow({
           </div>
         </div>
       )}
+      </div>
       <MessageComposer
         chatId={chatId}
         currentUserId={currentUser?.uid as string}

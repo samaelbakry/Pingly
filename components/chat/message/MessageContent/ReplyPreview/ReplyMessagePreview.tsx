@@ -1,8 +1,7 @@
 "use client";
 
-import { Reply } from "lucide-react";
 import { Message } from "@/types/messages";
-import Image from "next/image";
+import { Reply } from "lucide-react";
 
 type ReplyTo = NonNullable<Message["replyTo"]>;
 

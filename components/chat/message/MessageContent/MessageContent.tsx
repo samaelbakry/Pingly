@@ -26,17 +26,27 @@ export default function MessageContent({
 }: Props) {
   const [showActions, setShowActions] = useState(false);
 
-  const handleMessagePress = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType === "touch") {
-      setShowActions((prev) => !prev);
-    }
+  const handleMessageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (window.innerWidth >= 768) return;
+
+    e.stopPropagation();
+    setShowActions((prev) => !prev);
+  };
+
+  const handleReply = (message: Message) => {
+    onReply(message);
+    setShowActions(false);
   };
 
   const isImage = message.type === "image";
 
   return (
     <div className="relative group/message">
-      <ReactionPicker message={message} chatId={chatId} />
+      <ReactionPicker
+        message={message}
+        chatId={chatId}
+        showActions={showActions}
+      />
 
       <div
         className={`flex w-full items-end gap-2 ${
@@ -71,24 +81,23 @@ export default function MessageContent({
                 message={message}
                 chatId={chatId}
                 isMine={isMine}
-                onReply={onReply}
+                onReply={handleReply}
                 showActions={showActions}
               />
 
               <div
-                onPointerDown={handleMessagePress}
+                onClick={handleMessageClick}
                 className={`
-    relative
-    flex
-    w-fit
-    min-w-25
-    max-w-[calc(100vw-85px)]
-    flex-col
-    transition-all
-    duration-200
+                  relative
+                  flex
+                  w-fit
+                  min-w-25
+                  max-w-[calc(100vw-85px)]
+                  flex-col
+                  transition-all
+                  duration-200
 
-    sm:max-w-[min(75vw,520px)]
-
+                  sm:max-w-[min(75vw,520px)]
 
                   ${
                     isImage
@@ -140,7 +149,7 @@ export default function MessageContent({
                       w-fit
                       max-w-full
                       whitespace-normal
-                     wrap-break-word
+                      wrap-break-word
                       text-[13px]
                       leading-[1.6]
                       sm:text-sm

@@ -95,7 +95,9 @@ export default function MessageComposer({
       await sendMessage(chatId, currentUserId, {
         type: "image",
         imageUrl,
+        replyTo: replyingTo ?? undefined
       });
+      onCancelReply?.();
 
       console.log("Image message sent:", imageUrl);
     } catch (error) {

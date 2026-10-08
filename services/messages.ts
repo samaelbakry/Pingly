@@ -96,7 +96,7 @@ export async function markMessagesAsSeen(
 
   const updates: Record<string, boolean> = {};
 
-  Object.entries(data).forEach(([message, messageId]) => {
+  Object.entries(data).forEach(([messageId, message]) => {
     const messageData = message as unknown as Message;
 
     if (messageData.senderId !== currentUserId && messageData.seen === false) {
