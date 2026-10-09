@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "@/context/ThemeProvider";
-import { Check, Laptop, Moon, Sun } from "lucide-react";
+import { Check, Laptop, Moon, Palette, Sun } from "lucide-react";
 
 const appearanceOptions = [
   {
@@ -28,13 +28,16 @@ export default function ProfileAppearance() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <section className="relative flex chat-scroll h-full min-h-0 w-full min-w-0 flex-col overflow-y-auto overflow-x-hidden rounded-[2.5rem] border border-white/40 bg-white/30 p-5 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 sm:p-8">
+    <section className="relative flex chat-scroll h-full min-h-0 w-full min-w-0 flex-col overflow-y-auto overflow-x-hidden rounded-[2.5rem] border border-white/40 bg-white/30 p-5 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 sm:p-8 ">
       <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-orange-500/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl">
-        <header className="mb-8 flex items-start gap-4 border-b border-zinc-200/70 pb-6 dark:border-zinc-800">
-          <span className="mt-1 h-10 w-1.5 shrink-0 rounded-full bg-orange-500" />
-          <div>
+        <header className="mb-8 flex items-center gap-4 border-b border-zinc-200/70 pb-6 dark:border-zinc-800">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-orange-500/20 to-orange-500/5 text-orange-500 ring-1 ring-orange-500/20 sm:h-14 sm:w-14">
+            <Palette className="h-6 w-6 sm:h-7 sm:w-7" />
+          </div>
+
+          <div className="min-w-0">
             <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
               Appearance
             </h2>
@@ -47,7 +50,7 @@ export default function ProfileAppearance() {
         <div
           role="radiogroup"
           aria-label="Theme"
-          className="grid gap-4 sm:grid-cols-3"
+          className="grid gap-4 sm:grid-cols-3  animate-in fade-in-50 slide-in-from-top-3 duration-300"
         >
           {appearanceOptions.map((option) => {
             const Icon = option.icon;

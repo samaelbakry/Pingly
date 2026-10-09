@@ -91,6 +91,7 @@ export default function ChatWindowHeader({
           currentUserId={currentUserId}
           isGroupCreator={isGroupCreator}
           selectedGroup={selectedGroup}
+          selectedUser={selectedUser}
           isGroupChat={isGroupChat}
           handleLeaveChat={handleLeaveChat}
         />

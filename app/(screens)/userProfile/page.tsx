@@ -7,6 +7,7 @@ import Navbar from "@/components/common/Navbar";
 import { useState } from "react";
 import ManageAccount from "@/components/profile/features/ManageAccount";
 import ProfileAppearance from "@/components/profile/features/ProfileAppearance";
+import Privacy from "@/components/profile/features/Privacy";
 
 export default function UserProfile() {
   const [activeSection, setActiveSection] = useState("profile");
@@ -33,10 +34,7 @@ export default function UserProfile() {
           sm:flex-row sm:gap-4 sm:p-6 sm:pb-6
         "
       >
-        <ChatNavRail
-          showArchived={false}
-          setShowArchived={() => {}}
-        />
+        <ChatNavRail showArchived={false} setShowArchived={() => {}} />
 
         <div
           className="
@@ -64,6 +62,7 @@ export default function UserProfile() {
 
           {activeSection === "account" && <ManageAccount />}
           {activeSection === "appearance" && <ProfileAppearance />}
+          {activeSection === "privacy" && <Privacy />}
         </section>
       </main>
     </div>

@@ -11,6 +11,59 @@ import {
 import { database } from "@/lib/firebaseConfig";
 import { Message, ReplyTo } from "@/types/messages";
 
+async function assertCanSendMessage(chatId: string, senderId: string) {
+  
+  const chatSnapshot = await get(
+    ref(database, `chats/${chatId}`),
+  );
+
+  if (!chatSnapshot.exists()) {
+    throw new Error("Chat not found");
+  }
+
+  const chat = chatSnapshot.val() as {
+    type?: string;
+    participants?: Record<string, boolean>;
+  };
+
+  if (chat.participants?.[senderId] !== true) {
+    throw new Error("You are not a member of this chat");
+  }
+
+  if (chat.type === "group") return;
+
+  const otherUserIds = Object.keys(chat.participants ?? {}).filter(
+    (userId) =>
+      userId !== senderId &&
+      chat.participants?.[userId] === true,
+  );
+
+  const blockedChecks = await Promise.all(
+    otherUserIds.map(async (targetUserId) => {
+      const [myBlock, theirBlock] = await Promise.all([
+        get(
+          ref(
+            database,
+            `users/${senderId}/blockedUsers/${targetUserId}`,
+          ),
+        ),
+        get(
+          ref(
+            database,
+            `users/${targetUserId}/blockedUsers/${senderId}`,
+          ),
+        ),
+      ]);
+
+      return myBlock.val() === true || theirBlock.val() === true;
+    }),
+  );
+
+  if (blockedChecks.some(Boolean)) {
+    throw new Error("You cannot message a blocked contact");
+  }
+}
+
 export async function sendMessage(
   chatId: string,
   senderId: string,
@@ -21,6 +74,9 @@ export async function sendMessage(
     replyTo?: ReplyTo;
   },
 ) {
+
+  await assertCanSendMessage(chatId, senderId);
+
   const messagesRef = ref(database, `chats/${chatId}/messages`);
 
   const newMessageRef = push(messagesRef);

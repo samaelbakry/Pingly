@@ -50,9 +50,12 @@ export default function ProfileContent() {
       <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-orange-500/10 blur-3xl" />
 
       <div className="relative z-10 mx-auto w-full max-w-7xl">
-        <header className="mb-8 flex items-start gap-4 border-b border-zinc-200/70 pb-6 dark:border-zinc-800">
-          <span className="mt-1 h-10 w-1.5 shrink-0 rounded-full bg-orange-500" />
-          <div>
+        <header className="mb-8 flex items-center gap-4 border-b border-zinc-200/70 pb-6 dark:border-zinc-800">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-orange-500/20 to-orange-500/5 text-orange-500 ring-1 ring-orange-500/20 sm:h-14 sm:w-14">
+            <UserRound className="h-6 w-6 sm:h-7 sm:w-7" />
+          </div>
+
+          <div className="min-w-0">
             <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
               Your profile
             </h1>
@@ -62,7 +65,7 @@ export default function ProfileContent() {
           </div>
         </header>
 
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]  animate-in fade-in-50 slide-in-from-top-3 duration-300">
           <div className="overflow-hidden rounded-[2rem] border border-zinc-200/70 bg-white/60 shadow-sm backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/40">
             <div className="h-24 bg-linear-to-br from-orange-400/30 via-orange-300/20 to-orange-100/10 dark:from-orange-500/25 dark:via-orange-500/10 dark:to-transparent" />
 

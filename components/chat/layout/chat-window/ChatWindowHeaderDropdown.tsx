@@ -19,14 +19,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { leaveGroupChat } from "@/services/groupChatActions";
-import {
-  EllipsisVerticalIcon,
-  LogOut,
-  Trash2,
-  UserPlus,
-} from "lucide-react";
+import { EllipsisVerticalIcon, LogOut, Trash2, UserPlus } from "lucide-react";
 
 import { toast } from "sonner";
+import BlockUserButton from "../../actions/BlockUserButton";
+import { UserProfile } from "@/types/userProfile";
 
 export default function ChatWindowHeaderDropdown({
   messages,
@@ -34,6 +31,7 @@ export default function ChatWindowHeaderDropdown({
   currentUserId,
   isGroupCreator,
   selectedGroup,
+  selectedUser,
   isGroupChat,
   handleLeaveChat,
 }: {
@@ -42,6 +40,7 @@ export default function ChatWindowHeaderDropdown({
   currentUserId: string;
   isGroupCreator: boolean;
   selectedGroup: ChatItem | null;
+  selectedUser: UserProfile | null;
   isGroupChat: boolean;
   handleLeaveChat: () => void;
 }) {
@@ -98,9 +97,7 @@ export default function ChatWindowHeaderDropdown({
               "
             >
               <EllipsisVerticalIcon className="h-5 w-5" />
-              <span className="sr-only">
-                Open chat options
-              </span>
+              <span className="sr-only">Open chat options</span>
             </button>
           }
         />
@@ -152,12 +149,10 @@ export default function ChatWindowHeaderDropdown({
               </DropdownMenuItem>
             )}
 
-            {isGroupCreator &&
-              isGroupChat &&
-              selectedGroup && (
-                <DropdownMenuItem
-                  onClick={openAddMembersDialog}
-                  className="
+            {isGroupCreator && isGroupChat && selectedGroup && (
+              <DropdownMenuItem
+                onClick={openAddMembersDialog}
+                className="
                     cursor-pointer
                     gap-2
                     rounded-lg
@@ -166,11 +161,11 @@ export default function ChatWindowHeaderDropdown({
                     dark:text-zinc-200
                     dark:focus:bg-zinc-800
                   "
-                >
-                  <UserPlus className="size-4" />
-                  <span>Add Members</span>
-                </DropdownMenuItem>
-              )}
+              >
+                <UserPlus className="size-4" />
+                <span>Add Members</span>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
@@ -191,10 +186,15 @@ export default function ChatWindowHeaderDropdown({
             </DropdownMenuLabel>
 
             <DropdownMenuItem className="p-0 focus:bg-transparent">
-              <ArchiveButton
-                chatId={chatId}
-                currentUserId={currentUserId}
-              />
+              <ArchiveButton chatId={chatId} currentUserId={currentUserId} />
+            </DropdownMenuItem>
+            <DropdownMenuItem className="p-0 focus:bg-transparent">
+              {selectedUser?.uid && currentUserId && (
+                <BlockUserButton
+                  currentUserId={currentUserId}
+                  targetUserId={selectedUser.uid}
+                />
+              )}
             </DropdownMenuItem>
 
             {isGroupChat && (
@@ -213,16 +213,10 @@ export default function ChatWindowHeaderDropdown({
                 "
               >
                 <LogOut
-                  className={`size-4 ${
-                    leaving ? "animate-pulse" : ""
-                  }`}
+                  className={`size-4 ${leaving ? "animate-pulse" : ""}`}
                 />
 
-                <span>
-                  {leaving
-                    ? "Leaving..."
-                    : "Leave Group"}
-                </span>
+                <span>{leaving ? "Leaving..." : "Leave Group"}</span>
               </DropdownMenuItem>
             )}
           </DropdownMenuGroup>
@@ -238,9 +232,7 @@ export default function ChatWindowHeaderDropdown({
       {selectedGroup && (
         <AddMembersDialog
           chatId={chatId}
-          existingMemberIds={Object.keys(
-            selectedGroup.participants || {}
-          )}
+          existingMemberIds={Object.keys(selectedGroup.participants || {})}
           open={addMembersOpen}
           onOpenChange={setAddMembersOpen}
         />

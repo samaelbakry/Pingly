@@ -17,6 +17,7 @@ import MessageBubble from "../../message/MessageBubble";
 import MessageComposer from "../../message/MessageComposer";
 import NoChatSelectedState from "../../states/NoChatSelectedState";
 import ChatWindowHeader from "./ChatWindowHeader";
+import { BlockStatus, listenToBlockStatus } from "@/services/block";
 
 export default function ChatWindow({
   handleLeaveChat,
@@ -32,6 +33,7 @@ export default function ChatWindow({
 
   const [chatUsers, setChatUsers] = useState<Record<string, UserProfile>>({});
   const [replyingTo, setReplyingTo] = useState<ReplyTo | null>(null);
+  const [blockStatus, setBlockStatus] = useState<BlockStatus>("loading");
 
   const chatId = selectedChat?.chatId ?? null;
 
@@ -164,6 +166,21 @@ export default function ChatWindow({
   }, [chatId, currentUser?.uid, messages]);
 
   useEffect(() => {
+    if (isGroupChat || !currentUser?.uid || !selectedUser?.uid) {
+      setBlockStatus("none");
+      return;
+    }
+
+    setBlockStatus("loading");
+
+    return listenToBlockStatus(
+      currentUser.uid,
+      selectedUser.uid,
+      setBlockStatus,
+    );
+  }, [chatId, currentUser?.uid, selectedUser?.uid, isGroupChat]);
+
+  useEffect(() => {
     if (!chatId || messages.length === 0) return;
 
     requestAnimationFrame(() => {
@@ -178,10 +195,22 @@ export default function ChatWindow({
     return <NoChatSelectedState />;
   }
 
+  const hideSelectedUserProfile = blockStatus === "blocked-me" || blockStatus === "both";
+
+  const visibleSelectedUser = selectedUser
+    ? {
+        ...selectedUser,
+        name: hideSelectedUserProfile
+          ? "Unavailable contact"
+          : selectedUser.name,
+        photoURL: hideSelectedUserProfile ? "" : selectedUser.photoURL,
+      }
+    : null;
+
   return (
     <div className="flex h-full min-h-0 flex-col mb-3 overflow-hidden scroll-smooth rounded-[2.5rem]  border border-zinc-200/80 bg-white/30 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 dark:shadow-none">
       <ChatWindowHeader
-        selectedUser={selectedUser}
+        selectedUser={visibleSelectedUser}
         selectedGroup={selectedGroup}
         isGroupChat={isGroupChat}
         currentUserId={currentUser?.uid ?? ""}
@@ -215,22 +244,67 @@ export default function ChatWindow({
           }}
         />
         <div ref={messagesEndRef} />
-      {isSomeoneTyping && (
-        <div className="mt-2 flex items-end gap-2.5">
-          <div className="flex h-9 items-center gap-1 rounded-2xl rounded-bl-md border border-zinc-200/80 bg-white/90 px-3.5 shadow-sm backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/90">
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.3s] dark:bg-zinc-500" />
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.15s] dark:bg-zinc-500" />
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 dark:bg-zinc-500" />
+        {isSomeoneTyping && (
+          <div className="mt-2 flex items-end gap-2.5">
+            <div className="flex h-9 items-center gap-1 rounded-2xl rounded-bl-md border border-zinc-200/80 bg-white/90 px-3.5 shadow-sm backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/90">
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.3s] dark:bg-zinc-500" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.15s] dark:bg-zinc-500" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 dark:bg-zinc-500" />
+            </div>
           </div>
+        )}
+      </div>
+
+      {isGroupChat || blockStatus === "none" ? (
+        <MessageComposer
+          chatId={chatId}
+          currentUserId={currentUser?.uid as string}
+          replyingTo={replyingTo}
+          onCancelReply={() => setReplyingTo(null)}
+        />
+      ) : (
+        <div className="shrink-0 border-t border-zinc-200/70 bg-white/50 px-5 py-4 text-center backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/40">
+          {blockStatus === "loading" && (
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              Checking contact status...
+            </p>
+          )}
+
+          {blockStatus === "blocked-by-me" && (
+            <>
+              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+                You blocked this contact
+              </p>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                Unblock them from the chat header to send messages again.
+              </p>
+            </>
+          )}
+
+          {blockStatus === "blocked-me" && (
+            <>
+              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+                You can&apos;t message this contact
+              </p>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                This contact has blocked you.
+              </p>
+            </>
+          )}
+
+          {blockStatus === "both" && (
+            <>
+              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+                You have blocked each other
+              </p>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                Unblock this contact from the chat header to change your block
+                status.
+              </p>
+            </>
+          )}
         </div>
       )}
-      </div>
-      <MessageComposer
-        chatId={chatId}
-        currentUserId={currentUser?.uid as string}
-        replyingTo={replyingTo}
-        onCancelReply={() => setReplyingTo(null)}
-      />
     </div>
   );
 }
