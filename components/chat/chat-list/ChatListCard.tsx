@@ -32,6 +32,16 @@ export default function ChatListCard({
 
   const isSelected = selectedChatId === chat.chatId;
 
+  const storedUnread = chat.unreadCounts?.[currentUser?.uid ?? ""];
+
+  const unreadCount =
+    storedUnread ??
+    (chat.lastMessage &&
+    chat.lastMessage.senderId !== currentUser?.uid &&
+    chat.lastMessage.seen !== true
+      ? 1
+      : 0);
+
   return (
     <div
       className={`
@@ -149,19 +159,30 @@ export default function ChatListCard({
               )}
             </div>
 
-            <div className="mt-1 flex items-center gap-1.5">
-              {chat.lastMessage ? (
-                <p className="truncate text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
-                  {chat.lastMessage.type === "image"
-                    ? "📷 Photo"
-                    : chat.lastMessage.senderId === currentUser?.uid
-                      ? `You: ${chat.lastMessage.text}`
-                      : chat.lastMessage.text}
-                </p>
-              ) : (
-                <p className="truncate text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
-                  No messages yet
-                </p>
+            <div className="mt-1 flex min-w-0 items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                {chat.lastMessage ? (
+                  <p className="truncate text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
+                    {chat.lastMessage.type === "image"
+                      ? "📷 Photo"
+                      : chat.lastMessage.senderId === currentUser?.uid
+                        ? `You: ${chat.lastMessage.text}`
+                        : chat.lastMessage.text}
+                  </p>
+                ) : (
+                  <p className="truncate text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
+                    No messages yet
+                  </p>
+                )}
+              </div>
+
+              {unreadCount > 0 && (
+                <span
+                  aria-label={`${unreadCount} unread messages`}
+                  className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
               )}
             </div>
           </div>

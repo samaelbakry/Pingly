@@ -17,6 +17,7 @@ export type LastMessage = {
   text?: string;
   imageUrl?: string;
   createdAt: number;
+  seen?: boolean;
 };
 
 export type ChatItem = {
@@ -28,4 +29,5 @@ export type ChatItem = {
   createdAt: number;
   participants: Record<string, boolean>;
   lastMessage?: LastMessage;
+  unreadCounts?: Record<string, number>;
 };

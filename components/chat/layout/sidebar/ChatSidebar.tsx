@@ -1,11 +1,16 @@
+
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
 import { useChat } from "@/context/ChatProvider";
 
-import { createChat, createGroupChat, getUserChats } from "@/services/chats";
+import {
+  createChat,
+  createGroupChat,
+  listenToUserChats,
+} from "@/services/chats";
 
-import { getArchivedChats, unarchiveChat } from "@/services/chatActions";
+import { unarchiveChat } from "@/services/chatActions";
 import { getUserById } from "@/services/users";
 
 import { useEffect, useMemo, useState } from "react";
@@ -25,91 +30,153 @@ type ChatSidebarProps = {
   showArchived: boolean;
 };
 
-export default function ChatSidebar({ showArchived }: ChatSidebarProps) {
+export default function ChatSidebar({
+  showArchived,
+}: ChatSidebarProps) {
   const { user: currentUser } = useAuth();
 
-  const { selectedChat, selectUserChat, selectGroupChat } = useChat();
+  const {
+    selectedChat,
+    selectUserChat,
+    selectGroupChat,
+  } = useChat();
 
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
   const [userChats, setUserChats] = useState<ChatItem[]>([]);
-
-  const [chatUsers, setChatUsers] = useState<Record<string, UserProfile>>({});
+  const [chatUsers, setChatUsers] = useState<
+    Record<string, UserProfile>
+  >({});
 
   useEffect(() => {
-    const loadChats = async () => {
+    if (!currentUser?.uid) {
+      setUserChats([]);
+      setChatUsers({});
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    const unsubscribe = listenToUserChats(
+      currentUser.uid,
+      showArchived,
+      (chats) => {
+        setUserChats(chats);
+        setLoading(false);
+      },
+    );
+
+    return unsubscribe;
+  }, [currentUser?.uid, showArchived]);
+
+ const currentUserId = currentUser?.uid;
+
+const userIdsKey = useMemo(() => {
+  if (!currentUserId) return "";
+
+  const userIds = userChats
+    .filter((chat) => chat.type !== "group")
+    .flatMap((chat) =>
+      Object.keys(chat.participants ?? {}).filter(
+        (id) => id !== currentUserId,
+      ),
+    );
+
+  return [...new Set(userIds)].sort().join("|");
+}, [userChats, currentUserId]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const userIds = userIdsKey
+      ? userIdsKey.split("|")
+      : [];
+
+    if (userIds.length === 0) {
+      return;
+    }
+
+    const loadUsers = async () => {
       try {
-        setLoading(true);
+        const entries = await Promise.all(
+          userIds.map(async (userId) => {
+            const user = await getUserById(userId);
 
-        if (!currentUser?.uid) return;
-
-        const chats = showArchived
-          ? await getArchivedChats(currentUser.uid)
-          : await getUserChats(currentUser.uid);
-
-        const chatItems = chats as unknown as ChatItem[];
-
-        setUserChats(chatItems);
-
-        const usersEntries = await Promise.all(
-          chatItems
-            .filter((chat) => chat.type !== "group")
-            .map(async (chat) => {
-              const participantIds = Object.keys(chat.participants ?? {});
-
-              const otherUserId = participantIds.find(
-                (id) => id !== currentUser.uid,
-              );
-
-              if (!otherUserId) return null;
-
-              const user = await getUserById(otherUserId);
-
-              if (!user) return null;
-
-              return [otherUserId, user] as const;
-            }),
+            return user
+              ? ([userId, user] as const)
+              : null;
+          }),
         );
+
+        if (cancelled) return;
 
         const usersMap: Record<string, UserProfile> = {};
 
-        usersEntries.forEach((entry) => {
+        entries.forEach((entry) => {
           if (!entry) return;
 
           const [userId, user] = entry;
-
           usersMap[userId] = user;
         });
 
         setChatUsers(usersMap);
       } catch (error) {
-        console.error("Failed to fetch chats:", error);
-      } finally {
-        setLoading(false);
+        console.error("Failed to load chat users:", error);
       }
     };
 
-    if (currentUser?.uid) {
-      loadChats();
-    }
-  }, [currentUser?.uid, showArchived]);
+    loadUsers();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userIdsKey]);
 
   const filteredChats = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    if (!query) {
-      return userChats;
-    }
+    const getUnreadCount = (chat: ChatItem) => {
+      const userId = currentUser?.uid;
 
-    return userChats.filter((chat) => {
-      if (chat.type === "group") {
-        return chat.name?.toLowerCase().includes(query);
+      if (!userId) return 0;
+
+      const storedCount = chat.unreadCounts?.[userId];
+
+      if (typeof storedCount === "number") {
+        return storedCount;
       }
 
-      const participantIds = Object.keys(chat.participants ?? {});
+      const lastMessage = chat.lastMessage;
 
-      const otherUserId = participantIds.find((id) => id !== currentUser?.uid);
+      if (
+        lastMessage &&
+        lastMessage.senderId !== userId &&
+        lastMessage.seen !== true
+      ) {
+        return 1;
+      }
+
+      return 0;
+    };
+
+    const filtered = userChats.filter((chat) => {
+      if (!query) return true;
+
+      if (chat.type === "group") {
+        return (
+          chat.name?.toLowerCase().includes(query) ?? false
+        );
+      }
+
+      const participantIds = Object.keys(
+        chat.participants ?? {},
+      );
+
+      const otherUserId = participantIds.find(
+        (id) => id !== currentUser?.uid,
+      );
 
       if (!otherUserId) return false;
 
@@ -120,13 +187,51 @@ export default function ChatSidebar({ showArchived }: ChatSidebarProps) {
         otherUser?.email?.toLowerCase().includes(query)
       );
     });
-  }, [userChats, chatUsers, search, currentUser?.uid]);
 
-  const handleSelectChat = async (currentUserId: string, user: UserProfile) => {
+    return [...filtered].sort((a, b) => {
+      const aSelected = a.chatId === selectedChat?.chatId;
+      const bSelected = b.chatId === selectedChat?.chatId;
+
+      if (aSelected !== bSelected) {
+        return aSelected ? -1 : 1;
+      }
+
+      const aUnread = getUnreadCount(a);
+      const bUnread = getUnreadCount(b);
+
+      if (aUnread !== bUnread) {
+        return bUnread - aUnread;
+      }
+
+      const aTime = Number(
+        a.lastMessage?.createdAt ?? a.createdAt ?? 0,
+      );
+
+      const bTime = Number(
+        b.lastMessage?.createdAt ?? b.createdAt ?? 0,
+      );
+
+      return bTime - aTime;
+    });
+  }, [
+    userChats,
+    chatUsers,
+    search,
+    currentUser?.uid,
+    selectedChat?.chatId,
+  ]);
+
+  const handleSelectChat = async (
+    currentUserId: string,
+    user: UserProfile,
+  ) => {
     if (!currentUserId || !user?.uid) return;
 
     try {
-      const chatId = await createChat(currentUserId, user.uid);
+      const chatId = await createChat(
+        currentUserId,
+        user.uid,
+      );
 
       selectUserChat(chatId, user);
     } catch (error) {
@@ -142,48 +247,52 @@ export default function ChatSidebar({ showArchived }: ChatSidebarProps) {
 
       toast.success("Removed From Archive");
 
-      setUserChats((prev) => prev.filter((chat) => chat.chatId !== chatId));
     } catch (error) {
-      console.error(error);
+      console.error("Failed to unarchive chat:", error);
+      toast.error("Couldn't unarchive chat");
     }
   };
 
-  const handleCreateGroup = async (groupName: string, membersIds: string[]) => {
-    if (!currentUser?.uid || !groupName.trim() || membersIds.length === 0) {
+  const handleCreateGroup = async (
+    groupName: string,
+    membersIds: string[],
+  ) => {
+    if (
+      !currentUser?.uid ||
+      !groupName.trim() ||
+      membersIds.length === 0
+    ) {
       return;
     }
 
     try {
-      const chatId = await createGroupChat(
+      await createGroupChat(
         currentUser.uid,
         membersIds,
         groupName.trim(),
       );
 
-      const chats = await getUserChats(currentUser.uid);
-
-      setUserChats(chats as unknown as ChatItem[]);
-
-      console.log("Group created:", chatId);
+      toast.success("Group created successfully");
     } catch (error) {
       console.error("Failed to create group:", error);
+      toast.error("Failed to create group");
     }
   };
 
   const handleSelectGroup = (chatId: string) => {
     if (!chatId) return;
 
-    const group = userChats.find((chat) => chat.chatId === chatId);
+    const group = userChats.find(
+      (chat) => chat.chatId === chatId,
+    );
 
-    if (!group || group.type !== "group") {
-      return;
-    }
+    if (!group || group.type !== "group") return;
 
     selectGroupChat(chatId, group);
   };
 
   return (
-    <aside className="relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[2rem]  border border-zinc-200/80 dark:border-zinc-800/80 bg-white/55 p-3 shadow-[0_20px_70px_rgba(249,115,22,0.08)] backdrop-blur-2xl  dark:bg-zinc-950/55 dark:shadow-none">
+    <aside className="relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[2rem] border border-zinc-200/80 bg-white/55 p-3 shadow-[0_20px_70px_rgba(249,115,22,0.08)] backdrop-blur-2xl dark:border-zinc-800/80 dark:bg-zinc-950/55 dark:shadow-none">
       <div className="pointer-events-none absolute -right-16 -top-20 h-40 w-40 rounded-full bg-orange-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-20 -left-16 h-40 w-40 rounded-full bg-violet-500/10 blur-3xl" />
 
@@ -193,7 +302,7 @@ export default function ChatSidebar({ showArchived }: ChatSidebarProps) {
         setSearch={setSearch}
       />
 
-      <div className="custom-scrollbar  relative z-10 -mr-1 flex-1 space-y-1 overflow-y-auto px-1 pb-2 pr-1">
+      <div className="custom-scrollbar relative z-10 -mr-1 flex-1 space-y-1 overflow-y-auto px-1 pb-2 pr-1">
         {loading ? (
           Array.from({ length: 6 }).map((_, index) => (
             <ChatSkeleton key={index} />

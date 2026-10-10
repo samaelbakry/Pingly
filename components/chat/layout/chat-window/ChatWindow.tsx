@@ -41,8 +41,7 @@ export default function ChatWindow({
 
   const selectedUser = selectedChat?.type === "user" ? selectedChat.user : null;
 
-  const selectedGroup =
-    selectedChat?.type === "group" ? selectedChat.group : null;
+  const selectedGroup = selectedChat?.type === "group" ? selectedChat.group : null;
 
   const isSomeoneTyping = typingUsers.length > 0;
 
@@ -167,11 +166,8 @@ export default function ChatWindow({
 
   useEffect(() => {
     if (isGroupChat || !currentUser?.uid || !selectedUser?.uid) {
-      setBlockStatus("none");
       return;
     }
-
-    setBlockStatus("loading");
 
     return listenToBlockStatus(
       currentUser.uid,

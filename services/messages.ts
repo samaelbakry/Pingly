@@ -6,6 +6,7 @@ import {
   get,
   serverTimestamp,
   update,
+  runTransaction,
 } from "firebase/database";
 
 import { database } from "@/lib/firebaseConfig";
@@ -81,6 +82,31 @@ export async function sendMessage(
 
   const newMessageRef = push(messagesRef);
 
+  const participantsSnapshot = await get(
+  ref(database, `chats/${chatId}/participants`),
+);
+
+const participants = participantsSnapshot.exists()
+  ? (participantsSnapshot.val() as Record<string, boolean>)
+  : {};
+
+const recipientIds = Object.keys(participants).filter(
+  (userId) =>
+    userId !== senderId && participants[userId] === true,
+);
+
+await Promise.all(
+  recipientIds.map((recipientId) =>
+    runTransaction(
+      ref(
+        database,
+        `chats/${chatId}/unreadCounts/${recipientId}`,
+      ),
+      (currentCount) => (Number(currentCount) || 0) + 1,
+    ),
+  ),
+);
+
   const messageData = {
     senderId,
     type: data.type,
@@ -148,19 +174,26 @@ export async function markMessagesAsSeen(
 
   if (!snapshot.exists()) return;
 
-  const data = snapshot.val();
+  const updates: Record<string, boolean | number> = {
+  [`chats/${chatId}/unreadCounts/${currentUserId}`]: 0,
+};
 
-  const updates: Record<string, boolean> = {};
+ const lastMessageSnapshot = await get(
+  ref(database, `chats/${chatId}/lastMessage`),
+);
 
-  Object.entries(data).forEach(([messageId, message]) => {
-    const messageData = message as unknown as Message;
+if (lastMessageSnapshot.exists()) {
+  const lastMessage = lastMessageSnapshot.val();
 
-    if (messageData.senderId !== currentUserId && messageData.seen === false) {
-      updates[`chats/${chatId}/messages/${messageId}/seen`] = true;
-    }
-  });
-
-  if (Object.entries(updates).length > 0) {
-    await update(ref(database), updates);
+  if (
+    lastMessage.senderId !== currentUserId &&
+    lastMessage.seen !== true
+  ) {
+    updates[`chats/${chatId}/lastMessage/seen`] = true;
   }
+}
+
+if (Object.keys(updates).length > 0) {
+  await update(ref(database), updates);
+}
 }
