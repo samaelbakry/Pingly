@@ -18,6 +18,8 @@ import MessageComposer from "../../message/MessageComposer";
 import NoChatSelectedState from "../../states/NoChatSelectedState";
 import ChatWindowHeader from "./ChatWindowHeader";
 import { BlockStatus, listenToBlockStatus } from "@/services/block";
+import BlockStatusUI from "../../actions/BlockStatusUI";
+import TypingIndicator from "../../actions/typingIndicator";
 
 export default function ChatWindow({
   handleLeaveChat,
@@ -241,13 +243,7 @@ export default function ChatWindow({
         />
         <div ref={messagesEndRef} />
         {isSomeoneTyping && (
-          <div className="mt-2 flex items-end gap-2.5">
-            <div className="flex h-9 items-center gap-1 rounded-2xl rounded-bl-md border border-zinc-200/80 bg-white/90 px-3.5 shadow-sm backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-900/90">
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.3s] dark:bg-zinc-500" />
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.15s] dark:bg-zinc-500" />
-              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400 dark:bg-zinc-500" />
-            </div>
-          </div>
+         <TypingIndicator/>
         )}
       </div>
 
@@ -259,47 +255,7 @@ export default function ChatWindow({
           onCancelReply={() => setReplyingTo(null)}
         />
       ) : (
-        <div className="shrink-0 border-t border-zinc-200/70 bg-white/50 px-5 py-4 text-center backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/40">
-          {blockStatus === "loading" && (
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Checking contact status...
-            </p>
-          )}
-
-          {blockStatus === "blocked-by-me" && (
-            <>
-              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-                You blocked this contact
-              </p>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                Unblock them from the chat header to send messages again.
-              </p>
-            </>
-          )}
-
-          {blockStatus === "blocked-me" && (
-            <>
-              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-                You can&apos;t message this contact
-              </p>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                This contact has blocked you.
-              </p>
-            </>
-          )}
-
-          {blockStatus === "both" && (
-            <>
-              <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
-                You have blocked each other
-              </p>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                Unblock this contact from the chat header to change your block
-                status.
-              </p>
-            </>
-          )}
-        </div>
+        <BlockStatusUI blockStatus={blockStatus}/>
       )}
     </div>
   );

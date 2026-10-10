@@ -2,7 +2,6 @@
 
 import { Reply, X } from "lucide-react";
 import { ReplyTo } from "@/types/messages";
-import Image from "next/image";
 
 type Props = {
   replyTo: ReplyTo;
@@ -116,7 +115,7 @@ export default function ReplyingToPreview({
       </div>
 
       {isImage && replyTo.imageUrl && (
-        <Image
+        <img
           src={replyTo.imageUrl}
           alt="Replied image"
           className="
