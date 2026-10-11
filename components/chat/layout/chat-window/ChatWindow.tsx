@@ -19,7 +19,7 @@ import NoChatSelectedState from "../../states/NoChatSelectedState";
 import ChatWindowHeader from "./ChatWindowHeader";
 import { BlockStatus, listenToBlockStatus } from "@/services/block";
 import BlockStatusUI from "../../actions/BlockStatusUI";
-import TypingIndicator from "../../actions/typingIndicator";
+import TypingIndicator from "../../actions/TypingIndicator";
 
 export default function ChatWindow({
   handleLeaveChat,

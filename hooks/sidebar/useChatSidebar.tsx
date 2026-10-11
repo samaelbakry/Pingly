@@ -11,13 +11,13 @@ import { useFilteredChats } from "./useFilteredChats";
 import { useChatSidebarActions } from "./useChatSidebarActions";
 
 export function useChatSidebar(showArchived: boolean) {
+  const [search, setSearch] = useState("");
+
   const { user: currentUser } = useAuth();
 
   const { selectedChat, selectUserChat, selectGroupChat } = useChat();
 
   const currentUserId = currentUser?.uid;
-
-  const [search, setSearch] = useState("");
 
   const { userChats, loading } = useUserChats( currentUserId, showArchived );
 

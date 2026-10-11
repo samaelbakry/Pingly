@@ -61,7 +61,7 @@ export function useChatSidebarActions({ currentUserId, userChats, selectUserChat
     }
   };
 
-  const handleCreateGroup = async (groupName: string,membersIds: string[]) => {
+  const handleCreateGroup = async (groupName: string , membersIds: string[]) => {
     if (
       !currentUserId ||
       !groupName.trim() ||
