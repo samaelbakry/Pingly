@@ -37,7 +37,7 @@ export default function ChatWindow({
   }
 
   return (
-    <div className="mb-3 flex h-full min-h-0 flex-col overflow-hidden rounded-[2.5rem] border border-zinc-200/80 bg-white/30 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 dark:shadow-none">
+    <div className="mb-3 flex h-full min-h-0 flex-col overflow-hidden rounded-[2.5rem] border border-zinc-200/80 bg-white/30 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 dark:shadow-none z-50">
       <ChatWindowHeader
         selectedUser={visibleSelectedUser}
         selectedGroup={selectedGroup}

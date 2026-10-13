@@ -59,18 +59,18 @@ export default function ProfileSidebar({
 
       <nav
         className="
-          relative z-10
-          flex min-h-0
-          gap-2
-          overflow-x-auto
-          overflow-y-hidden
+    relative z-10
+    flex w-full min-w-0 shrink-0
+    gap-2
+    overflow-x-auto overflow-y-hidden
+    pb-1
+    chat-scroll
 
-          sm:flex-1
-          sm:flex-col
-          sm:space-y-1
-          sm:overflow-x-hidden
-          sm:overflow-y-auto
-        "
+    sm:min-h-0 sm:flex-1
+    sm:flex-col sm:space-y-1
+    sm:overflow-x-hidden sm:overflow-y-auto
+    sm:pb-0
+  "
       >
         {profileSections.map((section) => {
           const Icon = section.icon;
@@ -81,64 +81,41 @@ export default function ProfileSidebar({
               key={section.id}
               type="button"
               onClick={() => setActiveSection(section.id)}
+              aria-current={isActive ? "page" : undefined}
               className={`
-                group
-                relative
-                flex
-                shrink-0
-                items-center
-                gap-3
-                rounded-2xl
-                px-3
-                py-2.5
-                text-left
-                transition-all
-                duration-200
+          group relative flex shrink-0 items-center gap-2
+          rounded-2xl px-3 py-2.5 text-left
+          transition-all duration-200
 
-                sm:w-full
-                sm:py-3
+          sm:w-full sm:gap-3 sm:py-3
 
-                ${
-                  isActive
-                    ? "bg-linear-to-r from-orange-500/10 to-amber-400/10 shadow-sm"
-                    : "hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80"
-                }
-              `}
+          ${
+            isActive
+              ? "bg-linear-to-r from-orange-500/10 to-amber-400/10 shadow-sm"
+              : "hover:bg-zinc-100/80 dark:hover:bg-zinc-900/80"
+          }
+        `}
             >
               {isActive && (
                 <span
                   className="
-                    absolute
-                    left-0
-                    top-1/2
-                    h-7
-                    w-1
-                    -translate-y-1/2
-                    rounded-r-full
-                    bg-linear-to-b
-                    from-orange-500
-                    to-amber-400
-                  "
+              absolute left-0 top-1/2 h-7 w-1
+              -translate-y-1/2 rounded-r-full
+              bg-linear-to-b from-orange-500 to-amber-400
+            "
                 />
               )}
 
               <div
                 className={`
-                  flex
-                  h-9
-                  w-9
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-xl
-                  transition-colors
-
-                  ${
-                    isActive
-                      ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
-                      : "bg-zinc-100 text-zinc-400 group-hover:text-zinc-700 dark:bg-zinc-900 dark:text-zinc-500 dark:group-hover:text-zinc-200"
-                  }
-                `}
+            flex h-9 w-9 shrink-0 items-center justify-center
+            rounded-xl transition-colors
+            ${
+              isActive
+                ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
+                : "bg-zinc-100 text-zinc-400 group-hover:text-zinc-700 dark:bg-zinc-900 dark:text-zinc-500 dark:group-hover:text-zinc-200"
+            }
+          `}
               >
                 <Icon className="h-4 w-4" />
               </div>
@@ -146,15 +123,13 @@ export default function ProfileSidebar({
               <div className="min-w-0">
                 <p
                   className={`
-                    whitespace-nowrap
-                    text-xs
-                    font-bold
-                    ${
-                      isActive
-                        ? "text-orange-600 dark:text-orange-400"
-                        : "text-zinc-700 dark:text-zinc-200"
-                    }
-                  `}
+              whitespace-nowrap text-xs font-bold
+              ${
+                isActive
+                  ? "text-orange-600 dark:text-orange-400"
+                  : "text-zinc-700 dark:text-zinc-200"
+              }
+            `}
                 >
                   {section.label}
                 </p>

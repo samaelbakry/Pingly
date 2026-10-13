@@ -4,8 +4,8 @@ import { getUserById } from "@/services/users";
 import { chatWindowProps } from "@/types/Props";
 import { UserProfile } from "@/types/userProfile";
 import { useEffect, useState } from "react";
-import ChatProfileAvatar from "../ChatProfileAvatar";
 import ChatWindowHeaderDropdown from "./ChatWindowHeaderDropdown";
+import ChatProfileAvatar from "../../chatProfile/chatProfileAvatar";
 
 export default function ChatWindowHeader({
   selectedUser,
