@@ -11,6 +11,7 @@ import {
 
 import { database } from "@/lib/firebaseConfig";
 import { Message, ReplyTo } from "@/types/messages";
+import { getReadReceiptsEnabled } from "./privacy";
 
 async function assertCanSendMessage(chatId: string, senderId: string) {
   
@@ -168,32 +169,49 @@ export async function markMessagesAsSeen(
   chatId: string,
   currentUserId: string,
 ) {
-  const messageRef = ref(database, `chats/${chatId}/messages`);
+  const [messagesSnapshot, chatTypeSnapshot] = await Promise.all([
+    get(ref(database, `chats/${chatId}/messages`)),
+    get(ref(database, `chats/${chatId}/type`)),
+  ]);
 
-  const snapshot = await get(messageRef);
-
-  if (!snapshot.exists()) return;
+  const isGroupChat = chatTypeSnapshot.val() === "group";
 
   const updates: Record<string, boolean | number> = {
-  [`chats/${chatId}/unreadCounts/${currentUserId}`]: 0,
-};
+    [`chats/${chatId}/unreadCounts/${currentUserId}`]: 0,
+  };
 
- const lastMessageSnapshot = await get(
-  ref(database, `chats/${chatId}/lastMessage`),
-);
+  const readReceiptsEnabled = await getReadReceiptsEnabled(currentUserId);
 
-if (lastMessageSnapshot.exists()) {
-  const lastMessage = lastMessageSnapshot.val();
+  if (isGroupChat || readReceiptsEnabled) {
+    if (messagesSnapshot.exists()) {
+      const messagesData = messagesSnapshot.val();
 
-  if (
-    lastMessage.senderId !== currentUserId &&
-    lastMessage.seen !== true
-  ) {
-    updates[`chats/${chatId}/lastMessage/seen`] = true;
+      Object.entries(messagesData).forEach(([messageId, rawMessage]) => {
+        const messageData = rawMessage as Message;
+
+        if (messageData.senderId !== currentUserId && messageData.seen !== true) {
+          updates[
+            `chats/${chatId}/messages/${messageId}/seen`
+          ] = true;
+        }
+      });
+    }
+
+    const lastMessageSnapshot = await get(
+      ref(database, `chats/${chatId}/lastMessage`),
+    );
+
+    if (lastMessageSnapshot.exists()) {
+      const lastMessage = lastMessageSnapshot.val() as Message;
+
+      if (
+        lastMessage.senderId !== currentUserId &&
+        lastMessage.seen !== true
+      ) {
+        updates[`chats/${chatId}/lastMessage/seen`] = true;
+      }
+    }
   }
-}
 
-if (Object.keys(updates).length > 0) {
   await update(ref(database), updates);
-}
 }

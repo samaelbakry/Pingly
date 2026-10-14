@@ -24,6 +24,7 @@ export default function ChatProfileAvatar({ selectedUser, selectedGroup, isGroup
     uploading,
     canUpdateGroupPhoto,
     handleGroupImageChange,
+    canSeePresence
   } = useChatProfileAvatar({
     selectedUser,
     selectedGroup,
@@ -50,6 +51,7 @@ export default function ChatProfileAvatar({ selectedUser, selectedGroup, isGroup
 
   return (
     <ChatDirectProfile
+      canSeePresence={canSeePresence}
       displayName={displayName}
       displayPhoto={displayPhoto}
       presence={presence}

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, type ChangeEvent } from "react";
@@ -11,6 +10,7 @@ import { updateGroupPhoto } from "@/services/groupChatActions";
 import { ChatItem } from "@/types/chatType";
 import { UserProfile } from "@/types/userProfile";
 import { toast } from "sonner";
+import { useUserPrivacySettings } from "@/hooks/privacy/PrivacyVisibilitySettings/useUserPrivacySettings";
 
 export type ChatProfilePresence = {
   state: "online" | "offline";
@@ -23,44 +23,49 @@ type Props = {
   isGroupChat: boolean;
 };
 
-export function useChatProfileAvatar({ selectedUser, selectedGroup, isGroupChat }: Props) {
+export function useChatProfileAvatar({
+  selectedUser,
+  selectedGroup,
+  isGroupChat,
+}: Props) {
   const { user: currentUser } = useAuth();
+  const { settings: targetPrivacy } = useUserPrivacySettings(
+    !isGroupChat ? selectedUser?.uid : undefined,
+  );
 
-  const [presence, setPresence] =useState<ChatProfilePresence | null>(null);
+  const { settings: viewerPrivacy } = useUserPrivacySettings(currentUser?.uid);
+
+  const [presence, setPresence] = useState<ChatProfilePresence | null>(null);
 
   const [uploading, setUploading] = useState(false);
   const [groupPhoto, setGroupPhoto] = useState("");
 
-  useEffect(() => {
-    if (isGroupChat || !selectedUser?.uid) {
-      return;
-    }
+  const canSeeProfilePhoto =
+    isGroupChat ||
+    selectedUser?.uid === currentUser?.uid ||
+    targetPrivacy?.profilePhoto === "everyone";
+  const canSeePresence =
+    !isGroupChat &&
+    targetPrivacy?.lastSeen === "everyone" &&
+    viewerPrivacy?.lastSeen === "everyone";
 
-    const unsubscribe = listenToUserPresence(
-      selectedUser.uid,
-      (currentPresence) => {
-        setPresence(currentPresence);
-      },
-    );
-
-    return unsubscribe;
-  }, [selectedUser?.uid, isGroupChat]);
-
-  const displayName = isGroupChat ? selectedGroup?.name || "Unnamed Group"
+  const displayName = isGroupChat
+    ? selectedGroup?.name || "Unnamed Group"
     : selectedUser?.name || "Unknown User";
 
-  const displayPhoto = isGroupChat ? groupPhoto
-    : selectedUser?.photoURL || "";
+  const displayPhoto = isGroupChat
+    ? groupPhoto
+    : canSeeProfilePhoto
+      ? selectedUser?.photoURL || ""
+      : "";
 
   const isOnline = presence?.state === "online";
 
   const canUpdateGroupPhoto = Boolean(
-    isGroupChat &&
-      selectedGroup?.createdBy === currentUser?.uid &&
-      !uploading,
+    isGroupChat && selectedGroup?.createdBy === currentUser?.uid && !uploading,
   );
 
-  const handleGroupImageChange = async (  e: ChangeEvent<HTMLInputElement>) => {
+  const handleGroupImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (!file || !currentUser?.uid || !selectedGroup?.chatId) {
@@ -95,6 +100,22 @@ export function useChatProfileAvatar({ selectedUser, selectedGroup, isGroupChat 
     }
   };
 
+  useEffect(() => {
+    if (isGroupChat || !selectedUser?.uid || !canSeePresence) {
+      return;
+    }
+
+    const unsubscribe = listenToUserPresence(
+      selectedUser.uid,
+      (currentPresence) => {
+        setPresence(currentPresence);
+      },
+    );
+
+    return unsubscribe;
+  }, [selectedUser?.uid, isGroupChat , canSeePresence]);
+
+
   return {
     presence,
     isOnline,
@@ -104,5 +125,6 @@ export function useChatProfileAvatar({ selectedUser, selectedGroup, isGroupChat 
     uploading,
     canUpdateGroupPhoto,
     handleGroupImageChange,
+    canSeePresence,
   };
 }

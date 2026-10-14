@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,13 +7,11 @@ type Props = {
   displayName: string;
   displayPhoto: string;
   presence: ChatProfilePresence | null;
+  canSeePresence: boolean;
 };
 
 function formatLastSeen(timestamp?: number) {
-  if (
-    typeof timestamp !== "number" ||
-    !Number.isFinite(timestamp)
-  ) {
+  if (typeof timestamp !== "number" || !Number.isFinite(timestamp)) {
     return "Offline";
   }
 
@@ -45,10 +42,7 @@ function formatLastSeen(timestamp?: number) {
   const dateLabel = date.toLocaleDateString([], {
     day: "numeric",
     month: "short",
-    year:
-      date.getFullYear() !== now.getFullYear()
-        ? "numeric"
-        : undefined,
+    year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
   });
 
   return `Last seen ${dateLabel} at ${time}`;
@@ -58,8 +52,8 @@ export default function ChatDirectProfile({
   displayName,
   displayPhoto,
   presence,
+  canSeePresence,
 }: Props) {
-  const isOnline = presence?.state === "online";
 
   return (
     <div
@@ -95,21 +89,25 @@ export default function ChatDirectProfile({
           {displayName}
         </h2>
 
-        <p className="mt-0.5 flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-zinc-400">
-          <span
-            className={`inline-block size-2 shrink-0 rounded-full ${
-              isOnline
-                ? "animate-pulse bg-emerald-500"
-                : "bg-slate-400 dark:bg-zinc-500"
-            }`}
-          />
+        {canSeePresence && (
+          <p className="mt-0.5 flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-zinc-400">
+            <span
+              className={`inline-block size-2 shrink-0 rounded-full ${
+                presence?.state === "online"
+                  ? "animate-pulse bg-emerald-500"
+                  : "bg-slate-400 dark:bg-zinc-500"
+              }`}
+            />
 
-          <span className="truncate">
-            {isOnline
-              ? "Active now"
-              : formatLastSeen(presence?.lastSeen)}
-          </span>
-        </p>
+            <span className="truncate">
+              {!presence
+                ? "Loading status..."
+                : presence.state === "online"
+                  ? "Active now"
+                  : formatLastSeen(presence.lastSeen)}
+            </span>
+          </p>
+        )}
       </div>
     </div>
   );
