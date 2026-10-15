@@ -1,11 +1,9 @@
-
 "use client";
 
 import { ChatItem } from "@/types/chatType";
 import { UserProfile } from "@/types/userProfile";
 
-
-import { useChatProfileAvatar } from "@/hooks/chat/profile/useChatProfileAvatar";
+import { useChatProfileAvatar } from "@/hooks/profile/useChatProfileAvatar";
 import ChatGroupProfile from "./chatGroupProfile";
 import ChatDirectProfile from "./chatDirectProfile";
 
@@ -16,7 +14,12 @@ type Props = {
   groupMembers: UserProfile[];
 };
 
-export default function ChatProfileAvatar({ selectedUser, selectedGroup, isGroupChat, groupMembers}: Props) {
+export default function ChatProfileAvatar({
+  selectedUser,
+  selectedGroup,
+  isGroupChat,
+  groupMembers,
+}: Props) {
   const {
     presence,
     displayName,
@@ -24,7 +27,7 @@ export default function ChatProfileAvatar({ selectedUser, selectedGroup, isGroup
     uploading,
     canUpdateGroupPhoto,
     handleGroupImageChange,
-    canSeePresence
+    canSeePresence,
   } = useChatProfileAvatar({
     selectedUser,
     selectedGroup,

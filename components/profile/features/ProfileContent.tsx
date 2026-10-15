@@ -129,31 +129,32 @@ export default function ProfileContent() {
 
   return (
     <section className="relative flex chat-scroll h-full min-h-0 w-full min-w-0 flex-col overflow-y-auto overflow-x-hidden rounded-[2.5rem] border border-white/40 bg-white/30 p-5 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 sm:p-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-zinc-200/70 pb-6 dark:border-zinc-800">
-        <header className="flex items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-orange-500/20 to-orange-500/5 text-orange-500 ring-1 ring-orange-500/20 sm:h-14 sm:w-14">
-            <UserRound className="h-6 w-6 sm:h-7 sm:w-7" />
+        <header className="mb-8 flex items-center justify-between gap-4 border-b border-zinc-200/70 pb-6 dark:border-zinc-800">
+          <div className="flex min-w-0 items-stretch gap-4">
+            <div className="w-1 shrink-0 rounded-full bg-linear-to-b from-orange-500 to-amber-300" />
+
+            <div className="min-w-0 py-1">
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-orange-500">
+                Profile & identity
+              </p>
+
+              <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
+                User Profile
+              </h1>
+
+              <p className="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                Manage your public identity and connected social channels.
+              </p>
+            </div>
           </div>
 
-          <div className="min-w-0">
-            <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
-              User Profile
-            </h2>
-            <p className="mt-1.5 max-w-md text-sm font-medium text-zinc-500 dark:text-zinc-400">
-              Manage and view public identity and connected social channels.
-            </p>
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-zinc-200/80 bg-white/70 text-zinc-600 shadow-sm transition-all duration-300 hover:border-orange-500/30 hover:bg-orange-500/5 hover:text-orange-500 dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-300">
+            <UserRound className="h-5 w-5" strokeWidth={1.7} />
           </div>
         </header>
 
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            Verified Account
-          </span>
-        </div>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-[22rem_1fr] mt-3">
+      
+      <div className="grid gap-6 lg:grid-cols-[22rem_1fr] mt-1">
         <div className="flex flex-col gap-6">
           <div className="relative overflow-hidden rounded-3xl border border-zinc-200/80 bg-white/70 shadow-xl backdrop-blur-xl transition-all duration-300 dark:border-zinc-800/80 dark:bg-zinc-900/60">
             <div className="h-32 bg-linear-to-tr from-amber-400/40 via-orange-500/30 to-violet-600/30 dark:from-amber-500/20 dark:via-orange-600/20 dark:to-violet-600/20" />

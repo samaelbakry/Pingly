@@ -1,4 +1,5 @@
 import {
+  Bell,
   Lock,
   Palette,
   Settings,
@@ -29,5 +30,11 @@ export const profileSections = [
     label: "Privacy",
     description: "Control your privacy",
     icon: Lock,
+  },
+  {
+    id: "notifications",
+    label: "Notifications",
+    description: "Control your notifications",
+    icon: Bell,
   },
 ];

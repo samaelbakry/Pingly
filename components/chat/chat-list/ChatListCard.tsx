@@ -21,7 +21,6 @@ export default function ChatListCard({
   onUnarchive,
 }: ChatListCardProps) {
   const { user: currentUser } = useAuth();
-
   const currentUserId = currentUser?.uid;
   const isGroup = chat.type === "group";
   const isSelected = selectedChatId === chat.chatId;

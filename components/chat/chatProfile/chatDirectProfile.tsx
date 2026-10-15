@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { ChatProfilePresence } from "@/hooks/chat/profile/useChatProfileAvatar";
+import type { ChatProfilePresence } from "@/hooks/profile/useChatProfileAvatar";
 
 type Props = {
   displayName: string;
@@ -54,7 +54,6 @@ export default function ChatDirectProfile({
   presence,
   canSeePresence,
 }: Props) {
-
   return (
     <div
       className="

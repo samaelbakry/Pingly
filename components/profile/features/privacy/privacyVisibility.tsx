@@ -77,7 +77,7 @@ export default function PrivacyVisibility() {
   ];
 
   return (
-    <div className="rounded-3xl border mb-2 border-zinc-200/80 bg-white/60 p-5 backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-950/40 sm:p-6">
+    <div className="rounded-3xl border mb-2 border-zinc-200/80 bg-white/40 p-5 backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-950/40 sm:p-6 animate-in fade-in-50 slide-in-from-top-3 duration-300">
       <div className="flex items-start gap-3.5 pb-5 border-b border-zinc-200/60 dark:border-zinc-800/60">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-500 dark:bg-orange-500/15">
           <Eye className="h-5 w-5" />

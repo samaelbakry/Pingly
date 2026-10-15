@@ -38,7 +38,7 @@ export default function ReadRecepts() {
   };
 
   return (
-    <div className="rounded-3xl border mb-2 border-zinc-200/80 bg-white/50 p-4 dark:border-zinc-800 dark:bg-zinc-950/40 sm:p-5">
+    <div className="rounded-3xl border mb-2 border-zinc-200/80 bg-white/50 p-4 dark:border-zinc-800 dark:bg-zinc-950/40 sm:p-5 animate-in fade-in-50 slide-in-from-top-3 duration-300">
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-500">
           <CheckCheck className="h-5 w-5" />

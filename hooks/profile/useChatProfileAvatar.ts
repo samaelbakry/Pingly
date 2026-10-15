@@ -40,10 +40,7 @@ export function useChatProfileAvatar({
   const [uploading, setUploading] = useState(false);
   const [groupPhoto, setGroupPhoto] = useState("");
 
-  const canSeeProfilePhoto =
-    isGroupChat ||
-    selectedUser?.uid === currentUser?.uid ||
-    targetPrivacy?.profilePhoto === "everyone";
+  const canSeeProfilePhoto =  isGroupChat ||  selectedUser?.uid === currentUser?.uid || targetPrivacy?.profilePhoto === "everyone";
   const canSeePresence =
     !isGroupChat &&
     targetPrivacy?.lastSeen === "everyone" &&

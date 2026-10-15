@@ -2,7 +2,8 @@
 
 import ChatNavRail from "@/components/chat/layout/ChatNavRail";
 import Navbar from "@/components/common/Navbar";
-import ManageAccount from "@/components/profile/features/ManageAccount";
+import ManageAccount from "@/components/profile/features/manage-account/ManageAccount";
+import Notifications from "@/components/profile/features/Notifications";
 import Privacy from "@/components/profile/features/privacy/Privacy";
 import ProfileAppearance from "@/components/profile/features/ProfileAppearance";
 import ProfileContent from "@/components/profile/features/ProfileContent";
@@ -90,6 +91,7 @@ export default function UserProfile() {
           {activeSection === "account" && <ManageAccount />}
           {activeSection === "appearance" && <ProfileAppearance />}
           {activeSection === "privacy" && <Privacy />}
+          {activeSection === "notifications" && <Notifications />}
         </section>
       </main>
     </div>
