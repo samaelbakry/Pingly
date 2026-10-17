@@ -10,7 +10,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-10 w-full bg-amber-50/40 text-slate-800 shadow backdrop-blur-3xl transition-all dark:bg-zinc-950 dark:text-zinc-100">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-13 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Logo withText={true} />
 
         {!user && (

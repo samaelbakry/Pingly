@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, MessageCircle } from "lucide-react";
+import { Archive, Circle, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { usePathname } from "next/navigation";
@@ -87,6 +87,7 @@ export default function ChatNavRail({
             </button>
 
           </div>
+         
         </div>
 
         <div className="relative group flex items-center">
