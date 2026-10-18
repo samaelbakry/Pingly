@@ -9,12 +9,16 @@ import ChatWindowHeader from "./ChatWindowHeader";
 
 import BlockStatusUI from "../../actions/BlockStatusUI";
 import TypingIndicator from "../../actions/TypingIndicator";
+import { useMarkMessagesAsSeen } from "@/hooks/chat/layout/useMarkMessagesAsSeen";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ChatWindow({
   handleLeaveChat,
 }: {
   handleLeaveChat: () => void;
 }) {
+    const { user: currentUser } = useAuth();
+
   const {
     selectedChat,
     chatId,
@@ -32,9 +36,16 @@ export default function ChatWindow({
     cancelReply,
   } = useChatWindow();
 
+    const { unreadSnapshot } = useMarkMessagesAsSeen(
+    chatId,
+    currentUser?.uid,
+    messages.length,
+  );
+
   if (!selectedChat || !chatId) {
     return <NoChatSelectedState />;
   }
+
 
   return (
     <div className="mb-3 flex h-full min-h-0 flex-col overflow-hidden rounded-[2.5rem] border border-zinc-200/80 bg-white/30 shadow-md backdrop-blur-3xl dark:border-zinc-800 dark:bg-zinc-900/40 dark:shadow-none z-50">
@@ -55,6 +66,7 @@ export default function ChatWindow({
           chatUsers={chatUsers}
           isGroupChat={isGroupChat}
           onReply={handleReply}
+          unreadSnapshot={unreadSnapshot}
         />
 
         {isSomeoneTyping && <TypingIndicator />}

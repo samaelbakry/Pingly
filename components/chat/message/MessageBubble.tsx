@@ -5,8 +5,10 @@ import { Message } from "@/types/messages";
 import { UserProfile } from "@/types/userProfile";
 
 import EmptyChatState from "../states/EmptyChatState";
-import SystemMessage from "./SystemMessage";
 import MessageItem from "./MessageItem";
+import SystemMessage from "./SystemMessage";
+import UnreadMessagesDivider from "./unreadMessagesDivider";
+import type { UnreadMessagesSnapshot } from "@/services/messages";
 
 type Props = {
   messages: Message[];
@@ -14,6 +16,7 @@ type Props = {
   isGroupChat: boolean;
   chatUsers: Record<string, UserProfile>;
   onReply: (message: Message) => void;
+  unreadSnapshot: UnreadMessagesSnapshot | null;
 };
 
 export default function MessageBubble({
@@ -22,13 +25,16 @@ export default function MessageBubble({
   isGroupChat,
   chatUsers,
   onReply,
+  unreadSnapshot,
 }: Props) {
   const { user: currentUser } = useAuth();
+
+  const activeUnreadSnapshot =
+    unreadSnapshot?.chatId === chatId ? unreadSnapshot : null;
 
   if (messages.length === 0) {
     return <EmptyChatState />;
   }
-
   return (
     <div
       className="
@@ -45,29 +51,28 @@ export default function MessageBubble({
       "
     >
       {messages.map((message) => {
-        if (message.type === "system") {
-          return (
-            <SystemMessage
-              key={message.id}
-              message={message}
-              chatUsers={chatUsers}
-            />
-          );
-        }
-
-        const isMine = message.senderId === currentUser?.uid;
-        const sender = chatUsers[message.senderId];
+        const isFirstUnread =
+          message.id === activeUnreadSnapshot?.firstUnreadMessageId;
 
         return (
-          <MessageItem
-            key={message.id}
-            message={message}
-            chatId={chatId}
-            isMine={isMine}
-            isGroupChat={isGroupChat}
-            sender={sender}
-            onReply={onReply}
-          />
+          <div key={message.id} className="w-full min-w-0">
+            {isFirstUnread && activeUnreadSnapshot && (
+              <UnreadMessagesDivider count={activeUnreadSnapshot.count} />
+            )}
+
+            {message.type === "system" ? (
+              <SystemMessage message={message} chatUsers={chatUsers} />
+            ) : (
+              <MessageItem
+                message={message}
+                chatId={chatId}
+                isMine={message.senderId === currentUser?.uid}
+                isGroupChat={isGroupChat}
+                sender={chatUsers[message.senderId]}
+                onReply={onReply}
+              />
+            )}
+          </div>
         );
       })}
     </div>

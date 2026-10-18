@@ -13,6 +13,12 @@ import { database } from "@/lib/firebaseConfig";
 import { Message, ReplyTo } from "@/types/messages";
 import { getReadReceiptsEnabled } from "./privacy";
 
+export type UnreadMessagesSnapshot = {
+  chatId: string;
+  firstUnreadMessageId: string;
+  count: number;
+};
+
 async function assertCanSendMessage(chatId: string, senderId: string) {
   
   const chatSnapshot = await get(
@@ -165,37 +171,129 @@ export async function deleteMsg(chatId: string, messageId: string) {
   await remove(messageRef);
 }
 
+// export async function markMessagesAsSeen(
+//   chatId: string,
+//   currentUserId: string,
+// ) {
+//   const [messagesSnapshot, chatTypeSnapshot] = await Promise.all([
+//     get(ref(database, `chats/${chatId}/messages`)),
+//     get(ref(database, `chats/${chatId}/type`)),
+//   ]);
+
+//   const isGroupChat = chatTypeSnapshot.val() === "group";
+
+//   const updates: Record<string, boolean | number> = {
+//     [`chats/${chatId}/unreadCounts/${currentUserId}`]: 0,
+//   };
+
+//   const readReceiptsEnabled = await getReadReceiptsEnabled(currentUserId);
+
+//   if (isGroupChat || readReceiptsEnabled) {
+//     if (messagesSnapshot.exists()) {
+//       const messagesData = messagesSnapshot.val();
+
+//       Object.entries(messagesData).forEach(([messageId, rawMessage]) => {
+//         const messageData = rawMessage as Message;
+
+//         if (messageData.senderId !== currentUserId && messageData.seen !== true) {
+//           updates[
+//             `chats/${chatId}/messages/${messageId}/seen`
+//           ] = true;
+//         }
+//       });
+//     }
+
+//     const lastMessageSnapshot = await get(
+//       ref(database, `chats/${chatId}/lastMessage`),
+//     );
+
+//     if (lastMessageSnapshot.exists()) {
+//       const lastMessage = lastMessageSnapshot.val() as Message;
+
+//       if (
+//         lastMessage.senderId !== currentUserId &&
+//         lastMessage.seen !== true
+//       ) {
+//         updates[`chats/${chatId}/lastMessage/seen`] = true;
+//       }
+//     }
+//   }
+
+//   await update(ref(database), updates);
+// }
+
+
 export async function markMessagesAsSeen(
   chatId: string,
   currentUserId: string,
-) {
-  const [messagesSnapshot, chatTypeSnapshot] = await Promise.all([
+): Promise<UnreadMessagesSnapshot | null> {
+  const [
+    messagesSnapshot,
+    chatTypeSnapshot,
+    unreadCountSnapshot,
+    readReceiptsEnabled,
+  ] = await Promise.all([
     get(ref(database, `chats/${chatId}/messages`)),
     get(ref(database, `chats/${chatId}/type`)),
+    get(ref(database, `chats/${chatId}/unreadCounts/${currentUserId}`)),
+    getReadReceiptsEnabled(currentUserId),
   ]);
 
   const isGroupChat = chatTypeSnapshot.val() === "group";
+
+  const messagesData = messagesSnapshot.val() as
+    | Record<string, Message>
+    | null;
+
+  const incomingMessages = Object.entries(messagesData ?? {})
+    .map(([messageId, message]) => ({
+      ...message,
+      id: message.id || messageId,
+    }))
+    .filter(
+      (message) =>
+        message.type !== "system" &&
+        message.senderId !== currentUserId,
+    )
+    .sort((a, b) => a.createdAt - b.createdAt);
+
+  const unreadCountExists = unreadCountSnapshot.exists();
+
+  const storedUnreadCount = Math.max(0,
+    Math.floor(Number(unreadCountSnapshot.val()) || 0),
+  );
+
+  const unreadMessages = unreadCountExists
+    ? incomingMessages.slice(-storedUnreadCount)
+    : incomingMessages.filter((message) => message.seen !== true);
+
+  const unreadSnapshot: UnreadMessagesSnapshot | null =
+    unreadMessages.length > 0
+      ? {
+          chatId,
+          firstUnreadMessageId: unreadMessages[0].id,
+          count: unreadMessages.length,
+        }
+      : null;
 
   const updates: Record<string, boolean | number> = {
     [`chats/${chatId}/unreadCounts/${currentUserId}`]: 0,
   };
 
-  const readReceiptsEnabled = await getReadReceiptsEnabled(currentUserId);
-
   if (isGroupChat || readReceiptsEnabled) {
-    if (messagesSnapshot.exists()) {
-      const messagesData = messagesSnapshot.val();
-
-      Object.entries(messagesData).forEach(([messageId, rawMessage]) => {
-        const messageData = rawMessage as Message;
-
-        if (messageData.senderId !== currentUserId && messageData.seen !== true) {
+    Object.entries(messagesData ?? {}).forEach(
+      ([messageId, messageData]) => {
+        if (
+          messageData.type !== "system" &&
+          messageData.senderId !== currentUserId &&
+          messageData.seen !== true
+        ) {
           updates[
             `chats/${chatId}/messages/${messageId}/seen`
           ] = true;
         }
-      });
-    }
+      },
+    );
 
     const lastMessageSnapshot = await get(
       ref(database, `chats/${chatId}/lastMessage`),
@@ -205,6 +303,7 @@ export async function markMessagesAsSeen(
       const lastMessage = lastMessageSnapshot.val() as Message;
 
       if (
+        lastMessage.type !== "system" &&
         lastMessage.senderId !== currentUserId &&
         lastMessage.seen !== true
       ) {
@@ -214,4 +313,6 @@ export async function markMessagesAsSeen(
   }
 
   await update(ref(database), updates);
+
+  return unreadSnapshot;
 }

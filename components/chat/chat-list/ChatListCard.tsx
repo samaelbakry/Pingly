@@ -42,12 +42,8 @@ export default function ChatListCard({
 
   const storedUnread = chat.unreadCounts?.[currentUserId ?? ""];
 
-  const unreadCount =
-    storedUnread ??
-    (chat.lastMessage &&
-    chat.lastMessage.senderId !== currentUserId &&
-    chat.lastMessage.seen !== true
-      ? 1
+  const unreadCount = storedUnread ??
+   (chat.lastMessage && chat.lastMessage.senderId !== currentUserId && chat.lastMessage.seen !== true ? 1
       : 0);
 
   const handleSelect = () => {

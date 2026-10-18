@@ -2,18 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useTheme } from "@/context/ThemeProvider";
 import { sendMessage } from "@/services/messages";
 import { setTyping } from "@/services/typing";
 import { uploadImage } from "@/services/uploads";
 import { ReplyTo } from "@/types/messages";
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import EmojiPicker, {
+  EmojiClickData,
+  EmojiStyle
+} from "emoji-picker-react";
 import { Image, Loader2, Send, SmilePlus } from "lucide-react";
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  type FormEvent,
-} from "react";
+import React, { useEffect, useRef, useState, type FormEvent } from "react";
 import ReplyingToPreview from "./MessageContent/ReplyPreview/ReplyingToPreview";
 
 export default function MessageComposer({
@@ -30,6 +29,7 @@ export default function MessageComposer({
   const [messageText, setMessageText] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [sending, setSending] = useState(false);
+  const { theme } = useTheme();
 
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -80,9 +80,7 @@ export default function MessageComposer({
     }
   };
 
-  const handleImageSelect = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (!file || !chatId || !currentUserId) return;
@@ -95,7 +93,7 @@ export default function MessageComposer({
       await sendMessage(chatId, currentUserId, {
         type: "image",
         imageUrl,
-        replyTo: replyingTo ?? undefined
+        replyTo: replyingTo ?? undefined,
       });
       onCancelReply?.();
 
@@ -140,41 +138,34 @@ export default function MessageComposer({
     >
       {replyingTo && (
         <div className="mb-2">
-          <ReplyingToPreview
-            onCancel={onCancelReply}
-            replyTo={replyingTo}
-          />
+          <ReplyingToPreview onCancel={onCancelReply} replyTo={replyingTo} />
         </div>
       )}
-
       {showEmojiPicker && (
         <div
           className="
-            absolute
-            bottom-full
-            left-2
-            z-50
-            mb-2
-            overflow-hidden
-            rounded-2xl
-            border border-slate-200
-            shadow-2xl
-            animate-in fade-in zoom-in-95 duration-150
-
-            sm:left-4
-            sm:mb-3
-
-            dark:border-zinc-800
-          "
+      absolute bottom-full left-2 z-50 mb-3 overflow-hidden rounded-3xl
+      border border-slate-200/80 bg-white/90 p-1 shadow-2xl backdrop-blur-xl
+      animate-in fade-in zoom-in-95 duration-200 chat-scroll
+      sm:left-4 sm:mb-4
+      dark:border-zinc-800/80 dark:bg-zinc-950/90
+    "
         >
           <EmojiPicker
             onEmojiClick={handleEmojiPicker}
-            width="min(320px, calc(100vw - 24px))"
+            autoFocusSearch={false}
+            theme={theme}
+            emojiStyle={EmojiStyle.APPLE}
+            width="min(340px, calc(100vw - 32px))"
             height={380}
+            searchPlaceHolder="Search for emoji"
+            previewConfig={{
+              showPreview: false,
+            }}
+            lazyLoadEmojis={true}
           />
         </div>
       )}
-
       <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
         <div className="relative shrink-0">
           <input
@@ -213,10 +204,7 @@ export default function MessageComposer({
                 className="size-4 animate-spin sm:size-5"
               />
             ) : (
-              <Image
-                aria-label="Upload image"
-                className="size-4 sm:size-5"
-              />
+              <Image aria-label="Upload image" className="size-4 sm:size-5" />
             )}
           </label>
         </div>
