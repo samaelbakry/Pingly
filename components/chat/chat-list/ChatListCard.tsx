@@ -2,14 +2,25 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { ChatListCardProps } from "@/types/Props";
+import { Trash2 } from "lucide-react";
 
 import ChatListAvatar from "./ChatListAvatar";
 import ChatListInfo from "./ChatListInfo";
 import ChatListActions from "./ChatListActions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
-type ChatUser = NonNullable<
-  ChatListCardProps["chatUsers"][string]
->;
+type ChatUser = NonNullable<ChatListCardProps["chatUsers"][string]>;
 
 export default function ChatListCard({
   chat,
@@ -19,8 +30,10 @@ export default function ChatListCard({
   handleSelectGroup,
   showArchived,
   onUnarchive,
+  onDeleteChat,
 }: ChatListCardProps) {
   const { user: currentUser } = useAuth();
+
   const currentUserId = currentUser?.uid;
   const isGroup = chat.type === "group";
   const isSelected = selectedChatId === chat.chatId;
@@ -32,18 +45,18 @@ export default function ChatListCard({
     .map((id) => chatUsers[id])
     .filter((user): user is ChatUser => Boolean(user));
 
-  const otherUserId = participantIds.find(
-    (id) => id !== currentUserId
-  );
+  const otherUserId = participantIds.find((id) => id !== currentUserId);
 
-  const otherUser = otherUserId
-    ? chatUsers[otherUserId]
-    : undefined;
+  const otherUser = otherUserId ? chatUsers[otherUserId] : undefined;
 
   const storedUnread = chat.unreadCounts?.[currentUserId ?? ""];
 
-  const unreadCount = storedUnread ??
-   (chat.lastMessage && chat.lastMessage.senderId !== currentUserId && chat.lastMessage.seen !== true ? 1
+  const unreadCount =
+    storedUnread ??
+    (chat.lastMessage &&
+    chat.lastMessage.senderId !== currentUserId &&
+    chat.lastMessage.seen !== true
+      ? 1
       : 0);
 
   const handleSelect = () => {
@@ -79,7 +92,7 @@ export default function ChatListCard({
         />
       )}
 
-      <div className="flex items-center">
+      <div className="flex min-w-0 items-center">
         <button
           type="button"
           onClick={handleSelect}
@@ -103,12 +116,55 @@ export default function ChatListCard({
           />
         </button>
 
-        {showArchived && (
-          <ChatListActions
-            chatId={chat.chatId}
-            onUnarchive={onUnarchive}
-          />
-        )}
+        <div className="flex shrink-0 items-center gap-1 pr-2">
+          {showArchived && (
+            <ChatListActions chatId={chat.chatId} onUnarchive={onUnarchive} />
+          )}
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Delete chat"
+                  title="Delete chat"
+                  className="
+          h-8 w-8 shrink-0 rounded-xl text-zinc-400
+          transition-all hover:bg-red-500/10 hover:text-red-500
+          focus-visible:ring-2 focus-visible:ring-red-500/40
+          sm:opacity-0 sm:group-hover:opacity-100
+          sm:focus-visible:opacity-100
+        "
+                />
+              }
+            >
+              <Trash2 className="h-4 w-4" />
+            </AlertDialogTrigger>
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this chat?</AlertDialogTitle>
+
+                <AlertDialogDescription>
+                  This will remove the chat from your sidebar. Other
+                  participants will still have their messages.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                <AlertDialogAction
+                  onClick={() => onDeleteChat(chat.chatId)}
+                  className="bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete chat
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
     </div>
   );

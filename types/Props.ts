@@ -23,4 +23,5 @@ export type ChatListCardProps = {
 
   showArchived: boolean;
   onUnarchive: (chatId: string) => Promise<void>;
+  onDeleteChat: (chatId: string) => Promise<void>;
 };
