@@ -3,7 +3,7 @@ import { MessageCircle } from "lucide-react";
 
 export default function NoChatSelectedState() {
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/60 p-8 text-center shadow-2xl shadow-orange-500/5 dark:shadow-none backdrop-blur-3xl z-50">
+    <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden rounded-[2.5rem] border border-zinc-200/80 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/60 p-8 text-center shadow-2xl shadow-orange-500/5 dark:shadow-none backdrop-blur-3xl z-50">
       <div className="pointer-events-none absolute -top-32 -right-32 h-80 w-80 rounded-full bg-linear-to-br from-amber-400/15 via-orange-500/10 to-rose-500/15 dark:from-amber-500/10 dark:via-orange-600/5 dark:to-rose-600/10 blur-[100px]" />
       <div className="pointer-events-none absolute -bottom-32 -left-32 h-80 w-80 rounded-full bg-linear-to-tr from-violet-500/10 via-rose-400/15 to-orange-400/15 dark:from-violet-600/5 dark:via-rose-600/10 dark:to-orange-600/10 blur-[100px]" />
 

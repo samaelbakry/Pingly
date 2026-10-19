@@ -2,7 +2,7 @@ import { database } from "@/lib/firebaseConfig";
 import { Story, StoryView } from "@/types/story";
 import { onValue, push, ref, runTransaction, set } from "firebase/database";
 
-const STORY_DURATION = 24 * 60 * 60 * 100;
+const STORY_DURATION = 24 * 60 * 60 * 1000;
 export async function createStory(ownerId: string,mediaUrl: string,caption = ""): Promise<Story> {
 
   const storyRef = push(ref(database, `stories/${ownerId}`));

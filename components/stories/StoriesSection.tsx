@@ -201,7 +201,7 @@ export default function StoriesSection() {
   };
 
   return (
-    <section className="w-full min-w-0 shrink-0 dark:border-zinc-800 mx-10">
+    <section className="w-full min-w-0 shrink-0 mx-10">
       <div className="mb-1.5 flex items-center justify-between px-1">
         {uploading && (
           <Loader2 className="h-3.5 w-3.5 animate-spin text-orange-500" />
@@ -217,27 +217,28 @@ export default function StoriesSection() {
         disabled={uploading}
       />
 
-      <div className="chat-scroll flex items-start gap-2.5 overflow-x-auto overflow-y-hidden px-1 pb-1 sm:gap-3">
-        <div className="flex w-12 shrink-0 flex-col items-center gap-1 sm:w-14">
-          <div className="relative">
+      <div className="chat-scroll flex snap-x items-start gap-3 overflow-x-auto overflow-y-hidden px-3 py-1.5 sm:gap-4 sm:px-4">
+        {/* Your story */}
+        <div className="flex w-14 shrink-0 snap-start flex-col items-center gap-1.5 sm:w-16">
+          <div className="relative size-14 sm:size-16">
             <button
               type="button"
               onClick={openMyStories}
               disabled={uploading}
               aria-label={myQueue.length ? "View your stories" : "Add a story"}
-              className={`flex size-8 items-center justify-center rounded-full p-[2px] transition-transform hover:scale-105 active:scale-95 disabled:opacity-60 sm:h-14 sm:w-14 ${
+              className={`flex size-full items-center justify-center rounded-full p-[2.5px] transition-transform hover:scale-105 active:scale-95 disabled:opacity-60 ${
                 myQueue.length
                   ? "bg-linear-to-tr from-orange-500 via-amber-400 to-orange-500"
                   : "border-2 border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900"
               }`}
             >
-              <Avatar className="h-full w-full border-2 border-white dark:border-zinc-950">
+              <Avatar className="size-full border-2 border-white dark:border-zinc-950">
                 <AvatarImage
                   src={myProfile?.photoURL || undefined}
                   alt="Your profile"
                   className="object-cover"
                 />
-                <AvatarFallback className="bg-orange-500/10 text-xs font-bold text-orange-500">
+                <AvatarFallback className="bg-orange-500/10 text-sm font-bold text-orange-500 sm:text-base">
                   {myProfile?.name?.charAt(0).toUpperCase() || "Y"}
                 </AvatarFallback>
               </Avatar>
@@ -248,13 +249,13 @@ export default function StoriesSection() {
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
               aria-label="Add to story"
-              className="absolute bottom-0 right-0 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-sky-500 text-white shadow-sm dark:border-zinc-950"
+              className="absolute -bottom-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full border-2 border-white bg-sky-500 text-white shadow-sm transition-transform hover:scale-110 active:scale-95 disabled:opacity-60 sm:size-6 dark:border-zinc-950"
             >
-              <Plus className="h-2.5 w-2.5" strokeWidth={3} />
+              <Plus className="size-3 sm:size-3.5" strokeWidth={3} />
             </button>
           </div>
 
-          <span className="w-full truncate text-center text-[10px] font-medium text-zinc-700 dark:text-zinc-300">
+          <span className="w-full truncate text-center text-[11px] font-medium text-zinc-700 sm:text-xs dark:text-zinc-300">
             Your story
           </span>
         </div>
@@ -271,22 +272,22 @@ export default function StoriesSection() {
               key={contact.uid}
               type="button"
               onClick={() => openContactStories(contact.uid)}
-              className="flex w-12 shrink-0 flex-col items-center gap-1 transition-transform hover:scale-105 active:scale-95 sm:w-14"
+              className="flex w-14 shrink-0 snap-start flex-col items-center gap-1.5 transition-transform hover:scale-105 active:scale-95 sm:w-16"
             >
-              <span className="flex size-8 items-center justify-center rounded-full bg-linear-to-tr from-orange-500 via-pink-500 to-amber-400 p-[2px] sm:h-14 sm:w-14">
-                <Avatar className="h-full w-full border-2 border-white dark:border-zinc-950">
+              <span className="flex size-14 items-center justify-center rounded-full bg-linear-to-tr from-orange-500 via-pink-500 to-amber-400 p-[2.5px] sm:size-16">
+                <Avatar className="size-full border-2 border-white dark:border-zinc-950">
                   <AvatarImage
                     src={contact.photoURL || undefined}
                     alt={contact.name}
                     className="object-cover"
                   />
-                  <AvatarFallback className="bg-zinc-100 text-xs font-bold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                  <AvatarFallback className="bg-zinc-100 text-sm font-bold text-zinc-600 sm:text-base dark:bg-zinc-800 dark:text-zinc-300">
                     {contact.name?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
               </span>
 
-              <span className="w-full truncate text-center text-[10px] font-medium text-zinc-700 dark:text-zinc-300">
+              <span className="w-full truncate text-center text-[11px] font-medium text-zinc-700 sm:text-xs dark:text-zinc-300">
                 {contact.name.split(" ")[0]}
               </span>
             </button>
@@ -294,8 +295,8 @@ export default function StoriesSection() {
         })}
 
         {myQueue.length === 0 && contactsQueue.length === 0 && (
-          <div className="flex min-h-12 items-center px-1">
-            <p className="text-[10px] text-zinc-400 dark:text-zinc-500">
+          <div className="flex min-h-14 items-center px-1 sm:min-h-16">
+            <p className="text-[11px] text-zinc-400 sm:text-xs dark:text-zinc-500">
               No other stories yet
             </p>
           </div>

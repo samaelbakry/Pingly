@@ -58,7 +58,7 @@ export default function ChatDashboardContent() {
       <div
         className={`
     chat-scroll relative z-50
-    h-[50px] max-h-[50px] shrink-0
+    h-[70px] max-h-[70px] shrink-0
     w-full min-w-0
     overflow-x-hidden overflow-y-hidden overscroll-contain
     ${hasSelectedChat ? "hidden md:block" : "block"}
