@@ -38,16 +38,32 @@ export default function MessageContent({
     setShowActions(false);
   };
 
+  const handleMouseEnter = () => {
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      setShowActions(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      setShowActions(false);
+    }
+  };
   const isImage = message.type === "image";
 
   return (
-    <div className="relative group/message">
+    <div
+      className="group/message relative min-w-0"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {" "}
       <ReactionPicker
         message={message}
         chatId={chatId}
         showActions={showActions}
+        isMine={isMine}
       />
-
       <div
         className={`flex w-full items-end gap-2 ${
           isMine ? "justify-end" : "justify-start"
@@ -165,7 +181,6 @@ export default function MessageContent({
           </div>
         </div>
       </div>
-
       <ReactionList message={message} chatId={chatId} isMine={isMine} />
     </div>
   );
